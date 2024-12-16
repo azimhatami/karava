@@ -1,7 +1,11 @@
+import SendOTPForm from '../features/authentication/SendOTPForm';
+
 const Auth = () => {
   return(
     <>
-      Auth
+      <div className='w-full sm:max-w-sm'>
+        <SendOTPForm />
+      </div>
     </>
   );
 };
