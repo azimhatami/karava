@@ -1,26 +1,28 @@
 import React, { useState } from "react";
-import OTPInput from "react-otp-input";
+import OtpInput from "react-otp-input";
 
 function CheckOTPForm() {
   const [otp, setOtp] = useState("");
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <p className="font-bold text-secondary-800">کد تایید را وارد کنید</p>
-      <OTPInput
+      <OtpInput
         value={otp}
         onChange={setOtp}
         numInputs={6}
-        renderSeparator={<span> - </span>}
-        renderInput={(props) => <input {...props}/>}
-        inputType="number"
+        shouldAutoFocus
+        isInputNum='true'
+        renderSeparator={<span>-</span>}
+        renderInput={(props) => <input {...props} />}
         containerStyle='flex flex-row-reverse gap-x-3 justify-center'
         inputStyle={{
-            widht: '2.5rem',
-            padding: '0.4rem 1rem',
-            border: '1px solid rgb(var(--color-primary-300))',
-            borderRadius: '0.5rem',
+          width: '3rem',  
+          height: '3rem',  
+          borderRadius: 10,  
+          border: '2px solid rgb(var(--color-primary-300))',                      
         }}
       />
+      
       <button className="btn btn-primary w-full">تایید کد</button>
     </div>
   );
