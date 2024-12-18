@@ -7,10 +7,10 @@ import SendOTPForm from './SendOTPForm';
 
 const AuthContainer = () => {
 
-  const [phoneNumber, setPhoneNumber] = useState('09945899973');
-  const [step, setStep] = useState(2);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [step, setStep] = useState(1);
   
-  const { isPending: isSendingOtp, mutateAsync } = useMutation({
+  const { isPending: isSendingOtp, mutateAsync, data: otpResponse } = useMutation({
     mutationFn: getOtp,
   })
 
@@ -45,6 +45,7 @@ const AuthContainer = () => {
             phoneNumber={phoneNumber} 
             onBack={() => setStep(s => s - 1)} 
             onResendOtp={sendOtpHandler}
+            otpResponse={otpResponse}
           />
         );
       default:

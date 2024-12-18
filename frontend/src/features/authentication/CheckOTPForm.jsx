@@ -4,12 +4,13 @@ import { checkOtp } from '../../services/authService';
 import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { HiArrowRight } from "react-icons/hi";
+import { CiEdit } from "react-icons/ci";
 import OtpInput from "react-otp-input";
 
 
 const RESEND_TIME = 90;
 
-function CheckOTPForm({ phoneNumber, onBack, onResendOtp }) {
+function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
 
   const [otp, setOtp] = useState("");
   const [time, setTime] = useState(RESEND_TIME);
@@ -50,6 +51,16 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp }) {
       <button onClick={onBack}>
         <HiArrowRight className='text-xl text-secondary-500 hover:text-secondary-700' />
       </button>
+      <div>
+        {otpResponse && 
+          <p className='flex items-center gap-x-2'>
+            <span>{otpResponse?.message}</span>
+            <button onClick={onBack}>
+              <CiEdit className='w-6 h-6 text-primary-900 my-3'/>
+            </button>
+          </p>
+        }
+      </div>
       <div className='mb-2 text-secondary-600'>
         {time > 0 ? (
           <p>{time} ثانیه تا ارسال کدمجدد</p>
