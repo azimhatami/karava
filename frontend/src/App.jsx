@@ -8,6 +8,7 @@ import {
 import { Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Auth from './pages/Auth';
+import CompleteProfile from './pages/CompleteProfile';
 import './App.css'
 
 
@@ -24,6 +25,7 @@ function App() {
         <div className='container xl:max-w-screen-xl'>
           <Routes>
             <Route path='/auth' element={<Auth />} />
+            <Route path='/complete-profile' element={<CompleteProfile />} />
           </Routes>
         </div>
       </QueryClientProvider>

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { HiArrowRight } from "react-icons/hi";
 import { CiEdit } from "react-icons/ci";
 import OtpInput from "react-otp-input";
+import Loading from '../../ui/Loading';
 
 
 const RESEND_TIME = 90;
@@ -16,7 +17,7 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
   const [time, setTime] = useState(RESEND_TIME);
   const navigate = useNavigate();
 
-  const { isPending, error, data, mutateAsync } = useMutation({
+  const { isPending, mutateAsync } = useMutation({
     mutationFn: checkOtp,
   });
 
@@ -87,8 +88,15 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
             border: '2px solid rgb(var(--color-primary-300))',                      
           }}
         />
-        
-        <button className="btn btn-primary w-full">تایید کد</button>
+        <div>
+          {isPending ? (
+            <Loading />
+          ) : (
+            <button type='submit' className="btn btn-primary w-full">
+              تایید
+            </button>
+          )}
+        </div>
       </form>
     </div>
   );
