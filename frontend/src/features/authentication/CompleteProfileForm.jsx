@@ -55,7 +55,7 @@ function CompleteProfileForm() {
               checked={role === 'OWNER'}
             />
             <RadioInput 
-              label='free'
+              label='فریلنسر'
               name='role'
               id='FREELANCER'
               value='FREELANCER'
