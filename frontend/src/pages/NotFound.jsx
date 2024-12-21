@@ -7,7 +7,7 @@ function NotFound() {
   const moveBack = useMoveBack();
 
   return(
-    <>
+    <div className='container xl:max-w-screen-xl'>
       <div className='sm:max-w-md flex justify-center'>
         <div className='flex flex-col gap-y-10 mt-10'>
           <button className='flex items-center gap-x-2' onClick={moveBack}>
@@ -17,7 +17,7 @@ function NotFound() {
           <p className='text-secondary-800 font-bold text-xl'>صفحه ای که دنبالش بودید پیدا نشد</p>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
