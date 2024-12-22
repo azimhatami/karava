@@ -9,7 +9,7 @@ function AppLayout() {
       <Header />
       <Sidebar />
       <div className='bg-secondary-100 p-8 overflow-y-auto'>
-        <div className='mx-auto max-w-screen-md bg-red-300'>
+        <div className='mx-auto max-w-screen-lg'>
           <Outlet />
         </div>
       </div>
