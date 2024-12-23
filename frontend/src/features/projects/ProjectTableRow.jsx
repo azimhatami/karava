@@ -6,11 +6,13 @@ import { HiOutlineTrash } from 'react-icons/hi';
 import { TbPencilMinus } from 'react-icons/tb';
 import Modal from '../../ui/Modal';
 import { useState } from 'react';
+import ConfirmDelete from '../../ui/ConfirmDelete';
 
 
 function ProjectTableRow({ project, index }) {
 
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   return(
     <>
@@ -38,10 +40,28 @@ function ProjectTableRow({ project, index }) {
             <button onClick={() => setIsEditOpen(true)}>
               <TbPencilMinus className='w-5 h-5 text-primary-900 text-lg' />
             </button>
-            <Modal open={isEditOpen} title='Title' onClose={() => setIsEditOpen(false)}>This is modal...</Modal>
-            <button>
+            <Modal 
+              open={isEditOpen} 
+              title={`ویرایش ${project.title}`} 
+              onClose={() => setIsEditOpen(false)}
+            >
+              This is modal...
+            </Modal>
+            <button onClick={() => setIsDeleteOpen(true)}>
               <HiOutlineTrash className='w-5 h-5 text-error text-lg' />
             </button>
+            <Modal 
+              open={isDeleteOpen} 
+              title={`حذف ${project.title}`} 
+              onClose={() => setIsDeleteOpen(false)}
+            >
+              <ConfirmDelete 
+                name={project.title} 
+                onClose={() => setIsDeleteOpen(false)}
+                onConfirm={() => {}}
+                disabled={false}
+              />
+            </Modal>
           </div>
         </td>
       </Table.Row>

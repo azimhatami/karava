@@ -45,10 +45,16 @@
     @apply px-3 py-1.5 font-bold rounded-xl transition-all duration-300
   }
   .btn-primary {
-    @apply bg-primary-900 text-white hover:bg-primary-800 shadow-lg shadow-primary-300
+    @apply bg-primary-900 text-white hover:bg-primary-800 shadow-md shadow-primary-400
   }
   .btn-secondary {
     @apply bg-secondary-600 text-secondary-100 
+  }
+  .btn-danger {
+    @apply bg-secondary-0 text-red-500 border-red-500 border hover:bg-red-500 hover:text-secondary-100 shadow-md shadow-red-300;
+  }
+  .btn-success {
+    @apply bg-success text-secondary-0 shadow-md shadow-secondary-300 font-semibold;
   }
   .badge {
     @apply inline-block whitespace-nowrap rounded-md px-1.5 py-0.5 font-semibold text-xs;
