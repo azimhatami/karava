@@ -2,12 +2,19 @@ import truncateText from '../../utils/truncateText';
 import shortDate from '../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import Table from '../../ui/Table';
+import { HiOutlineTrash } from 'react-icons/hi';
+import { TbPencilMinus } from 'react-icons/tb';
+import Modal from '../../ui/Modal';
+import { useState } from 'react';
 
 
 function ProjectTableRow({ project, index }) {
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+
   return(
     <>
-      <Table.Row key={project._id}>
+      <Table.Row>
         <td>{index + 1}</td>
         <td>{truncateText(project.title, 30)}</td>
         <td>{project.category.title}</td>
@@ -26,7 +33,17 @@ function ProjectTableRow({ project, index }) {
             <span className='badge badge-danger'>بسته</span>
           )}
         </td>
-        <td>...</td>
+        <td>
+          <div className='flex items-center gap-x-4'>
+            <button onClick={() => setIsEditOpen(true)}>
+              <TbPencilMinus className='w-5 h-5 text-primary-900 text-lg' />
+            </button>
+            <Modal open={isEditOpen} title='Title' onClose={() => setIsEditOpen(false)}>This is modal...</Modal>
+            <button>
+              <HiOutlineTrash className='w-5 h-5 text-error text-lg' />
+            </button>
+          </div>
+        </td>
       </Table.Row>
       
     </>
