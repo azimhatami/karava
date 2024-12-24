@@ -4,7 +4,7 @@ import { getOwnerProjectsAPI } from '../../services/projectService';
 
 function useOwnerProjects() {
   const {data, isLoading} = useQuery({
-    queryKey: ['projects'],
+    queryKey: ['owner-projects'],
     queryFn: getOwnerProjectsAPI,
   });
 
