@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { HiOutlinePlus } from 'react-icons/hi';
 import Modal from '../../ui/Modal';
+import CreateProjectForm from './CreateProjectForm';
 
 
 function ProjectsHeader() {
@@ -13,7 +14,7 @@ function ProjectsHeader() {
         open={open}
         onClose={() => setOpen(false)}
       >
-        <p>test</p>
+        <CreateProjectForm />
       </Modal>
       <button className='btn btn-primary flex items-center gap-x-2' onClick={() => setOpen(true)}>
         <span>اضافه کردن پروژه</span>
