@@ -17,16 +17,40 @@ function CreateProjectForm() {
   return(
     <form onSubmit={handleSubmit(onSubmit)} className='space-y-6'>
       <TextField 
-        label='عنوان پروژه'
+        label='عنوان'
         name='title'
         register={register}
         required
         validationSchema={{
-          required: 'Title is required',
+          required: 'عنوان ضروری است',
           minLength: {
             value: 10,
             message: 'حداقل ۱۰ کاراکتر وارد کنید',
           }
+        }}
+        errors={errors}
+      />
+      <TextField 
+        label='توضیحات'
+        name='title'
+        register={register}
+        required
+        validationSchema={{
+          required: 'توضیحات ضروری است',
+          minLength: {
+            value: 10,
+            message: 'حداقل ۱۰ کاراکتر وارد کنید',
+          }
+        }}
+        errors={errors}
+      />
+      <TextField 
+        label='بودجه'
+        name='title'
+        register={register}
+        required
+        validationSchema={{
+          required: 'بودجه ضروری است',
         }}
         errors={errors}
       />
