@@ -5,19 +5,34 @@ import { TagsInput } from "react-tag-input-component";
 import { useState } from "react";
 import DatePickerField from "../../ui/DatePickerField";
 import useCategories from '../../hooks/useCategories';
+import useCreateProject from './useCreateProject';
+import Loading from "../../ui/Loading";
 
-function CreateProjectForm() {
+function CreateProjectForm({onClose}) {
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm();
   const [tags, setTags] = useState([]);
   const [date, setDate] = useState(new Date());
   const { categories } = useCategories();
+  const { createProject, isCreating } = useCreateProject();
 
   const onSubmit = (data) => {
-    console.log(data);
+    const newProject = {
+      ...data, 
+      deadline: new Date(date).toISOString(),
+      tags,
+    }
+
+    createProject(newProject, {
+      onSuccess: () => {
+        onClose();
+        reset();
+      }
+    })
   };
 
   return (
@@ -38,21 +53,21 @@ function CreateProjectForm() {
       />
       <TextField
         label="توضیحات"
-        name="title"
+        name="description"
         register={register}
         required
         validationSchema={{
           required: "توضیحات ضروری است",
           minLength: {
-            value: 10,
-            message: "حداقل ۱۰ کاراکتر وارد کنید",
+            value: 15,
+            message: "حداقل ۱۵ کاراکتر وارد کنید",
           },
         }}
         errors={errors}
       />
       <TextField
         label="بودجه"
-        name="price"
+        name="budget"
         type="number"
         register={register}
         required
@@ -73,9 +88,13 @@ function CreateProjectForm() {
         <TagsInput value={tags} onChange={setTags} name="tags" />
       </div>
       <DatePickerField label='ددلاین' date={date} setDate={setDate} />
-      <button type="submit" className="btn btn-primary w-full">
-        تایید
-      </button>
+      <div>
+        {isCreating ? <Loading /> : (
+          <button type="submit" className="btn btn-primary w-full">
+           تایید
+          </button>
+        )}
+      </div>
     </form>
   );
 }

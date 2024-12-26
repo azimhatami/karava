@@ -14,7 +14,7 @@ function ProjectsHeader() {
         open={open}
         onClose={() => setOpen(false)}
       >
-        <CreateProjectForm />
+        <CreateProjectForm onClose={() => setOpen(false)} />
       </Modal>
       <button className='btn btn-primary flex items-center gap-x-2' onClick={() => setOpen(true)}>
         <span>اضافه کردن پروژه</span>
