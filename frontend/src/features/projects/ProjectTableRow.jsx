@@ -8,6 +8,7 @@ import Modal from '../../ui/Modal';
 import { useState } from 'react';
 import ConfirmDelete from '../../ui/ConfirmDelete';
 import useRemoveProject from './useRemoveProject';
+import CreateProjectForm from './CreateProjectForm';
 
 
 function ProjectTableRow({ project, index }) {
@@ -47,7 +48,10 @@ function ProjectTableRow({ project, index }) {
               title={`ویرایش ${project.title}`} 
               onClose={() => setIsEditOpen(false)}
             >
-              This is modal...
+              <CreateProjectForm 
+                projectToEdit={project} 
+                onClose={() => setIsEditOpen(false)}
+              />
             </Modal>
             <button onClick={() => setIsDeleteOpen(true)}>
               <HiOutlineTrash className='w-5 h-5 text-error text-lg' />
