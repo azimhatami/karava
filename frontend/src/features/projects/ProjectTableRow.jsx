@@ -2,7 +2,7 @@ import truncateText from '../../utils/truncateText';
 import shortDate from '../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import Table from '../../ui/Table';
-import { HiOutlineTrash } from 'react-icons/hi';
+import { HiOutlineTrash, HiEye } from 'react-icons/hi';
 import { TbPencilMinus } from 'react-icons/tb';
 import Modal from '../../ui/Modal';
 import { useState } from 'react';
@@ -10,6 +10,7 @@ import ConfirmDelete from '../../ui/ConfirmDelete';
 import useRemoveProject from './useRemoveProject';
 import CreateProjectForm from './CreateProjectForm';
 import ToggleProjectStatus from './ToggleProjectStatus';
+import { Link } from 'react-router';
 
 
 function ProjectTableRow({ project, index }) {
@@ -73,6 +74,11 @@ function ProjectTableRow({ project, index }) {
               />
             </Modal>
           </div>
+        </td>
+        <td>
+          <Link to={project._id} className='flex place-content-center'>
+            <HiEye className='w-5 h-5 text-primary-900'/>
+          </Link>
         </td>
       </Table.Row>
       
