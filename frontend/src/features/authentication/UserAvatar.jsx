@@ -11,7 +11,7 @@ function UserAvatar() {
         <img 
           src='/user.jpg' 
           alt='user avatar'
-          className='w-7 h-7 raounded-full object-cover object-center'
+          className='w-7 h-7 rounded-full object-cover object-center'
         />
         <span>{user?.name}</span>
       </div>
