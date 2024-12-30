@@ -7,6 +7,8 @@ import {
 } from '@tanstack/react-query';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { DarkModeProvider } from './context/DarkModeContext';
+
 import Auth from './pages/Auth';
 import CompleteProfile from './pages/CompleteProfile';
 import NotFound from './pages/NotFound';
@@ -26,21 +28,23 @@ function App() {
 
   return (
     <>
-      <QueryClientProvider client={queryClient}>
-        <Toaster />
-        <Routes>
-          <Route path='/auth' element={<Auth />} />
-          <Route path='/complete-profile' element={<CompleteProfile />} />
-          <Route path='/owner' element={<AppLayout />}>
-            <Route index element={<Navigate to='dashboard' />}/>
-            <Route path='dashboard' element={<OwnerDashboard />}/>
-            <Route path='projects' element={<Projects />}/>
-            <Route path='projects/:id' element={<Project />}/>
-          </Route>
-          <Route path='/' element={<Home />} />
-          <Route path='*' element={<NotFound />} />
-        </Routes>
-      </QueryClientProvider>
+      <DarkModeProvider>
+        <QueryClientProvider client={queryClient}>
+          <Toaster />
+          <Routes>
+            <Route path='/auth' element={<Auth />} />
+            <Route path='/complete-profile' element={<CompleteProfile />} />
+            <Route path='/owner' element={<AppLayout />}>
+              <Route index element={<Navigate to='dashboard' />}/>
+              <Route path='dashboard' element={<OwnerDashboard />}/>
+              <Route path='projects' element={<Projects />}/>
+              <Route path='projects/:id' element={<Project />}/>
+            </Route>
+            <Route path='/' element={<Home />} />
+            <Route path='*' element={<NotFound />} />
+          </Routes>
+        </QueryClientProvider>
+      </DarkModeProvider>
     </>
   )
 }
