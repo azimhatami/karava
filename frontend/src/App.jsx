@@ -17,6 +17,7 @@ import OwnerDashboard from './pages/OwnerDashboard';
 import Projects from './pages/Projects';
 import Project from './pages/Project';
 import AppLayout from './ui/AppLayout';
+import OwnerLayout from './features/owner/OwnerLayout';
 import './App.css'
 
 
@@ -34,8 +35,8 @@ function App() {
           <Routes>
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />
-            <Route path='/owner' element={<AppLayout />}>
-              <Route index element={<Navigate to='dashboard' />}/>
+            <Route path='/owner' element={<OwnerLayout />}>
+              <Route index element={<Navigate to='dashboard' replace />}/>
               <Route path='dashboard' element={<OwnerDashboard />}/>
               <Route path='projects' element={<Projects />}/>
               <Route path='projects/:id' element={<Project />}/>
