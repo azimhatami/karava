@@ -1,4 +1,4 @@
-import Stat from './Stat';
+import Stat from '../../ui/Stat';
 import {
   HiOutlineViewGrid, 
   HiCurrencyDollar, 
