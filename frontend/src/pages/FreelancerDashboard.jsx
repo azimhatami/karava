@@ -1,7 +1,10 @@
+import DashboardLayout from '../features/freelancer/DashboardLayout'
+
+
 function FreelancerDashboard() {
   return(
     <>
-      FreelancerDashboard
+      <DashboardLayout />
     </>
   );
 }
