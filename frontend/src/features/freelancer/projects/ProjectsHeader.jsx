@@ -1,13 +1,42 @@
 import FilterDropDown from '../../../ui/FilterDropDown';
+import Filter from '../../../ui/Filter';
 import useCategories from '../../../hooks/useCategories';
 
+
+const sortOptions = [
+  {
+    label: 'مرتب سازی (جدیدترین)',
+    value: 'latest'
+  },
+  {
+    label: 'مرتب سازی (قدیمی ترین)',
+    value: 'earliest'
+  },
+];
+
+const statusOptions = [
+  {
+    label: 'همه',
+    value: 'ALL'
+  },
+  {
+    label: 'باز',
+    value: 'OPEN'
+  },
+  {
+    label: 'بسته',
+    value: 'CLOSE'
+  }
+];
 
 function ProjectsHeader() {
   const { transformedCategories } = useCategories()
   return(
     <div className='flex items-center justify-between text-secondary-700 mb-8'>
       <h2 className='text-lg font-bold'>لیست پروژه ها</h2>
-      <div>
+      <div className='flex gap-x-8 items-center'>
+        <Filter filterField='status' options={statusOptions} />
+        <FilterDropDown filterField='sort' options={sortOptions} />
         <FilterDropDown 
           filterField='category' 
           options={[
