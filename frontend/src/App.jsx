@@ -24,6 +24,8 @@ import Proposals from './pages/Proposals';
 import SubmitedProjects from './pages/SubmitedProjects';
 import FreelancerLayout from './features/freelancer/FreelancerLayout';
 import ProtectedRoute from './ui/ProtectedRoute';
+import AdminLayout from './features/admin/AdminLayout';
+import AdminDashboard from './pages/AdminDashboard';
 import './App.css'
 
 
@@ -42,6 +44,17 @@ function App() {
           <Routes>
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />
+            <Route 
+              path='/admin' 
+              element={
+                <ProtectedRoute>
+                  <AdminLayout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<Navigate to='dashboard' replace />}/>
+              <Route path='dashboard' element={<AdminDashboard />}/>
+            </Route>
             <Route 
               path='/owner' 
               element={
