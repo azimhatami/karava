@@ -23,6 +23,7 @@ import FreelancerDashboard from './pages/FreelancerDashboard';
 import Proposals from './pages/Proposals';
 import SubmitedProjects from './pages/SubmitedProjects';
 import FreelancerLayout from './features/freelancer/FreelancerLayout';
+import ProtectedRoute from './ui/ProtectedRoute';
 import './App.css'
 
 
@@ -41,13 +42,27 @@ function App() {
           <Routes>
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />
-            <Route path='/owner' element={<OwnerLayout />}>
+            <Route 
+              path='/owner' 
+              element={
+                <ProtectedRoute>
+                  <OwnerLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Navigate to='dashboard' replace />}/>
               <Route path='dashboard' element={<OwnerDashboard />}/>
               <Route path='projects' element={<Projects />}/>
               <Route path='projects/:id' element={<Project />}/>
             </Route>
-            <Route path='/freelancer' element={<FreelancerLayout />}>
+            <Route 
+              path='/freelancer' 
+              element={
+                <ProtectedRoute>
+                  <FreelancerLayout />
+                </ProtectedRoute>
+              }
+            >
               <Route index element={<Navigate to='dashboard' replace />}/>
               <Route path='dashboard' element={<FreelancerDashboard />} />
               <Route path='proposals' element={<Proposals />} />
