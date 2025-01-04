@@ -8,6 +8,7 @@ import {
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { DarkModeProvider } from './context/DarkModeContext';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import Auth from './pages/Auth';
 import CompleteProfile from './pages/CompleteProfile';
@@ -35,6 +36,7 @@ function App() {
     <>
       <DarkModeProvider>
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
           <Toaster />
           <Routes>
             <Route path='/auth' element={<Auth />} />
