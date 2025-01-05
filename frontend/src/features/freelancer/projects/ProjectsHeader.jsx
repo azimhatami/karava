@@ -25,7 +25,7 @@ const statusOptions = [
   },
   {
     label: 'بسته',
-    value: 'CLOSE'
+    value: 'CLOSED'
   }
 ];
 
