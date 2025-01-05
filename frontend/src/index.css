@@ -77,13 +77,13 @@
 
 @layer components {
   .textField_input {
-    @apply w-full py-3 px-4 rounded-xl text-secondary-900 border border-gray-300 outline-none hover:border-primary-500 focus:outline-none focus:border-primary-500 transition-all duration-300 ease-out focus:shadow-lg focus:shadow-primary-300
+    @apply w-full py-3 px-4 rounded-xl text-secondary-900 bg-secondary-100 border border-secondary-300 outline-none hover:border-primary-500 hover:shadow-md hover:shadow-secondary-400 focus:outline-none focus:border-primary-500 transition-all duration-300 ease-out focus:shadow-md focus:shadow-secondary-400
   }
   .btn {
     @apply px-3 py-1.5 font-bold rounded-xl transition-all duration-300
   }
   .btn-primary {
-    @apply bg-primary-900 text-white hover:bg-primary-800 shadow-md shadow-primary-400
+    @apply bg-primary-900 text-white hover:bg-primary-800 hover:dark:bg-primary-900 shadow-lg shadow-primary-800 hover:dark:shadow-md hover:dark:shadow-primary-600 dark:shadow-none
   }
   .btn-secondary {
     @apply bg-secondary-600 text-secondary-100 

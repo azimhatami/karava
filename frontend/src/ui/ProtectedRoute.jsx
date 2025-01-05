@@ -1,18 +1,23 @@
 import { useNavigate } from "react-router";
 import { useEffect } from 'react';
+import { toast } from 'react-hot-toast';
 
 import useAuthorize from '../features/authentication/useAuthorize';
 import Loading from './Loading';
 
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated, isAuthorized, isLoading } = useAuthorize();
+  const { isAuthenticated, isAuthorized, isLoading, isVerified } = useAuthorize();
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isAuthenticated && !isLoading) navigate('/auth')
+    if (!isVerified && !isLoading) { 
+      toast.error('پروفایل شما هنوز تایید نشده است')
+      navigate('/')
+    }
     if (!isAuthorized && !isLoading) navigate('/not-access')
-  }, [isAuthenticated, isAuthorized, isLoading, navigate])
+  }, [isAuthenticated, isAuthorized, isLoading, navigate, isVerified])
 
   if (isLoading) {
     return (

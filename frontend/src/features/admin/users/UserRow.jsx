@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import Table from '../../../ui/Table';
 import Modal from '../../../ui/Modal';
+import ChangeUserStatus from './ChangeUserStatus';
 
 
 function UserRow({ user, index }) {
@@ -41,7 +42,7 @@ function UserRow({ user, index }) {
             open={open} 
             onClose={() => setOpen(false)}
           >
-            {/* <ChangeProposalStatus proposalId={proposal._id} onClose={() => setOpen(false)} /> */}
+            <ChangeUserStatus userId={user._id} onClose={() => setOpen(false)} />
           </Modal>
           <button onClick={() => setOpen(true)}>تعییر وضعیت</button>
         </td>

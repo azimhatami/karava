@@ -37,7 +37,7 @@ function App() {
 
 
   return (
-    <>
+    <div className='h-screen bg-secondary-0'>
       <DarkModeProvider>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
@@ -88,7 +88,7 @@ function App() {
           </Routes>
         </QueryClientProvider>
       </DarkModeProvider>
-    </>
+    </div>
   )
 }
 
