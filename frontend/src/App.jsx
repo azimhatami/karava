@@ -26,6 +26,7 @@ import FreelancerLayout from './features/freelancer/FreelancerLayout';
 import ProtectedRoute from './ui/ProtectedRoute';
 import AdminLayout from './features/admin/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
+import Users from './pages/Users';
 import './App.css'
 
 
@@ -54,6 +55,7 @@ function App() {
             >
               <Route index element={<Navigate to='dashboard' replace />}/>
               <Route path='dashboard' element={<AdminDashboard />}/>
+              <Route path='users' element={<Users />}/>
             </Route>
             <Route 
               path='/owner' 
