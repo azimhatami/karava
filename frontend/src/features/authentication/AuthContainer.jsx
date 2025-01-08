@@ -47,7 +47,7 @@ const AuthContainer = () => {
           <CheckOTPForm 
             phoneNumber={getValues('phoneNumber')} 
             onBack={() => setStep(s => s - 1)} 
-            onResendOtp={sendOtpHandler}
+            onResendOtp={handleSubmit(sendOtpHandler)}
             otpResponse={otpResponse}
           />
         );
@@ -57,11 +57,9 @@ const AuthContainer = () => {
   };
 
   return(
-    <>
       <div className='w-full sm:max-w-md'>
         {renderStep()}
       </div>
-    </>
   );
 };
 

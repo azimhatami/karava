@@ -9,7 +9,7 @@ import OtpInput from "react-otp-input";
 import Loading from '../../ui/Loading';
 
 
-const RESEND_TIME = 90;
+const RESEND_TIME = 10;
 
 function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
 
@@ -21,13 +21,6 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
     mutationFn: checkOtp,
   });
 
-  useEffect(() => {
-    const timer = time > 0 && setInterval(() => setTime((t) => t - 1), 1000)
-    return () => {
-      if (timer) clearInterval(timer)
-    };
-  }, [time])
-
   const checkOtpHandler = async (e) => {
     e.preventDefault();
     try {
@@ -38,7 +31,7 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
         return navigate('/complete-profile')
       }
 
-      if (user.status !== 2) {
+      if (Number(user.status) !== 2) {
         navigate('/');
         toast('پروفایل شما در انتظار تایید است', {icon: '👏'})
         return;
@@ -53,30 +46,36 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
     }
   };
 
+
+  useEffect(() => {
+    const timer = time > 0 && setInterval(() => setTime((t) => t - 1), 1000);
+    return () => {
+        if (timer) clearInterval(timer);
+    };
+  }, [time]);
+
+  const handleResendOtp = () => {
+    setTime(RESEND_TIME)
+    onResendOtp();
+  };
+
+
   return (
     <div>
       <button onClick={onBack}>
         <HiArrowRight className='text-xl text-secondary-500 hover:text-secondary-700' />
       </button>
-      <div>
-        {otpResponse && 
-          <p className='flex items-center gap-x-2'>
-            <span>{otpResponse?.message}</span>
+      <div className='mb-4'>
+        {otpResponse && (
+          <p className='flex items-center gap-x-3'>
+            <span className='text-secondary-800'>{otpResponse?.message}</span>
             <button onClick={onBack}>
-              <CiEdit className='w-6 h-6 text-primary-900 my-3'/>
+              <CiEdit className='w-7 h-7 text-primary-600 my-3'/>
             </button>
           </p>
-        }
+        )}
       </div>
-      <div className='mb-2 text-secondary-600'>
-        {time > 0 ? (
-          <p>{time} ثانیه تا ارسال کدمجدد</p>
-        ) : (
-          <button onClick={onResendOtp}>ارسال مجدد کد تایید</button>
-        )
-        } 
-      </div>
-      <form className='space-y-10' onSubmit={checkOtpHandler}>
+      <form className='space-y-12' onSubmit={checkOtpHandler}>
         <p className="font-bold text-secondary-800">کد تایید را وارد کنید</p>
         <OtpInput
           value={otp}
@@ -85,13 +84,15 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
           shouldAutoFocus
           isInputNum='true'
           renderSeparator={<span>-</span>}
-          renderInput={(props) => <input {...props} />}
+          renderInput={(props) => <input type='number' {...props} />}
           containerStyle='flex flex-row-reverse gap-x-3 justify-center'
           inputStyle={{
             width: '3rem',  
             height: '3rem',  
             borderRadius: 10,  
-            border: '2px solid rgb(var(--color-primary-300))',                      
+            border: '1px solid rgb(var(--color-primary-600))',
+            backgroundColor: 'rgb(var(--color-secondary-200))',
+            color: 'rgb(var(--color-secondary-900))',
           }}
         />
         <div>
@@ -104,6 +105,14 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
           )}
         </div>
       </form>
+      <div className='text-secondary-600 flex items-center justify-center mt-4'>
+        {time > 0 ? (
+          <p>{time} ثانیه تا ارسال کدمجدد</p>
+        ) : (
+          <button className='hover:text-secondary-700' onClick={handleResendOtp}>ارسال مجدد کد تایید</button>
+        )
+        } 
+      </div>
     </div>
   );
 }
