@@ -15,10 +15,10 @@ function DashboardLayout() {
   if (isLoadingProposals || isLoadingProjects || isLoadingUsers) return <Loading />;
 
   return(
-    <>
+    <div className=''>
       <DashboardHeader />
       <Stats proposals={proposals.length} projects={projects.length} users={users.length} />
-    </>
+    </div>
   );
 }
 

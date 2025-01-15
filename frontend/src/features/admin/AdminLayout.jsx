@@ -11,25 +11,25 @@ function AdminLayout() {
       <Sidebar>
         <CustomNavLink to='dashboard'>
           <HiHome />
-          <span>
+          <span className='md:inline hidden'>
             داشبورد
           </span>
         </CustomNavLink>
         <CustomNavLink to='projects'>
           <HiCollection />
-          <span>
+          <span className='md:inline hidden'>
           پروژه ها
           </span>
         </CustomNavLink>
         <CustomNavLink to='proposals'>
           <HiCollection />
-          <span>
+            <span className='md:inline hidden'>
             درخواست ها
-          </span>
+            </span>
         </CustomNavLink>
         <CustomNavLink to='users'>
           <HiUsers />
-          <span>
+          <span className='md:inline hidden'>
             کاربران
           </span>
         </CustomNavLink>
