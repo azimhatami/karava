@@ -1,6 +1,5 @@
 import { NavLink } from "react-router"
 
-import useUser from '../features/authentication/useUser';
 import useProjects from '../hooks/useProjects';
 import Loading from '../ui/Loading';
 
@@ -17,12 +16,11 @@ const projectStatus = {
 
 
 function Home() {
-  const { isLoding: userLoading, user } = useUser();
   const { isLoading: projectsLoading, projects } = useProjects();
 
   return(
     <div className='container h-screen bg-secondary-0 m-auto'>
-      <div className='pt-8 xl:max-w-screen-xl flex items-center justify-between'>
+      <div className='pt-8 xl:max-w-screen-xl flex items-center justify-between border-b border-solid border-secondary-400'>
         <div className='flex items-center gap-x-8'>
           <NavLink to='/'>
             <h2 className='text-lg font-bold text-secondary-500'>خانه</h2>
@@ -31,12 +29,10 @@ function Home() {
             <p className='text-lg font-bold text-secondary-500'>داشبورد</p>
           </NavLink>
         </div>
-        { userLoading ? <Loading /> : (
-          <p className='text-lg forn-bold text-secondary-600'>{user?.name} به وبسایت FreelancerHub خوش امدید</p>
-        )}
+        <p className='text-lg forn-bold text-primary-600'>FreelancerHub</p>
       </div>
       <div className=''>
-        <div className='container mt-16 flex items-center justify-normal flex-wrap gap-y-5 gap-x-6'>
+        <div className='mt-16 flex items-center justify-center md:justify-normal flex-wrap gap-y-5 gap-x-6 h-[30rem] overflow-y-auto md:h-full'>
           {projectsLoading ? <Loading /> : (
             projects.map((project) => {
               return(
