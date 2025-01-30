@@ -9,7 +9,7 @@ import OtpInput from "react-otp-input";
 import Loading from '../../ui/Loading';
 
 
-const RESEND_TIME = 10;
+const RESEND_TIME = 90;
 
 function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
 
