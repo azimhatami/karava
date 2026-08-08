@@ -1,5 +1,6 @@
 import { HiArrowRightOnRectangle } from "react-icons/hi2";
 import useLogout from './useLogout';
+import Loading from '../../ui/Loading';
 
 
 function Logout() {

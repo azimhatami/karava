@@ -24,37 +24,51 @@ function toPersianDigits(n) {
   return n.toString().replace(/\d/g, (x) => farsiDigits[parseInt(x)]);
 }
 
-async function setAccessToken(res, user) {
-  const cookieOptions = {
-    maxAge: 1000 * 60 * 60 * 24 * 1, // would expire after 1 days
-    httpOnly: true, // The cookie only accessible by the web server
-    signed: true, // Indicates if the cookie should be signed
+/** Normalize Persian/Arabic digits and coerce numbers to Latin digit strings. */
+function toEnglishDigits(value) {
+  return String(value ?? "")
+    .replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+    .replace(/[٠-٩]/g, (d) => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    .trim();
+}
+
+function buildAuthCookieOptions(extra = {}) {
+  const options = {
+    httpOnly: true,
+    signed: true,
     sameSite: "Lax",
     secure: process.env.NODE_ENV === "development" ? false : true,
-    domain: process.env.DOMAIN,
-    // domain:process.env.NODE_ENV === "development" ? "localhost" : ".fronthooks.ir",
+    path: "/",
+    ...extra,
   };
+  // Browsers reject Domain=localhost; omit for host-only cookies in local dev.
+  const domain = process.env.DOMAIN;
+  if (domain && domain !== "localhost") {
+    options.domain = domain;
+  }
+  return options;
+}
+
+async function setAccessToken(res, user) {
+  const expiresIn = process.env.ACCESS_TOKEN_EXPIRES_IN || "1d";
+  const cookieOptions = buildAuthCookieOptions({
+    maxAge: 1000 * 60 * 60 * 24 * 1, // would expire after 1 days
+  });
   res.cookie(
     "accessToken",
-    await generateToken(user, "1d", process.env.ACCESS_TOKEN_SECRET_KEY),
+    await generateToken(user, expiresIn, process.env.ACCESS_TOKEN_SECRET_KEY),
     cookieOptions
   );
 }
 
 async function setRefreshToken(res, user) {
-  const cookieOptions = {
+  const expiresIn = process.env.REFRESH_TOKEN_EXPIRES_IN || "1y";
+  const cookieOptions = buildAuthCookieOptions({
     maxAge: 1000 * 60 * 60 * 24 * 365, // would expire after 1 year
-    httpOnly: true, // The cookie only accessible by the web server
-    signed: true, // Indicates if the cookie should be signed
-    sameSite: "Lax",
-    secure: process.env.NODE_ENV === "development" ? false : true,
-    domain: process.env.DOMAIN,
-    // domain:
-    //   process.env.NODE_ENV === "development" ? "localhost" : ".folan.ir",
-  };
+  });
   res.cookie(
     "refreshToken",
-    await generateToken(user, "1y", process.env.REFRESH_TOKEN_SECRET_KEY),
+    await generateToken(user, expiresIn, process.env.REFRESH_TOKEN_SECRET_KEY),
     cookieOptions
   );
 }
@@ -322,6 +336,8 @@ function invoiceNumberGenerator() {
 module.exports = {
   generateRandomNumber,
   toPersianDigits,
+  toEnglishDigits,
+  buildAuthCookieOptions,
   setAccessToken,
   setRefreshToken,
   verifyRefreshToken,

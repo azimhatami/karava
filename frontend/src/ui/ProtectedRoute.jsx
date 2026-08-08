@@ -11,13 +11,23 @@ function ProtectedRoute({ children }) {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isAuthenticated && !isLoading) navigate('/auth')
-    if (!isVerified && !isLoading) { 
-      toast.error('پروفایل شما هنوز تایید نشده است')
-      navigate('/')
+    if (isLoading) return;
+
+    if (!isAuthenticated) {
+      navigate('/auth', { replace: true });
+      return;
     }
-    if (!isAuthorized && !isLoading) navigate('/not-access')
-  }, [isAuthenticated, isAuthorized, isLoading, navigate, isVerified])
+
+    if (!isVerified) {
+      toast.error('پروفایل شما هنوز تایید نشده است');
+      navigate('/', { replace: true });
+      return;
+    }
+
+    if (!isAuthorized) {
+      navigate('/', { replace: true });
+    }
+  }, [isAuthenticated, isAuthorized, isLoading, navigate, isVerified]);
 
   if (isLoading) {
     return (
@@ -27,7 +37,9 @@ function ProtectedRoute({ children }) {
     );
   }
 
-  if (isAuthenticated && isAuthorized) return children;
+  if (isAuthenticated && isAuthorized && isVerified) return children;
+
+  return null;
 }
 
 

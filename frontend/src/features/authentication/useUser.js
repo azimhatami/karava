@@ -3,16 +3,16 @@ import { getUser } from '../../services/authService';
 
 
 function useUser() {
-  const { data, isLoading } =  useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['user'],
     queryFn: getUser,
     retry: false,
-    refetchOnWindowFocus: true
-  })
+    refetchOnWindowFocus: false,
+  });
 
   const { user } = data || {};
 
-  return { isLoading, user }
+  return { isLoading, isError, user };
 }
 
 

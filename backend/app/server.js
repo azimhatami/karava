@@ -22,9 +22,10 @@ class Application {
     this.errorHandling();
   }
   createServer() {
-    this.#app.listen(this.#PORT, () =>
-      console.log(`listening on port ${this.#PORT}`)
-    );
+    this.#app.listen(this.#PORT, () => {
+      console.log(`listening on port ${this.#PORT}`);
+      console.log(`NODE_ENV=${process.env.NODE_ENV}`);
+    });
   }
   connectToDB() {
     mongoose

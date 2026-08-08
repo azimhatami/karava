@@ -5,7 +5,7 @@ const { authorize } = require("../http/middlewares/permission.guard");
 
 const router = require("express").Router();
 
-router.get("/list", expressAsyncHandler(ProjectController.getListOfProjects));
+// /project/list is registered as a public route in router.js
 router.get(
   "/owner-projects",
   authorize(ROLES.ADMIN, ROLES.OWNER),

@@ -6,12 +6,12 @@ import {
 } from "react-icons/hi";
 
 
-function Stats({ projects }) {
+function Stats({ projects = [] }) {
 
   const numOfProjects = projects.length;
-  const numOfAcceptedProjects = projects.map((p) => p.status === 2).length;
+  const numOfAcceptedProjects = projects.filter((p) => p.status === 2).length;
   const numOfProposal = projects.reduce(
-    (accumulator, currentValue) => currentValue.proposals.length + accumulator,
+    (accumulator, currentValue) => (currentValue.proposals?.length || 0) + accumulator,
     0
   );
 

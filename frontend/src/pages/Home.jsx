@@ -2,6 +2,7 @@ import { NavLink } from "react-router"
 
 import useProjects from '../hooks/useProjects';
 import Loading from '../ui/Loading';
+import Empty from '../ui/Empty';
 
 const projectStatus = {
   OPEN: {
@@ -16,7 +17,7 @@ const projectStatus = {
 
 
 function Home() {
-  const { isLoading: projectsLoading, projects } = useProjects();
+  const { isLoading: projectsLoading, isError, projects } = useProjects();
 
   return(
     <div className='container h-screen bg-secondary-0 m-auto'>
@@ -25,24 +26,35 @@ function Home() {
           <NavLink to='/'>
             <h2 className='text-lg font-bold text-secondary-500'>خانه</h2>
           </NavLink>
-          <NavLink to='/admin/dashboard'>
-            <p className='text-lg font-bold text-secondary-500'>داشبورد</p>
+          <NavLink to='/auth'>
+            <p className='text-lg font-bold text-secondary-500'>ورود</p>
           </NavLink>
         </div>
-        <p className='text-lg forn-bold text-primary-600'>FreelancerHub</p>
+        <p className='text-lg forn-bold text-primary-600'>Karava</p>
       </div>
       <div className=''>
         <div className='mt-16 flex items-center justify-center md:justify-normal flex-wrap gap-y-5 gap-x-6 h-[30rem] overflow-y-auto md:h-full'>
-          {projectsLoading ? <Loading /> : (
+          {projectsLoading ? (
+            <Loading />
+          ) : isError ? (
+            <p className='text-red-500 font-bold'>خطا در دریافت پروژه‌ها</p>
+          ) : !projects.length ? (
+            <Empty resourceName='پروژه‌ای' />
+          ) : (
             projects.map((project) => {
+              const statusMeta = projectStatus[project.status] || projectStatus.OPEN;
               return(
                 <div key={project._id} className='border border-[1px] border-secondary-400 w-[24rem] h-[8rem] rounded-md p-2'>
                   <div className='flex items-center justify-between'>
                   <h2 className='text-xl text-secondary-800 mb-2 inline'>{project.title}</h2>
-                  <span className={`badge ${projectStatus[project.status].className}`}>{projectStatus[project.status].label}</span>
+                  <span className={`badge ${statusMeta.className}`}>{statusMeta.label}</span>
                   </div>
                   <p className='text-secondary-500 text-sm'>{project.description}</p>
-                  <div className='mt-6 flex items-center justify-stretch gap-x-2'>{project.tags.map((t) => <span key={t} className='badge badge-secondary'>{t}</span>)}</div>
+                  <div className='mt-6 flex items-center justify-stretch gap-x-2'>
+                    {(project.tags || []).map((t) => (
+                      <span key={t} className='badge badge-secondary'>{t}</span>
+                    ))}
+                  </div>
                 </div>
               );
             })

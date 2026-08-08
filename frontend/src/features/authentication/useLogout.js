@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { logoutUser } from '../../services/authService';
 import { useNavigate } from 'react-router';
+import { resetAuthRefreshState } from '../../services/httpService';
 
 
 function useLogout() {
@@ -9,7 +10,8 @@ function useLogout() {
 
   const { isPending, mutate: logout } = useMutation({
     mutationFn: logoutUser,
-    onSuccess: (data) => {
+    onSuccess: () => {
+      resetAuthRefreshState();
       queryClient.removeQueries();
       navigate('/auth', { replace: true });
     },

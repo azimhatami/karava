@@ -2,21 +2,22 @@ import { useQuery } from '@tanstack/react-query';
 import { getProjectsAPI } from '../services/projectService';
 import { useLocation } from 'react-router'
 
-import queryString from 'query-string';
-
 
 function useProjects() {
   const { search } = useLocation();
-  // const queryObject = queryString.parse(search);
   const queryObject = Object.fromEntries(new URLSearchParams(search));
-  const {data, isLoading} = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['projects', queryObject],
     queryFn: () => getProjectsAPI(search),
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 401) return false;
+      return failureCount < 2;
+    },
   });
 
-  const {projects} = data || {};
+  const projects = data?.projects ?? [];
 
-  return { isLoading, projects };
+  return { isLoading, isError, projects };
 }
 
 

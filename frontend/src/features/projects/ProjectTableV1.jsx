@@ -11,7 +11,7 @@ function ProjectTable() {
 
   if (isLoading) return <Loading />;
 
-  if (!projects.length) return <Empty />;
+  if (!projects?.length) return <Empty />;
 
   return(
     <div>
@@ -39,7 +39,7 @@ function ProjectTable() {
               <td>{shortDate(project.deadline)}</td>
               <td>
                 <div className='flex flex-wrap items-center gap-2 max-w-[200px]'>
-                  {project.tags.map(tag => <span className='badge badge-secondary' key={tag}>{tag}</span>)}
+                  {(project.tags || []).map(tag => <span className='badge badge-secondary' key={tag}>{tag}</span>)}
                 </div>
               </td>
               <td>{project.freelancer?.name || '-'}</td>

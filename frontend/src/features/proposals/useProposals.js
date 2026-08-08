@@ -3,14 +3,18 @@ import { getProposalsAPI } from '../../services/proposalService';
 
 
 function useProposals() {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['proposals'],
-    queryFn: getProposalsAPI
+    queryFn: getProposalsAPI,
+    retry: (failureCount, error) => {
+      if (error?.response?.status === 401) return false;
+      return failureCount < 2;
+    },
   });
 
-  const { proposals } = data || {};
+  const proposals = data?.proposals ?? [];
 
-  return { isLoading, proposals };
+  return { isLoading, isError, proposals };
 }
 
 export default useProposals

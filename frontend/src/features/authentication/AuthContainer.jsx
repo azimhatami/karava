@@ -10,7 +10,7 @@ import { useForm } from 'react-hook-form';
 const AuthContainer = () => {
 
   const { handleSubmit, register, getValues } = useForm();
-  // const [phoneNumber, setPhoneNumber] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [step, setStep] = useState(1);
   
   const { isPending: isSendingOtp, mutateAsync, data: otpResponse } = useMutation({
@@ -19,7 +19,9 @@ const AuthContainer = () => {
 
   const sendOtpHandler = async (data) => {
     try {
-      const { message } = await mutateAsync(data);
+      const phone = String(data.phoneNumber || '').trim();
+      const { message } = await mutateAsync({ phoneNumber: phone });
+      setPhoneNumber(phone);
       setStep(2)
       toast.success(message)
     } catch(error) {
@@ -35,8 +37,6 @@ const AuthContainer = () => {
         return(
           <SendOTPForm 
             setStep={setStep} 
-            // phoneNumber={phoneNumber} 
-            // onChange={(e) => setPhoneNumber(e.target.value)} 
             onSubmit={handleSubmit(sendOtpHandler)}
             isSendingOtp={isSendingOtp}
             register={register}
@@ -45,7 +45,7 @@ const AuthContainer = () => {
       case 2:
         return(
           <CheckOTPForm 
-            phoneNumber={getValues('phoneNumber')} 
+            phoneNumber={phoneNumber || getValues('phoneNumber')} 
             onBack={() => setStep(s => s - 1)} 
             onResendOtp={handleSubmit(sendOtpHandler)}
             otpResponse={otpResponse}

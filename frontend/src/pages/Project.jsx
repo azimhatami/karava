@@ -12,10 +12,14 @@ function Project() {
     return <Loading />
   }
 
+  if (!project) {
+    return <p className='text-secondary-700 font-bold'>پروژه یافت نشد</p>;
+  }
+
   return(
     <div>
       <ProjectHeader project={project} />
-      <ProposalsTable proposals={project.proposals} />
+      <ProposalsTable proposals={project.proposals || []} />
     </div>
   );
 }

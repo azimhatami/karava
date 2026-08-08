@@ -7,6 +7,7 @@ import { HiArrowRight } from "react-icons/hi";
 import { CiEdit } from "react-icons/ci";
 import OtpInput from "react-otp-input";
 import Loading from '../../ui/Loading';
+import { resetAuthRefreshState } from '../../services/httpService';
 
 
 const RESEND_TIME = 90;
@@ -24,7 +25,11 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
   const checkOtpHandler = async (e) => {
     e.preventDefault();
     try {
-      const { user, message } = await mutateAsync({phoneNumber, otp});
+      const { user, message } = await mutateAsync({
+        phoneNumber: String(phoneNumber || '').trim(),
+        otp: String(otp || '').trim(),
+      });
+      resetAuthRefreshState();
       toast.success(message)
 
       if (!user.isActive) {
@@ -77,24 +82,29 @@ function CheckOTPForm({ phoneNumber, onBack, onResendOtp, otpResponse }) {
       </div>
       <form className='space-y-12' onSubmit={checkOtpHandler}>
         <p className="font-bold text-secondary-800">کد تایید را وارد کنید</p>
-        <OtpInput
-          value={otp}
-          onChange={setOtp}
-          numInputs={6}
-          shouldAutoFocus
-          isInputNum='true'
-          renderSeparator={<span>-</span>}
-          renderInput={(props) => <input type='number' {...props} />}
-          containerStyle='flex flex-row-reverse gap-x-3 justify-center'
-          inputStyle={{
-            width: '3rem',  
-            height: '3rem',  
-            borderRadius: 10,  
-            border: '1px solid rgb(var(--color-primary-600))',
-            backgroundColor: 'rgb(var(--color-secondary-200))',
-            color: 'rgb(var(--color-secondary-900))',
-          }}
-        />
+        {/* LTR so digits enter in natural left-to-right order (avoids RTL reverse bugs). */}
+        <div dir="ltr">
+          <OtpInput
+            value={otp}
+            onChange={(value) => setOtp(String(value))}
+            numInputs={6}
+            shouldAutoFocus
+            inputType="tel"
+            renderSeparator={<span>-</span>}
+            renderInput={(props) => (
+              <input {...props} type="tel" inputMode="numeric" autoComplete="one-time-code" />
+            )}
+            containerStyle="flex flex-row gap-x-3 justify-center"
+            inputStyle={{
+              width: '3rem',
+              height: '3rem',
+              borderRadius: 10,
+              border: '1px solid rgb(var(--color-primary-600))',
+              backgroundColor: 'rgb(var(--color-secondary-200))',
+              color: 'rgb(var(--color-secondary-900))',
+            }}
+          />
+        </div>
         <div>
           {isPending ? (
             <Loading />

@@ -2,7 +2,7 @@ import Empty from '../../ui/Empty';
 import Table from '../../ui/Table';
 import ProposalRow from './ProposalRow';
 
-function ProposalsTable({ proposals }) {
+function ProposalsTable({ proposals = [] }) {
 
   if (!proposals.length) return <Empty resourceName='درخواستی'/>
 

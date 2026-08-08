@@ -7,7 +7,7 @@ import {
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 
 
-function Stats({ proposals }) {
+function Stats({ proposals = [] }) {
 
   const numOfProposals = proposals.length;
   const acceptedProposals = proposals.filter((p) => p.status === 2);
