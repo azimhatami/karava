@@ -18,7 +18,7 @@ function CreateProposal({ onClose, projectId }) {
 
   return(
     <div className=''>
-      <form className='space-y-4' onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
         <TextField
           label="توضیحات"
           name="description"
@@ -57,8 +57,8 @@ function CreateProposal({ onClose, projectId }) {
         />
         <div className=''>
           { isCreating ? <Loading /> : (
-            <button type="submit" className="btn btn-primary w-full mt-6">
-             تایید
+            <button type="submit" className="karava-form-submit mt-2">
+              تایید و ذخیره
             </button>
           )}
         </div>
