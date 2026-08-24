@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { completeProfile } from '../../services/authService';
-import { toast } from 'react-hot-toast';
+import toast from '../../ui/toast';
 import { useNavigate } from 'react-router-dom';
 import TextField from '../../ui/TextField';
 import RadioInput from '../../ui/RadioInput';
@@ -31,7 +31,7 @@ function CompleteProfileForm() {
 
       if (user.status !== 2) {
         navigate('/');
-        toast('پروفایل شما در انتظار تایید است', {icon: '👏'})
+        toast.info('پروفایل شما در انتظار تایید است');
         return;
       }
       

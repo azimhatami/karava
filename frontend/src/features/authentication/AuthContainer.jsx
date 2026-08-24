@@ -1,8 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { getOtp } from '../../services/authService';
-import { toast } from 'react-hot-toast';
+import toast from '../../ui/toast';
+import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import { useState } from 'react';
 import CheckOTPForm from './CheckOTPForm';
+import RoleSelectForm from './RoleSelectForm';
 import SendOTPForm from './SendOTPForm';
 import { useForm } from 'react-hook-form';
 
@@ -11,7 +13,8 @@ const AuthContainer = () => {
 
   const { handleSubmit, register, getValues } = useForm();
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [step, setStep] = useState(1);
+  const [selectedRole, setSelectedRole] = useState(null);
+  const [step, setStep] = useState(0);
   
   const { isPending: isSendingOtp, mutateAsync, data: otpResponse } = useMutation({
     mutationFn: getOtp,
@@ -25,7 +28,7 @@ const AuthContainer = () => {
       setStep(2)
       toast.success(message)
     } catch(error) {
-      toast.error(error?.response?.data?.message)
+      toast.error(getApiErrorMessage(error, 'ارسال کد تایید انجام نشد.'));
     }
 
   };
@@ -33,10 +36,20 @@ const AuthContainer = () => {
 
   const renderStep = () => {
     switch(step) {
+      case 0:
+        return (
+          <RoleSelectForm
+            onSelectRole={(role) => {
+              setSelectedRole(role);
+              setStep(1);
+            }}
+          />
+        );
       case 1:
         return(
           <SendOTPForm 
-            setStep={setStep} 
+            selectedRole={selectedRole}
+            onBack={() => setStep(0)}
             onSubmit={handleSubmit(sendOtpHandler)}
             isSendingOtp={isSendingOtp}
             register={register}
@@ -46,6 +59,7 @@ const AuthContainer = () => {
         return(
           <CheckOTPForm 
             phoneNumber={phoneNumber || getValues('phoneNumber')} 
+            selectedRole={selectedRole}
             onBack={() => setStep(s => s - 1)} 
             onResendOtp={handleSubmit(sendOtpHandler)}
             otpResponse={otpResponse}
@@ -56,11 +70,7 @@ const AuthContainer = () => {
     }
   };
 
-  return(
-      <div className='w-full sm:max-w-md'>
-        {renderStep()}
-      </div>
-  );
+  return <div className="flex w-full justify-center">{renderStep()}</div>;
 };
 
 
