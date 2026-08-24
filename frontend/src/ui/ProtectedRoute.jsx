@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router";
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import toast from './toast';
 
 import useAuthorize from '../features/authentication/useAuthorize';
 import Loading from './Loading';
@@ -39,7 +39,11 @@ function ProtectedRoute({ children }) {
 
   if (isAuthenticated && isAuthorized && isVerified) return children;
 
-  return null;
+  return (
+    <div className="flex h-screen items-center justify-center bg-karava-bg-subtle">
+      <Loading />
+    </div>
+  );
 }
 
 

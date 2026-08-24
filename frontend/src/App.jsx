@@ -6,7 +6,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
+import KaravaToaster from './ui/KaravaToaster';
 import { DarkModeProvider } from './context/DarkModeContext';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
@@ -49,11 +49,11 @@ function App() {
 
 
   return (
-    <div className='h-screen bg-secondary-0'>
+    <div className='min-h-screen bg-karava-bg-subtle'>
       <DarkModeProvider>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
-          <Toaster />
+          <KaravaToaster />
           <Routes>
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />

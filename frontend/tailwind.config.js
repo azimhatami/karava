@@ -21,6 +21,20 @@ export default {
   theme: {
     extend: {
       colors: {
+        karava: {
+          'bg-subtle': '#F8F9FD',
+          white: '#FFFFFF',
+          'green-light': '#8EC3A9',
+          green: '#007A55',
+          'green-dark': '#0D4B39',
+          'green-darker': '#00362E',
+          gray: '#6E6E6E',
+          'gray-blue': '#677487',
+          'blue-light': '#4A9CFC',
+          blue: '#155DFC',
+          text: '#1D1B20',
+          red: '#C9093D',
+        },
         primary: {
           900: withOpacity("--color-primary-900"),
           800: withOpacity("--color-primary-800"),

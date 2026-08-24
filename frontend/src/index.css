@@ -1,4 +1,5 @@
 @import url('/fonts.css');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,8 +10,20 @@
   :root {
     &,
     &.light-mode {
-      --background-app-rgb: 255, 255, 255;
-      --color-primary-900: 74, 109, 255;
+      --background-app-rgb: 248, 249, 253;
+      --karava-bg-subtle: #F8F9FD;
+      --karava-white: #FFFFFF;
+      --karava-green-light: #8EC3A9;
+      --karava-green: #007A55;
+      --karava-green-dark: #0D4B39;
+      --karava-green-darker: #00362E;
+      --karava-gray: #6E6E6E;
+      --karava-gray-blue: #677487;
+      --karava-blue-light: #4A9CFC;
+      --karava-blue: #155DFC;
+      --karava-text: #1D1B20;
+      --karava-red: #C9093D;
+      --color-primary-900: 21, 93, 252;
       --color-primary-800: 92, 124, 255;
       --color-primary-700: 110, 138, 255;
       --color-primary-600: 128, 153, 255;
@@ -76,14 +89,31 @@
 }
 
 @layer components {
+  .karava-form-field {
+    @apply flex flex-col gap-2 text-right;
+  }
+
+  .karava-form-label {
+    @apply block text-sm font-bold leading-[19px] text-karava-text;
+  }
+
+  .karava-form-input {
+    @apply w-full rounded-[6px] bg-karava-bg-subtle px-4 py-3 text-right text-sm leading-[19px] text-karava-text outline-none transition-colors placeholder:text-karava-gray focus:bg-karava-white;
+    border: none;
+  }
+
+  .karava-form-submit {
+    @apply flex h-[46px] w-full items-center justify-center rounded-[6px] bg-karava-green text-sm font-bold text-white transition-colors hover:bg-karava-green-dark disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
   .textField_input {
-    @apply w-full py-3 px-4 rounded-xl text-secondary-900 bg-secondary-100 border border-secondary-300 outline-none hover:border-primary-500 hover:shadow-md hover:shadow-secondary-400 focus:outline-none focus:border-primary-500 transition-all duration-300 ease-out focus:shadow-md focus:shadow-secondary-400
+    @apply karava-form-input;
   }
   .btn {
-    @apply px-3 py-1.5 font-bold rounded-xl transition-all duration-300
+    @apply px-3 py-1.5 font-bold rounded-[6px] transition-all duration-300
   }
   .btn-primary {
-    @apply bg-primary-900 text-white hover:bg-primary-800 hover:dark:bg-primary-900 shadow-lg shadow-primary-800 hover:dark:shadow-md hover:dark:shadow-primary-600 dark:shadow-none
+    @apply karava-form-submit h-auto py-3 shadow-none hover:shadow-none;
   }
   .btn-secondary {
     @apply bg-secondary-600 text-secondary-100 
@@ -167,4 +197,63 @@ table td {
   font-size: 0.85rem;
   padding: 1rem 1rem;
   color: rgb(var(--color-secondary-600));
+}
+
+.owner-panel-header {
+  background: var(--karava-bg-subtle);
+}
+
+.owner-projects-table {
+  table-layout: fixed;
+}
+
+.owner-projects-table th,
+.owner-projects-table td {
+  border-bottom: none;
+  padding: 0;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.owner-projects-table thead tr,
+.owner-projects-table__head-row {
+  height: 19px;
+  border-bottom: 1px solid #000000;
+}
+
+.owner-projects-table__row {
+  height: 68px;
+  border-bottom: 1px solid #000000;
+}
+
+.owner-projects-table tbody tr:last-child {
+  border-bottom: 1px solid #000000;
+}
+
+.owner-panel-title {
+  font-family: 'Inter', 'Vazir', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0;
+  color: var(--karava-text);
+  text-align: right;
+}
+
+.owner-panel-subtitle {
+  font-family: 'Inter', 'Vazir', sans-serif;
+  font-size: 14px;
+  line-height: 140%;
+  color: var(--karava-gray-blue);
+  text-align: right;
+}
+
+.owner-panel-user-btn {
+  font-family: 'Inter', 'Vazir', sans-serif;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+  letter-spacing: 0;
+  text-align: right;
+  color: #222020;
 }

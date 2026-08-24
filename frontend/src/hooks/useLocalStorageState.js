@@ -3,13 +3,21 @@ import { useState, useEffect } from 'react';
 
 function useLocalStorageState(key, initialState) {
   const [value, setValue] = useState(() => {
-    const themeValue = localStorage.getItem(key);
-    return themeValue ? JSON.parse(themeValue) : initialState;
+    try {
+      const storedValue = localStorage.getItem(key);
+      return storedValue ? JSON.parse(storedValue) : initialState;
+    } catch {
+      return initialState;
+    }
   });
 
   useEffect(() => {
-    localStorage.setItem(key, JSON.stringify(value))
-  }, [value, key])
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch {
+      // Ignore quota or privacy mode errors.
+    }
+  }, [value, key]);
 
   return [value, setValue];
 }

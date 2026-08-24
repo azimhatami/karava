@@ -1,31 +1,35 @@
-import { useRef, useEffect } from 'react';
 import { HiOutlineX } from 'react-icons/hi';
 import useOutsideClick from '../hooks/useOutsideClick';
 
-
 function Modal({ open, onClose, title, children }) {
-
   const ref = useOutsideClick(onClose);
 
-  return open && (
-    <div className='backdrop-blur-sm fixed top-0 left-0 w-full h-screen \
-      bg-secondary-800/30 z-50'
-    >
-      <div ref={ref} className='fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 \
-        rounded-lg bg-secondary-0 p-4 shadow-lg transition-all duration-500 \
-        ease-out w-[calc(100vw-1.5rem)] md:max-w-lg max-h-[calc(100vh-2rem)] overflow-y-auto'
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-karava-text/30 p-4 backdrop-blur-sm">
+      <div
+        ref={ref}
+        className="flex max-h-[calc(100vh-2rem)] w-full max-w-[640px] flex-col overflow-hidden rounded-[6px] border border-[#D1D5DB] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
       >
-        <div className='flex items-center justify-between border-b border-b-secondary-300 pb-1 mb-6'>
-          <p className='text-secondary-700 font-bold text-base'>{title}</p>
-          <button onClick={onClose}>
-            <HiOutlineX className='w-5 h-5 text-secondary-500'/>
+        <div className="relative shrink-0 px-6 pb-4 pt-6">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="بستن"
+            className="absolute left-6 top-6 flex h-6 w-6 items-center justify-center rounded-full border border-karava-green text-karava-green transition-colors hover:bg-karava-bg-subtle"
+          >
+            <HiOutlineX className="h-3.5 w-3.5" />
           </button>
+          <h2 className="pr-8 text-right text-base font-bold leading-[19px] text-karava-text">
+            {title}
+          </h2>
         </div>
-        {children}
+
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">{children}</div>
       </div>
     </div>
-  )
+  );
 }
 
-
-export default Modal
+export default Modal;
