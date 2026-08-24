@@ -1,42 +1,19 @@
-import AppLayout from '../../ui/AppLayout';
-import Sidebar from '../../ui/Sidebar';
-import CustomNavLink from '../../ui/CustomNavLink';
-
-import { HiHome, HiCollection, HiUsers } from "react-icons/hi";
-
+import { Outlet } from 'react-router-dom';
+import AdminPanelHeader from './AdminPanelHeader';
+import AdminSidebar from './AdminSidebar';
 
 function AdminLayout() {
-  return(
-    <AppLayout>
-      <Sidebar>
-        <CustomNavLink to='dashboard'>
-          <HiHome />
-          <span className='md:inline hidden'>
-            داشبورد
-          </span>
-        </CustomNavLink>
-        <CustomNavLink to='projects'>
-          <HiCollection />
-          <span className='md:inline hidden'>
-          پروژه ها
-          </span>
-        </CustomNavLink>
-        <CustomNavLink to='proposals'>
-          <HiCollection />
-            <span className='md:inline hidden'>
-            درخواست ها
-            </span>
-        </CustomNavLink>
-        <CustomNavLink to='users'>
-          <HiUsers />
-          <span className='md:inline hidden'>
-            کاربران
-          </span>
-        </CustomNavLink>
-      </Sidebar>
-    </AppLayout>
+  return (
+    <div className="min-h-screen bg-white">
+      <AdminPanelHeader />
+      <div className="mx-auto flex max-w-[1440px] items-start gap-6 pl-6 pr-[108px] pb-8">
+        <AdminSidebar />
+        <main className="min-w-0 flex-1 pt-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }
 
-
-export default AdminLayout
+export default AdminLayout;

@@ -1,30 +1,19 @@
-import AppLayout from '../../ui/AppLayout';
-import Sidebar from '../../ui/Sidebar';
-import CustomNavLink from '../../ui/CustomNavLink';
-
-import { HiHome, HiCollection } from "react-icons/hi";
-
+import { Outlet } from 'react-router-dom';
+import OwnerPanelHeader from './OwnerPanelHeader';
+import OwnerSidebar from './OwnerSidebar';
 
 function OwnerLayout() {
-  return(
-    <AppLayout>
-      <Sidebar>
-        <CustomNavLink to='/owner/dashboard'>
-          <HiHome />
-          <span>
-            داشبورد
-          </span>
-        </CustomNavLink>
-        <CustomNavLink to='/owner/projects'>
-          <HiCollection />
-          <span>
-          پروژه ها
-          </span>
-        </CustomNavLink>
-      </Sidebar>
-    </AppLayout>
+  return (
+    <div className="min-h-[1225px] bg-white">
+      <OwnerPanelHeader />
+      <div className="mx-auto flex max-w-[1440px] items-start gap-6 pl-6 pr-[108px] pb-8">
+        <OwnerSidebar />
+        <main className="min-w-0 flex-1 pt-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   );
 }
 
-
-export default OwnerLayout
+export default OwnerLayout;
