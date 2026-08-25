@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { HiXMark, HiArrowLeft, HiDevicePhoneMobile } from 'react-icons/hi2';
+import { HiOutlineXCircle, HiArrowLeft, HiDevicePhoneMobile } from 'react-icons/hi2';
 import Loading from '../../ui/Loading';
 
 const roleBadgeLabels = {
@@ -19,13 +19,15 @@ const SendOTPForm = ({
 
   return (
     <div className="flex w-full max-w-[408px] min-h-[399px] flex-col gap-[31px] rounded-[6px] border border-[#D1D5DB] bg-white p-[10px]">
-      <div>
-        <div className="flex items-center justify-between pb-3">
+      <div className="flex h-[185px] w-[388px] max-w-full rotate-0 flex-col justify-between opacity-100">
+        <div className="flex h-[45px] w-[388px] max-w-full rotate-0 items-center justify-between border-b border-[#6E6E6E] opacity-100">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[#374151]">نقش انتخاب شده:</span>
+            <span className="inline-block h-[17px] w-[104px] rotate-0 text-center font-['Inter'] text-[14px] font-normal leading-none tracking-normal text-[#222020] opacity-100">نقش انتخاب شده:</span>
             {selectedRole && (
-              <span className="rounded-full bg-[#E6F4EC] px-2.5 py-1 text-xs font-medium text-karava-green">
-                {roleBadgeLabels[selectedRole]}
+              <span className="inline-flex h-[22px] w-[101px] rotate-0 items-center justify-center gap-2.5 overflow-hidden rounded-[6px] bg-[#ECFDF5] p-0.5 opacity-100">
+                <span className="inline-block h-[15px] w-[93px] rotate-0 overflow-hidden text-center font-['Inter'] text-[12px] font-normal leading-none tracking-normal text-[#006045] opacity-100">
+                  {roleBadgeLabels[selectedRole]}
+                </span>
               </span>
             )}
           </div>
@@ -33,36 +35,37 @@ const SendOTPForm = ({
           <button
             type="button"
             onClick={() => navigate('/')}
-            className="flex h-8 w-8 items-center justify-center rounded-full border border-karava-green text-karava-green transition-colors hover:bg-[#E8F3EE]"
+            className="relative h-11 w-11 shrink-0 rotate-0 opacity-100"
             aria-label="بستن"
           >
-            <HiXMark className="h-4 w-4" />
+            <HiOutlineXCircle className="absolute left-[2.29px] top-[2.29px] h-[39.41666793823242px] w-[39.41666793823242px] rotate-0 text-[#0E6A50] opacity-100" />
           </button>
         </div>
 
-        <div className="border-b border-[#E5E7EB]" />
-      </div>
-
-      <form className="flex flex-1 flex-col gap-[31px]" onSubmit={onSubmit}>
         <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#E8F3EE]">
-            <HiDevicePhoneMobile className="h-8 w-8 text-karava-green" />
+          <div className="relative h-[58px] w-[58px] rotate-0 rounded-[32px] bg-[#ECFDF5] opacity-100">
+            <HiDevicePhoneMobile className="absolute left-[11px] top-[3px] h-[52px] w-[36px] rotate-0 text-[#00362E] opacity-100" />
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-base font-bold text-[#111827]">
+            <h2 className="h-[17px] w-[388px] max-w-full rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-bold leading-none tracking-normal text-[#222020] opacity-100">
               شماره موبایل خود را وارد کنید
             </h2>
-            <p className="text-sm leading-6 text-karava-gray-blue">
+            <p className="h-[17px] w-[388px] max-w-full rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-normal leading-none tracking-normal text-[#222020] opacity-100">
               برای ورود امن به حساب کاربری، شماره موبایل خود را وارد کنید.
             </p>
           </div>
         </div>
+      </div>
 
+      <form
+        className="mx-auto flex h-[156px] w-[342px] max-w-full rotate-0 flex-col justify-between gap-5 opacity-100"
+        onSubmit={onSubmit}
+      >
         <div className="space-y-2">
           <label
             htmlFor="phoneNumber"
-            className="block text-right text-sm text-[#374151]"
+            className="block h-[17px] w-[342px] max-w-full rotate-0 text-right font-['Inter'] text-[14px] font-normal leading-none tracking-normal text-[#222020] opacity-100"
           >
             شماره موبایل
           </label>
@@ -73,31 +76,37 @@ const SendOTPForm = ({
             inputMode="numeric"
             autoComplete="tel"
             placeholder="09123456789"
-            className="w-full rounded-[6px] border border-[#9CA3AF] bg-white px-4 py-3 text-center text-sm text-[#111827] outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-karava-green focus:ring-1 focus:ring-karava-green"
+            className="box-border h-[39px] w-[342px] max-w-full rotate-0 gap-2.5 rounded-[12px] border border-[#6E6E6E] bg-white p-2.5 text-center text-sm text-[#111827] opacity-100 outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-karava-green focus:ring-1 focus:ring-karava-green"
           />
         </div>
 
-        <div className="mt-auto flex gap-3">
+        <div className="flex gap-3">
           {isSendingOtp ? (
-            <div className="flex flex-[7] items-center justify-center py-2.5">
+            <div className="flex h-[44px] w-[221px] shrink-0 items-center justify-center">
               <Loading />
             </div>
           ) : (
             <button
               type="submit"
-              className="flex flex-[7] items-center justify-center gap-2 rounded-[6px] bg-karava-green px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+              className="flex h-[44px] w-[221px] shrink-0 rotate-0 items-center justify-center gap-2.5 rounded-[12px] bg-[#00573F] p-2.5 text-white opacity-100 transition-colors hover:bg-karava-green-dark"
             >
-              <span>دریافت کد تایید</span>
-              <HiArrowLeft className="h-4 w-4" />
+              <span className="inline-block h-[17px] w-[88px] rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-normal leading-none tracking-normal text-white opacity-100">
+                دریافت کد تایید
+              </span>
+              <span className="relative inline-block h-6 w-6 shrink-0 opacity-100">
+                <HiArrowLeft className="absolute left-[2.25px] top-[4.25px] h-[15.50075626373291px] w-[19.49791717529297px] rotate-0 text-white opacity-100" />
+              </span>
             </button>
           )}
 
           <button
             type="button"
             onClick={onBack}
-            className="flex flex-[3] items-center justify-center rounded-[6px] border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+            className="flex h-[39px] w-[100px] shrink-0 rotate-0 items-center justify-center gap-2.5 rounded-[12px] border border-[#6E6E6E] bg-white p-2.5 opacity-100 transition-colors hover:bg-[#F9FAFB]"
           >
-            تغییر نوع ورود
+            <span className="inline-block h-[17px] w-[78px] rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-normal leading-none tracking-normal text-[#222020] opacity-100">
+              تغییر نوع ورود
+            </span>
           </button>
         </div>
       </form>

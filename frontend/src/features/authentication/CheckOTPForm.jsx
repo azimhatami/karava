@@ -5,7 +5,7 @@ import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import { useNavigate } from 'react-router-dom';
 import { CiEdit } from 'react-icons/ci';
-import { HiCheckCircle } from 'react-icons/hi2';
+import { HiOutlineCheckCircle } from 'react-icons/hi2';
 import OtpInput from 'react-otp-input';
 import Loading from '../../ui/Loading';
 import { resetAuthRefreshState } from '../../services/httpService';
@@ -28,6 +28,8 @@ const ROLE_REDIRECT_SUBTITLES = {
 
 const ROLE_MISMATCH_MESSAGE = 'این شماره موبایل با نقش انتخاب‌شده مطابقت ندارد.';
 
+const SUCCESS_BORDER_DELAY_MS = 700;
+
 function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
   const [otp, setOtp] = useState('');
   const [otpState, setOtpState] = useState('empty');
@@ -41,9 +43,34 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
   const inputBorderColor =
     otpState === 'error'
       ? karava.red
-      : otpState === 'filled'
-        ? karava.green
-        : '#9CA3AF';
+      : otpState === 'success'
+        ? '#006045'
+        : '#222020';
+
+  const continueAfterVerifiedOtp = (user) => {
+    resetAuthRefreshState();
+
+    if (!user.isActive) {
+      toast.success('ورود با موفقیت انجام شد', {
+        subtitle: 'لطفا اطلاعات خود را تکمیل کنید',
+      });
+      return navigate('/complete-profile');
+    }
+
+    if (Number(user.status) !== 2) {
+      navigate('/');
+      toast.info('پروفایل شما در انتظار تایید است');
+      return;
+    }
+
+    toast.success('ورود با موفقیت انجام شد', {
+      subtitle: ROLE_REDIRECT_SUBTITLES[user.role],
+    });
+
+    if (user.role === 'OWNER') return navigate('/owner');
+    if (user.role === 'FREELANCER') return navigate('/freelancer');
+    if (user.role === 'ADMIN') return navigate('/admin');
+  };
 
   const checkOtpHandler = async (e) => {
     e.preventDefault();
@@ -65,28 +92,9 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
         return;
       }
 
-      resetAuthRefreshState();
-
-      if (!user.isActive) {
-        toast.success('ورود با موفقیت انجام شد', {
-          subtitle: 'لطفا اطلاعات خود را تکمیل کنید',
-        });
-        return navigate('/complete-profile');
-      }
-
-      if (Number(user.status) !== 2) {
-        navigate('/');
-        toast.info('پروفایل شما در انتظار تایید است');
-        return;
-      }
-
-      toast.success('ورود با موفقیت انجام شد', {
-        subtitle: ROLE_REDIRECT_SUBTITLES[user.role],
-      });
-
-      if (user.role === 'OWNER') return navigate('/owner');
-      if (user.role === 'FREELANCER') return navigate('/freelancer');
-      if (user.role === 'ADMIN') return navigate('/admin');
+      setOtpState('success');
+      await new Promise((resolve) => setTimeout(resolve, SUCCESS_BORDER_DELAY_MS));
+      continueAfterVerifiedOtp(user);
     } catch (error) {
       setOtpState('error');
       toast.error(getApiErrorMessage(error, 'تایید کد انجام نشد.'));
@@ -101,13 +109,9 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
   }, [time]);
 
   const handleOtpChange = (value) => {
-    const next = String(value);
-    setOtp(next);
-    if (otpState === 'error') {
-      setOtpState(next.length ? 'filled' : 'empty');
-      return;
-    }
-    setOtpState(next.length ? 'filled' : 'empty');
+    if (otpState === 'success') return;
+    setOtp(String(value));
+    if (otpState === 'error') setOtpState('empty');
   };
 
   const handleResendOtp = () => {
@@ -122,7 +126,7 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
       onSubmit={checkOtpHandler}
       className="flex h-[290px] w-full max-w-[460px] flex-col justify-between rounded-[6px] border border-[#D1D5DB] bg-white p-3"
     >
-      <div className="space-y-2 text-center">
+      <div className="mx-auto flex h-[184px] w-[436px] max-w-full rotate-0 flex-col items-center justify-between gap-[18px] opacity-100">
         <h2 className="text-base font-bold text-[#111827]">تایید شماره موبایل</h2>
         <div className="flex items-center justify-center gap-2 text-sm text-[#374151]">
           <span>
@@ -137,10 +141,8 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
             ویرایش
           </button>
         </div>
-      </div>
 
-      <div className="space-y-3">
-        <div dir="ltr">
+        <div dir="ltr" className="w-full">
           <OtpInput
             value={otp}
             onChange={handleOtpChange}
@@ -157,25 +159,30 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
             )}
             containerStyle="flex flex-row justify-between gap-2"
             inputStyle={{
-              width: '3rem',
-              height: '3rem',
+              width: '48px',
+              height: '49px',
               borderRadius: 6,
               border: `1px solid ${inputBorderColor}`,
-              backgroundColor: karava.bgSubtle,
+              backgroundColor: '#E9E9E9',
               color: '#111827',
               fontSize: '1rem',
               outline: 'none',
+              opacity: 1,
+              transform: 'rotate(0deg)',
+              transition: 'border-color 200ms ease',
             }}
           />
         </div>
 
-        <div className="text-center text-sm text-[#374151]">
+        <div className="flex h-[17px] w-[436px] max-w-full rotate-0 items-center justify-center opacity-100">
           {time > 0 ? (
-            <p>ارسال مجدد کد تا {formatTime(time)}</p>
+            <p className="h-[17px] w-full text-center font-['Inter'] text-[14px] font-medium leading-none tracking-normal text-[#374151]">
+              ارسال مجدد کد تا {formatTime(time)}
+            </p>
           ) : (
             <button
               type="button"
-              className="font-medium text-karava-green"
+              className="h-[17px] w-full rotate-0 text-center font-['Inter'] text-[14px] font-medium leading-none tracking-normal text-[#222020] opacity-100"
               onClick={handleResendOtp}
             >
               ارسال مجدد کد تایید
@@ -186,25 +193,29 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
 
       <div className="flex gap-3">
         {isPending ? (
-          <div className="flex flex-[7] items-center justify-center py-2.5">
+            <div className="flex h-[44px] w-[251px] shrink-0 items-center justify-center">
             <Loading />
           </div>
         ) : (
           <button
             type="submit"
-            className="flex flex-[7] items-center justify-center gap-2 rounded-[6px] bg-karava-green px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+            className="flex h-[44px] w-[251px] shrink-0 rotate-0 items-center justify-center gap-2.5 rounded-[6px] bg-[#006045] p-2.5 text-white opacity-100 transition-colors hover:bg-karava-green-dark"
           >
-            <span>تایید ورود</span>
-            <HiCheckCircle className="h-5 w-5" />
+            <span className="inline-block h-[17px] w-[59px] rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-bold leading-none tracking-normal text-white opacity-100">
+              تایید ورود
+            </span>
+            <HiOutlineCheckCircle className="h-6 w-6 rotate-0 text-white opacity-100" />
           </button>
         )}
 
         <button
           type="button"
           onClick={onBack}
-          className="flex flex-[3] items-center justify-center rounded-[6px] border border-[#D1D5DB] bg-white px-3 py-2.5 text-sm font-medium text-[#374151] transition-colors hover:bg-[#F9FAFB]"
+          className="flex h-[44px] w-[155px] shrink-0 rotate-0 items-center justify-center gap-2.5 rounded-[6px] border border-[#6E6E6E] bg-white p-2.5 opacity-100 transition-colors hover:bg-[#F9FAFB]"
         >
-          ویرایش شماره موبایل
+          <span className="inline-block h-[17px] w-[133px] rotate-0 overflow-hidden text-center font-['Inter'] text-[14px] font-bold leading-none tracking-normal text-[#6E6E6E] opacity-100">
+            ویرایش شماره موبایل
+          </span>
         </button>
       </div>
     </form>
