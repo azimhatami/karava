@@ -1,36 +1,52 @@
 const Joi = require("joi");
 const createHttpError = require("http-errors");
-const { toEnglishDigits } = require("../../../utils/functions");
+const {
+  joiLocalizedDigits,
+  joiLocalizedNumber,
+  digitsOnlyValue,
+} = require("../../../utils/joiLocalizedNumber");
 
 const getOtpSchema = Joi.object({
-  phoneNumber: Joi.string()
-    .length(11)
-    .pattern(/^09[0-9]{9}$/)
-    .error(createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")),
+  phoneNumber: joiLocalizedDigits((schema) =>
+    schema
+      .required()
+      .custom((value, helpers) => {
+        const normalized = digitsOnlyValue(value);
+        if (!/^09[0-9]{9}$/.test(normalized)) {
+          return helpers.error("any.invalid");
+        }
+        return normalized;
+      })
+  ).error(
+    createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")
+  ),
 });
 
 const checkOtpSchema = Joi.object({
-  // Accept string or number (UI / JSON may send either), then normalize digits.
-  otp: Joi.any()
-    .required()
-    .custom((value, helpers) => {
-      const normalized = toEnglishDigits(value);
-      if (!/^\d{5,6}$/.test(normalized)) {
-        return helpers.error("any.invalid");
-      }
-      return normalized;
-    })
-    .error(createHttpError.BadRequest("کد ارسال شده صحیح نمیباشد")),
-  phoneNumber: Joi.any()
-    .required()
-    .custom((value, helpers) => {
-      const normalized = toEnglishDigits(value);
-      if (!/^09[0-9]{9}$/.test(normalized)) {
-        return helpers.error("any.invalid");
-      }
-      return normalized;
-    })
-    .error(createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")),
+  otp: joiLocalizedDigits((schema) =>
+    schema
+      .required()
+      .custom((value, helpers) => {
+        const normalized = digitsOnlyValue(value);
+        if (!/^\d{5,6}$/.test(normalized)) {
+          return helpers.error("any.invalid");
+        }
+        return normalized;
+      })
+  ).error(createHttpError.BadRequest("کد ارسال شده صحیح نمیباشد")),
+  phoneNumber: joiLocalizedDigits((schema) =>
+    schema
+      .required()
+      .custom((value, helpers) => {
+        const normalized = digitsOnlyValue(value);
+        if (!/^09[0-9]{9}$/.test(normalized)) {
+          return helpers.error("any.invalid");
+        }
+        return normalized;
+      })
+  ).error(
+    createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")
+  ),
 });
 
 const completeProfileSchema = Joi.object({
@@ -57,14 +73,38 @@ const updateProfileSchema = Joi.object({
     .required()
     .email()
     .error(createHttpError.BadRequest("ایمیل وارد شده صحیح نمی باشد")),
-  phoneNumber: Joi.string()
-    .length(11)
-    .pattern(/^09[0-9]{9}$/)
-    .error(createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")),
+  phoneNumber: joiLocalizedDigits((schema) =>
+    schema
+      .required()
+      .custom((value, helpers) => {
+        const normalized = digitsOnlyValue(value);
+        if (!/^09[0-9]{9}$/.test(normalized)) {
+          return helpers.error("any.invalid");
+        }
+        return normalized;
+      })
+  ).error(
+    createHttpError.BadRequest("شماره موبایل وارد شده صحیح نمیباشد")
+  ),
   biography: Joi.string()
-    .max(30)
+    .max(500)
     .allow("")
-    .error(createHttpError.BadRequest("حوزه تخصصی صحیح نمی باشد.")),
+    .error(createHttpError.BadRequest("بیوگرافی صحیح نمی باشد.")),
+  skills: Joi.array()
+    .items(Joi.string().trim().min(1).max(40))
+    .max(20)
+    .optional()
+    .error(createHttpError.BadRequest("مهارت‌ها صحیح نمی باشد.")),
+  companyName: Joi.string()
+    .max(100)
+    .allow("")
+    .optional()
+    .error(createHttpError.BadRequest("نام شرکت/کسب‌وکار صحیح نمی باشد.")),
+  companyDescription: Joi.string()
+    .max(500)
+    .allow("")
+    .optional()
+    .error(createHttpError.BadRequest("معرفی کسب‌وکار صحیح نمی باشد.")),
 });
 
 module.exports = {
@@ -72,4 +112,5 @@ module.exports = {
   completeProfileSchema,
   checkOtpSchema,
   updateProfileSchema,
+  joiLocalizedNumber,
 };

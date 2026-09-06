@@ -2,7 +2,6 @@ const Controller = require("./controller");
 const {
   generateRandomNumber,
   toPersianDigits,
-  toEnglishDigits,
   buildAuthCookieOptions,
   setAccessToken,
   setRefreshToken,
@@ -17,6 +16,7 @@ const {
   completeProfileSchema,
   updateProfileSchema,
   checkOtpSchema,
+  getOtpSchema,
 } = require("../validators/user.schema");
 
 const DEV_OTP = "111111";
@@ -29,12 +29,8 @@ class userAuthController extends Controller {
     this.phoneNumber = null;
   }
   async getOtp(req, res) {
-    let { phoneNumber } = req.body;
+    const { phoneNumber } = await getOtpSchema.validateAsync(req.body);
 
-    if (!phoneNumber)
-      throw createError.BadRequest("شماره موبایل معتبر را وارد کنید");
-
-    phoneNumber = toEnglishDigits(phoneNumber);
     this.phoneNumber = phoneNumber;
     this.code = isDevelopment()
       ? Number(DEV_OTP)
@@ -199,13 +195,33 @@ class userAuthController extends Controller {
   }
   async updateProfile(req, res) {
     const { _id: userId } = req.user;
-    await updateProfileSchema.validateAsync(req.body);
-    const { name, email, biography, phoneNumber } = req.body;
+    const {
+      name,
+      email,
+      biography,
+      phoneNumber,
+      skills,
+      companyName,
+      companyDescription,
+    } = await updateProfileSchema.validateAsync(req.body);
+
+    const updatePayload = {
+      name,
+      email,
+      biography,
+      phoneNumber,
+    };
+
+    if (Array.isArray(skills)) updatePayload.skills = skills;
+    if (typeof companyName === "string") updatePayload.companyName = companyName;
+    if (typeof companyDescription === "string") {
+      updatePayload.companyDescription = companyDescription;
+    }
 
     const updateResult = await UserModel.updateOne(
       { _id: userId },
       {
-        $set: { name, email, biography, phoneNumber },
+        $set: updatePayload,
       }
     );
     if (!updateResult.modifiedCount === 0)
