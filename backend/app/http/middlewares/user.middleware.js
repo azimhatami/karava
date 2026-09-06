@@ -63,8 +63,26 @@ function decideAuthMiddleware(req, res, next) {
   next();
 }
 
+/**
+ * Like decideAuthMiddleware, but never blocks the request.
+ * Invalid/expired tokens are ignored so public pages still work for guests.
+ */
+function optionalAuthMiddleware(req, res, next) {
+  const accessToken = req.signedCookies["accessToken"];
+  if (!accessToken) return next();
+
+  return verifyAccessToken(req, res, (error) => {
+    if (error) {
+      req.user = undefined;
+      return next();
+    }
+    return next();
+  });
+}
+
 module.exports = {
   verifyAccessToken,
   decideAuthMiddleware,
+  optionalAuthMiddleware,
   isVerifiedUser,
 };

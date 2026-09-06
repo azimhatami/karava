@@ -7,12 +7,22 @@ const createHttpError = require("http-errors");
 const { addProjectSchema } = require("../validators/project.schema");
 const { ProposalModel } = require("../../models/proposal");
 const ObjectId = mongoose.Types.ObjectId;
+const {
+  ACTION_TYPES,
+  assertProfileCompleteForAction,
+} = require("../../../utils/profileCompleteness");
 
 class ProjectController extends Controller {
   async addNewProject(req, res) {
     const userId = req.user._id;
-    await addProjectSchema.validateAsync(req.body);
-    const { title, description, tags, category, budget, deadline } = req.body;
+    const { title, description, tags, category, budget, deadline } =
+      await addProjectSchema.validateAsync(req.body);
+
+    assertProfileCompleteForAction(
+      req.user,
+      ACTION_TYPES.CREATE_PROJECT,
+      "برای ثبت پروژه باید ابتدا پروفایل خود را تکمیل کنید"
+    );
 
     const project = await ProjectModel.create({
       title,
@@ -168,6 +178,79 @@ class ProjectController extends Controller {
       },
     });
   }
+
+  async getPublicProjectDetails(req, res) {
+    const { id } = req.params;
+    if (!mongoose.isValidObjectId(id)) {
+      throw createHttpError.BadRequest("شناسه پروژه ارسال شده صحیح نمیباشد");
+    }
+
+    const project = await ProjectModel.findById(id)
+      .select({
+        title: 1,
+        description: 1,
+        status: 1,
+        budget: 1,
+        tags: 1,
+        deadline: 1,
+        createdAt: 1,
+        category: 1,
+        owner: 1,
+        proposals: 1,
+      })
+      .populate([
+        {
+          path: "category",
+          select: { title: 1, englishTitle: 1 },
+        },
+        {
+          path: "owner",
+          select: { name: 1, companyName: 1, companyDescription: 1 },
+        },
+      ])
+      .lean();
+
+    if (!project) throw createHttpError.NotFound("پروژه یافت نشد.");
+
+    const proposalIds = project.proposals || [];
+    const proposalCount = proposalIds.length;
+
+    const ownerProjectCount = project.owner?._id
+      ? await ProjectModel.countDocuments({ owner: project.owner._id })
+      : 0;
+
+    let myProposal = null;
+    const currentUser = req.user;
+    if (currentUser && proposalIds.length) {
+      myProposal = await ProposalModel.findOne({
+        _id: { $in: proposalIds },
+        user: currentUser._id,
+      })
+        .select({
+          status: 1,
+          price: 1,
+          duration: 1,
+          durationUnit: 1,
+          description: 1,
+          createdAt: 1,
+        })
+        .lean();
+    }
+
+    delete project.proposals;
+
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: {
+        project: {
+          ...project,
+          proposalCount,
+          ownerProjectCount,
+        },
+        myProposal,
+      },
+    });
+  }
   async findProjectById(id) {
     if (!mongoose.isValidObjectId(id))
       throw createHttpError.BadRequest("شناسه پروژ ارسال شده صحیح نمیباشد");
@@ -216,9 +299,8 @@ class ProjectController extends Controller {
   async updateProject(req, res) {
     const { id } = req.params;
     await this.findProjectById(id);
-    const { title, description, tags, deadline, category, budget } = req.body;
-    console.log(req.body);
-    await addProjectSchema.validateAsync(req.body);
+    const { title, description, tags, deadline, category, budget } =
+      await addProjectSchema.validateAsync(req.body);
     const updateResult = await ProjectModel.updateOne(
       { _id: id },
       {

@@ -1,24 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import truncateText from '../../utils/truncateText';
-import Modal from '../../ui/Modal';
-import CreateProposal from '../proposals/CreateProposal';
-import useUser from '../authentication/useUser';
 
 function ProjectCard({ project }) {
-  const { user } = useUser();
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
   const isOpen = project.status === 'OPEN';
-
-  const handleView = () => {
-    if (user?.role === 'FREELANCER') {
-      setOpen(true);
-      return;
-    }
-    navigate('/auth');
-  };
 
   return (
     <article className="mx-auto flex h-[347px] w-full max-w-[392px] flex-col gap-[18px] rounded-[12px] border border-[#00362E] bg-white p-3 opacity-100">
@@ -79,13 +64,12 @@ function ProjectCard({ project }) {
             تومان
           </span>
         </p>
-        <button
-          type="button"
-          onClick={handleView}
+        <Link
+          to={`/projects/${project._id}`}
           className="inline-flex h-5 w-[161px] items-center justify-between overflow-visible text-[#4A9CFC] opacity-100"
         >
           <span className="h-[19px] w-[131px] text-right font-['Inter'] text-[16px] font-normal leading-none tracking-normal text-[#4A9CFC]">
-            مشاهده و درخواست
+            مشاهده جزئیات
           </span>
           <span className="flex h-5 w-5 shrink-0 items-center justify-center">
             <svg
@@ -101,16 +85,8 @@ function ProjectCard({ project }) {
               <path d="M19.5 12H4.5m0 0 6.75 6.75M4.5 12l6.75-6.75" />
             </svg>
           </span>
-        </button>
+        </Link>
       </div>
-
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        title={`درخواست انجام پروژه ${project.title}`}
-      >
-        <CreateProposal onClose={() => setOpen(false)} projectId={project._id} />
-      </Modal>
     </article>
   );
 }

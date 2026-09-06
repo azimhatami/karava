@@ -4,6 +4,7 @@ const { authorize } = require("../http/middlewares/permission.guard");
 const {
   verifyAccessToken,
   isVerifiedUser,
+  optionalAuthMiddleware,
 } = require("../http/middlewares/user.middleware");
 const { ProjectController } = require("../http/controllers/project.controller");
 const { adminRoutes } = require("./admin/admin.routes");
@@ -21,6 +22,13 @@ router.use("/category", categoryRoutes);
 router.get(
   "/project/list",
   expressAsyncHandler(ProjectController.getListOfProjects)
+);
+
+// Public: project details (optional auth to include current user's proposal)
+router.get(
+  "/project/details/:id",
+  optionalAuthMiddleware,
+  expressAsyncHandler(ProjectController.getPublicProjectDetails)
 );
 
 router.use(

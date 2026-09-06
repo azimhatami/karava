@@ -27,6 +27,9 @@ import ProtectedRoute from './ui/ProtectedRoute';
 import AdminLayout from './features/admin/AdminLayout';
 import AdminDashboard from './pages/AdminDashboard';
 import Users from './pages/Users';
+import Profile from './pages/Profile';
+import ProjectDetails from './pages/ProjectDetails';
+import { ProfileIncompleteHost } from './features/profile/ProfileIncompleteHost';
 import './App.css'
 
 
@@ -54,9 +57,12 @@ function App() {
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
           <KaravaToaster />
+          <ProfileIncompleteHost />
           <Routes>
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />
+            <Route path='/projects/:projectId' element={<ProjectDetails />} />
+            <Route path='/' element={<Home />} />
             <Route 
               path='/admin' 
               element={
@@ -70,6 +76,7 @@ function App() {
               <Route path='users' element={<Users />}/>
               <Route path='proposals' element={<Proposals />}/>
               <Route path='projects' element={<SubmitedProjects />}/>
+              <Route path='profile' element={<Profile />}/>
             </Route>
             <Route 
               path='/owner' 
@@ -83,6 +90,7 @@ function App() {
               <Route path='dashboard' element={<OwnerDashboard />}/>
               <Route path='projects' element={<Projects />}/>
               <Route path='projects/:id' element={<Project />}/>
+              <Route path='profile' element={<Profile />}/>
             </Route>
             <Route 
               path='/freelancer' 
@@ -96,8 +104,8 @@ function App() {
               <Route path='dashboard' element={<FreelancerDashboard />} />
               <Route path='proposals' element={<Proposals />} />
               <Route path='projects' element={<SubmitedProjects />} />
+              <Route path='profile' element={<Profile />}/>
             </Route>
-            <Route path='/' element={<Home />} />
             <Route path='*' element={<NotFound />} />
           </Routes>
         </QueryClientProvider>

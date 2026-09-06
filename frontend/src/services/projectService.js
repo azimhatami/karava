@@ -25,6 +25,10 @@ export function getProjectAPI(id) {
   return http.get(`/project/${id}`).then(({data}) => data.data);
 }
 
+export function getPublicProjectDetailsAPI(id) {
+  return http.get(`/project/details/${id}`).then(({ data }) => data.data);
+}
+
 export function getProjectsAPI(qs) {
   return http.get(`/project/list${qs}`).then(({data}) => data.data);
 }
