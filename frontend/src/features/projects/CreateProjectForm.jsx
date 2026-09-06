@@ -8,12 +8,29 @@ import useCategories from '../../hooks/useCategories';
 import useCreateProject from './useCreateProject';
 import Loading from '../../ui/Loading';
 import useEditProject from './useEditProject';
+import useUser from '../authentication/useUser';
+import { showProfileIncompleteModal } from '../profile/ProfileIncompleteHost';
+import { parseLocalizedNumber } from '../../utils/normalizeDigits';
+import {
+  ACTION_TYPES,
+  getProfileIncompletePayload,
+  isProfileCompleteForAction,
+  isProfileIncompleteError,
+} from '../../utils/profileCompleteness';
+
+function getProfilePath(role) {
+  if (role === 'FREELANCER') return '/freelancer/profile';
+  if (role === 'ADMIN') return '/admin/profile';
+  return '/owner/profile';
+}
 
 function CreateProjectForm({ onClose, projectToEdit = {} }) {
+  const { user } = useUser();
   const { _id: editId } = projectToEdit;
   const isEditMode = Boolean(editId);
 
-  const { title, description, budget, category, deadline, tags: prevTags } = projectToEdit;
+  const { title, description, budget, category, deadline, tags: prevTags } =
+    projectToEdit;
   let editValues = {};
 
   if (isEditMode) {
@@ -39,9 +56,18 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
   const { createProject, isCreating } = useCreateProject();
   const { editProject, isEditing } = useEditProject();
 
+  const openIncomplete = (payload) => {
+    showProfileIncompleteModal({
+      ...payload,
+      profilePath: getProfilePath(user?.role),
+    });
+    onClose?.();
+  };
+
   const onSubmit = (data) => {
     const newProject = {
       ...data,
+      budget: parseLocalizedNumber(data.budget),
       deadline: new Date(date).toISOString(),
       tags,
     };
@@ -59,10 +85,27 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
       return;
     }
 
+    const localCheck = isProfileCompleteForAction(
+      user,
+      ACTION_TYPES.CREATE_PROJECT,
+    );
+
+    if (!localCheck.complete) {
+      openIncomplete({
+        message: 'برای ثبت پروژه باید ابتدا پروفایل خود را تکمیل کنید',
+        missingFields: localCheck.missingFields,
+      });
+      return;
+    }
+
     createProject(newProject, {
       onSuccess: () => {
         onClose();
         reset();
+      },
+      onError: (error) => {
+        if (!isProfileIncompleteError(error)) return;
+        openIncomplete(getProfileIncompletePayload(error));
       },
     });
   };
@@ -70,7 +113,10 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
   const isSubmitting = isCreating || isEditing;
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex min-h-[649px] flex-col gap-5">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex min-h-[649px] flex-col gap-5"
+    >
       <TextField
         label="عنوان"
         name="title"
@@ -107,12 +153,14 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
       <TextField
         label="بودجه(تومان)"
         name="budget"
-        type="number"
+        numeric
         register={register}
         required
-        placeholder="25,000,000"
+        placeholder="25000000"
         validationSchema={{
           required: 'بودجه ضروری است',
+          validate: (value) =>
+            Number(value) > 0 || 'بودجه باید عدد معتبر باشد',
         }}
         errors={errors}
       />

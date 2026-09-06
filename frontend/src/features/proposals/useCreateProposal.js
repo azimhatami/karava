@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from '../../ui/toast';
 import { createProposalAPI } from '../../services/proposalService';
+import { isProfileIncompleteError } from '../../utils/profileCompleteness';
 
 
 function useCreateProposal() {
@@ -15,6 +16,7 @@ function useCreateProposal() {
       })
     },
     onError: (error) => {
+      if (isProfileIncompleteError(error)) return;
       toast.error(error?.response?.data?.message)
     }
   });
