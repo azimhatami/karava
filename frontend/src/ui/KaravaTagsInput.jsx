@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { HiPlus, HiXMark, HiTag } from 'react-icons/hi2';
 
-function KaravaTagsInput({ tags, onChange }) {
+function KaravaTagsInput({ tags, onChange, label = 'تگ ها', placeholder = 'افزودن تگ(مثلا figma)' }) {
   const [input, setInput] = useState('');
 
   const addTag = () => {
@@ -17,7 +17,7 @@ function KaravaTagsInput({ tags, onChange }) {
 
   return (
     <div className="karava-form-field">
-      <label className="karava-form-label">تگ ها</label>
+      <label className="karava-form-label">{label}</label>
 
       <div className="flex items-center gap-2">
         <input
@@ -30,7 +30,7 @@ function KaravaTagsInput({ tags, onChange }) {
               addTag();
             }
           }}
-          placeholder="افزودن تگ(مثلا figma)"
+          placeholder={placeholder}
           className="karava-form-input min-w-0 flex-1"
         />
         <button

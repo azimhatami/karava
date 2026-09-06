@@ -1,7 +1,7 @@
 import {
-  HiSquares2X2,
-  HiRectangleStack,
-  HiUserCircle,
+  HiOutlineSquares2X2,
+  HiOutlineRectangleStack,
+  HiOutlineUserCircle,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useOwnerProjects from '../projects/useOwnerProjects';
@@ -15,19 +15,19 @@ function OwnerSidebar() {
     {
       to: '/owner/dashboard',
       label: 'داشبورد',
-      icon: HiSquares2X2,
+      icon: HiOutlineSquares2X2,
       end: true,
     },
     {
       to: '/owner/projects',
       label: 'پروژه ها',
-      icon: HiRectangleStack,
+      icon: HiOutlineRectangleStack,
       badge: projects.length,
     },
     {
-      to: '/complete-profile',
+      to: '/owner/profile',
       label: 'پروفایل من',
-      icon: HiUserCircle,
+      icon: HiOutlineUserCircle,
     },
   ];
 

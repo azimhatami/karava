@@ -1,9 +1,9 @@
 import {
-  HiSquares2X2,
-  HiUsers,
-  HiRectangleStack,
-  HiDocumentText,
-  HiUserCircle,
+  HiOutlineSquares2X2,
+  HiOutlineUsers,
+  HiOutlineRectangleStack,
+  HiOutlineDocumentText,
+  HiOutlineUserCircle,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useUsers from './useUsers';
@@ -21,31 +21,31 @@ function AdminSidebar() {
     {
       to: '/admin/dashboard',
       label: 'داشبورد',
-      icon: HiSquares2X2,
+      icon: HiOutlineSquares2X2,
       end: true,
     },
     {
       to: '/admin/users',
       label: 'کاربران',
-      icon: HiUsers,
+      icon: HiOutlineUsers,
       badge: users.length,
     },
     {
       to: '/admin/projects',
       label: 'پروژه ها',
-      icon: HiRectangleStack,
+      icon: HiOutlineRectangleStack,
       badge: projects.length,
     },
     {
       to: '/admin/proposals',
       label: 'درخواست های من',
-      icon: HiDocumentText,
+      icon: HiOutlineDocumentText,
       badge: proposals.length,
     },
     {
-      to: '/complete-profile',
+      to: '/admin/profile',
       label: 'پروفایل من',
-      icon: HiUserCircle,
+      icon: HiOutlineUserCircle,
     },
   ];
 

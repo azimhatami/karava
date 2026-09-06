@@ -4,6 +4,7 @@ import useProjects from '../../hooks/useProjects';
 import useUser from '../authentication/useUser';
 import FreelancerStats from './FreelancerStats';
 import FreelancerDashboardProjects from './FreelancerDashboardProjects';
+import ProfileCompletionCard from '../profile/ProfileCompletionCard';
 
 function DashboardLayout() {
   const { user } = useUser();
@@ -13,16 +14,22 @@ function DashboardLayout() {
   if (proposalsLoading || projectsLoading) return <Loading />;
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-2xl font-bold text-[#111827]">داشبورد فریلنسر</h2>
-        <p className="mt-2 text-sm text-[#6B7280]">
+    <div className="flex w-full flex-col gap-8">
+      <div className="flex h-[77px] w-full shrink-0 rotate-0 flex-col gap-2.5 p-2.5 opacity-100">
+        <h2 className="h-[19px] w-full rotate-0 text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100">
+          داشبورد فریلنسر
+        </h2>
+        <p className="h-[19px] w-full rotate-0 whitespace-nowrap text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100">
           خوش آمدید {user?.name || 'کاربر'}! وضعیت درخواست ها، درآمد و پروژه
           های مناسب
         </p>
       </div>
 
-      <FreelancerStats proposals={proposals} />
+      <ProfileCompletionCard user={user} profilePath="/freelancer/profile" />
+
+      <div className="w-full shrink-0">
+        <FreelancerStats proposals={proposals} />
+      </div>
       <FreelancerDashboardProjects projects={projects} />
     </div>
   );

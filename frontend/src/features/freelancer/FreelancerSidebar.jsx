@@ -1,8 +1,8 @@
 import {
-  HiSquares2X2,
-  HiBriefcase,
-  HiDocumentText,
-  HiUserCircle,
+  HiOutlineSquares2X2,
+  HiOutlineBriefcase,
+  HiOutlineDocumentText,
+  HiOutlineUserCircle,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useProjects from '../../hooks/useProjects';
@@ -20,25 +20,25 @@ function FreelancerSidebar() {
     {
       to: '/freelancer/dashboard',
       label: 'داشبورد',
-      icon: HiSquares2X2,
+      icon: HiOutlineSquares2X2,
       end: true,
     },
     {
       to: '/freelancer/projects',
       label: 'فرصت های شغلی',
-      icon: HiBriefcase,
+      icon: HiOutlineBriefcase,
       badge: openProjectsCount,
     },
     {
       to: '/freelancer/proposals',
       label: 'درخواست های من',
-      icon: HiDocumentText,
+      icon: HiOutlineDocumentText,
       badge: proposals.length,
     },
     {
-      to: '/complete-profile',
+      to: '/freelancer/profile',
       label: 'پروفایل من',
-      icon: HiUserCircle,
+      icon: HiOutlineUserCircle,
     },
   ];
 
