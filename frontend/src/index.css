@@ -125,7 +125,10 @@
     @apply bg-success text-secondary-0 shadow-md shadow-secondary-300 font-semibold;
   }
   .badge {
-    @apply inline-block whitespace-nowrap rounded-md px-1.5 py-0.5 font-semibold text-xs;
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md px-1.5 py-0.5 text-center font-semibold text-xs;
+  }
+  .badge-fixed {
+    @apply min-w-[7.5rem];
   }
   .badge-secondary {
     @apply bg-secondary-200 text-secondary-600;

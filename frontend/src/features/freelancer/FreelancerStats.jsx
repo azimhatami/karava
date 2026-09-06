@@ -1,20 +1,35 @@
 import {
-  HiDocumentText,
-  HiCheckCircle,
-  HiWallet,
+  HiOutlineDocumentText,
+  HiOutlineCheckCircle,
+  HiOutlineWallet,
 } from 'react-icons/hi2';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 
-function StatCard({ icon: Icon, title, value }) {
+function StatCard({ icon: Icon, title, value, valueSuffix }) {
   return (
-    <div className="flex items-center gap-4 rounded-[6px] border border-[#E5E7EB] bg-white p-4">
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#E8F3EE]">
-        <Icon className="h-6 w-6 text-karava-green" />
+    <div className="flex h-auto min-h-[68px] w-[288px] rotate-0 flex-col justify-center gap-2 rounded-[6px] border border-[#006045] bg-white p-2.5 opacity-100">
+      <div className="flex h-[28px] w-[266px] rotate-0 items-center justify-between opacity-100">
+        <p className="h-[19px] w-[139px] rotate-0 whitespace-nowrap text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-black opacity-100">
+          {title}
+        </p>
+        <div className="relative flex h-6 w-6 shrink-0 items-center justify-center">
+          <Icon
+            className="h-5 w-5 rotate-0 text-[#006045] opacity-100"
+            strokeWidth={2}
+            aria-hidden
+          />
+        </div>
       </div>
-      <div>
-        <p className="text-sm text-karava-gray-blue">{title}</p>
-        <p className="text-lg font-bold text-[#111827]">{value}</p>
-      </div>
+      <p className="flex h-[19px] w-[266px] rotate-0 items-center justify-start gap-6 opacity-100">
+        <span className="h-[19px] w-[95px] rotate-0 text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100">
+          {value}
+        </span>
+        {valueSuffix ? (
+          <span className="text-right font-['Inter'] text-base font-bold leading-none text-black">
+            {valueSuffix}
+          </span>
+        ) : null}
+      </p>
     </div>
   );
 }
@@ -28,21 +43,22 @@ function FreelancerStats({ proposals = [] }) {
   );
 
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <div className="flex w-full flex-wrap justify-between gap-4">
       <StatCard
-        icon={HiDocumentText}
+        icon={HiOutlineDocumentText}
         title="درخواست ها"
         value={numOfProposals}
       />
       <StatCard
-        icon={HiCheckCircle}
+        icon={HiOutlineCheckCircle}
         title="پروژه های تایید شده"
         value={acceptedProposals.length}
       />
       <StatCard
-        icon={HiWallet}
+        icon={HiOutlineWallet}
         title="کیف پول"
-        value={`${toPersianNumbersWithComma(balance)} تومان`}
+        value={toPersianNumbersWithComma(balance)}
+        valueSuffix="تومان"
       />
     </div>
   );

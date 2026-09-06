@@ -4,6 +4,7 @@ import Empty from '../../ui/Empty';
 import truncateText from '../../utils/truncateText';
 import shortDate from '../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
+import ProjectTags from '../../ui/ProjectTags';
 
 
 function ProjectTable() {
@@ -38,9 +39,7 @@ function ProjectTable() {
               <td>{toPersianNumbersWithComma(project.budget)}</td>
               <td>{shortDate(project.deadline)}</td>
               <td>
-                <div className='flex flex-wrap items-center gap-2 max-w-[200px]'>
-                  {(project.tags || []).map(tag => <span className='badge badge-secondary' key={tag}>{tag}</span>)}
-                </div>
+                <ProjectTags tags={project.tags} className="max-w-[200px]" />
               </td>
               <td>{project.freelancer?.name || '-'}</td>
               <td>

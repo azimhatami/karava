@@ -3,15 +3,18 @@ import Empty from '../../ui/Empty';
 import useOwnerProjects from '../projects/useOwnerProjects';
 import OwnerProjectTableRow from './OwnerProjectTableRow';
 
+const OWNER_PROJECTS_GRID_COLS =
+  'grid-cols-[minmax(0,1.5fr)_0.9fr_1fr_0.8fr_1.1fr_0.9fr_0.8fr_1.1fr]';
+
 const columns = [
-  { key: 'title', label: 'عنوان پروژه', width: '16%' },
-  { key: 'category', label: 'دسته بندی', width: '12%' },
-  { key: 'budget', label: 'بودجه (تومان)', width: '12%' },
-  { key: 'deadline', label: 'ددلاین', width: '10%' },
-  { key: 'tags', label: 'تگ ها', width: '10%' },
-  { key: 'freelancer', label: 'فریلنسر', width: '12%' },
-  { key: 'status', label: 'وضعیت', width: '10%' },
-  { key: 'actions', label: 'عملیات', width: '18%' },
+  { key: 'title', label: 'عنوان پروژه' },
+  { key: 'category', label: 'دسته بندی' },
+  { key: 'budget', label: 'بودجه (تومان)' },
+  { key: 'deadline', label: 'ددلاین' },
+  { key: 'tags', label: 'تگ ها' },
+  { key: 'freelancer', label: 'فریلنسر' },
+  { key: 'status', label: 'وضعیت' },
+  { key: 'actions', label: 'عملیات' },
 ];
 
 function OwnerDashboardProjectsTable() {
@@ -21,35 +24,29 @@ function OwnerDashboardProjectsTable() {
   if (!projects.length) return <Empty resourceName="پروژه‌ای" />;
 
   return (
-    <section className="flex w-full max-w-[912px] flex-col gap-[7px]">
-      <h3 className="owner-panel-title">پروژه های شما</h3>
+    <section className="flex w-full rotate-0 flex-col gap-[7px] opacity-100">
+      <h3 className="owner-panel-title w-full">پروژه های شما</h3>
 
-      <div className="flex h-[494px] w-full flex-col overflow-hidden rounded-[6px] border border-karava-green-dark bg-white p-3">
-        <div className="min-h-0 flex-1 overflow-auto">
-          <table className="owner-projects-table w-full max-w-[886px] border-collapse">
-            <thead>
-              <tr className="owner-projects-table__head-row">
-                {columns.map((column) => (
-                  <th
-                    key={column.key}
-                    className="px-1 text-center text-xs font-medium leading-[19px] text-karava-gray-blue"
-                    style={{ width: column.width }}
-                  >
-                    {column.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {projects.map((project, index) => (
-                <OwnerProjectTableRow
-                  key={project._id}
-                  project={project}
-                  isAlternate={index % 2 === 1}
-                />
-              ))}
-            </tbody>
-          </table>
+      <div className="flex h-[494px] w-full rotate-0 flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3 opacity-100">
+        <div className="flex min-h-0 w-full flex-1 flex-col overflow-auto">
+          <div
+            className={`grid h-[19px] w-full shrink-0 rotate-0 items-center ${OWNER_PROJECTS_GRID_COLS} opacity-100`}
+          >
+            {columns.map((column) => (
+              <span
+                key={column.key}
+                className="h-[19px] rotate-0 whitespace-nowrap text-center font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100"
+              >
+                {column.label}
+              </span>
+            ))}
+          </div>
+
+          <div className="flex min-h-0 flex-1 flex-col">
+            {projects.map((project) => (
+              <OwnerProjectTableRow key={project._id} project={project} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

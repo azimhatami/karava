@@ -14,7 +14,7 @@ function ProposalsTable({ proposals = [] }) {
         <th>فریلنسر</th>
         <th>توضیحات</th>
         <th>زمان تحویل</th>
-        <th>هزینه</th>
+        <th>هزینه (تومان)</th>
         <th>وضعیت</th>
         <th>عملیات</th>
       </Table.Header> 

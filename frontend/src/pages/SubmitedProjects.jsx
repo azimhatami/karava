@@ -1,15 +1,13 @@
 import ProjectsHeader from '../features/freelancer/projects/ProjectsHeader';
 import ProjectsTable from '../features/freelancer/projects/ProjectsTable';
 
-
 function SubmitedProjects() {
-  return(
-    <>
+  return (
+    <div className="flex w-full flex-col">
       <ProjectsHeader />
       <ProjectsTable />
-    </>
+    </div>
   );
 }
 
-
-export default SubmitedProjects
+export default SubmitedProjects;

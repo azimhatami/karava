@@ -2,55 +2,57 @@ import FilterDropDown from '../../../ui/FilterDropDown';
 import Filter from '../../../ui/Filter';
 import useCategories from '../../../hooks/useCategories';
 
-
 const sortOptions = [
   {
     label: 'مرتب سازی (جدیدترین)',
-    value: 'latest'
+    value: 'latest',
   },
   {
     label: 'مرتب سازی (قدیمی ترین)',
-    value: 'earliest'
+    value: 'earliest',
   },
 ];
 
 const statusOptions = [
   {
     label: 'همه',
-    value: 'ALL'
+    value: 'ALL',
   },
   {
     label: 'باز',
-    value: 'OPEN'
+    value: 'OPEN',
   },
   {
     label: 'بسته',
-    value: 'CLOSED'
-  }
+    value: 'CLOSED',
+  },
 ];
 
 function ProjectsHeader() {
-  const { transformedCategories } = useCategories()
-  return(
-    <div className='flex items-center justify-between flex-wrap text-secondary-700 mb-8'>
-      <h2 className='text-lg md:text-lg md:font-bold'>لیست پروژه ها</h2>
-      <div className='md:flex md:gap-x-8 md:items-center flex items-center flex-wrap gap-y-2'>
-        <Filter filterField='status' options={statusOptions} />
-        <FilterDropDown filterField='sort' options={sortOptions} />
-        <FilterDropDown 
-          filterField='category' 
+  const { transformedCategories } = useCategories();
+
+  return (
+    <div className="mb-6 flex w-full flex-nowrap items-center justify-between gap-4">
+      <h2 className="owner-panel-title shrink-0 whitespace-nowrap">
+        لیست پروژه ها
+      </h2>
+
+      <div className="flex min-w-0 flex-nowrap items-center justify-end gap-3">
+        <Filter filterField="status" options={statusOptions} />
+        <FilterDropDown filterField="sort" options={sortOptions} />
+        <FilterDropDown
+          filterField="category"
           options={[
             {
-              value: 'ALL', 
-              label: 'دسته بندی (همه)'
-            }, 
-            ...transformedCategories
-          ]} 
+              value: 'ALL',
+              label: 'دسته بندی (همه)',
+            },
+            ...transformedCategories,
+          ]}
         />
       </div>
     </div>
   );
 }
 
-
-export default ProjectsHeader
+export default ProjectsHeader;

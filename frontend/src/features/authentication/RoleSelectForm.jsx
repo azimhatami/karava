@@ -81,14 +81,14 @@ function RoleSelectForm({ onSelectRole }) {
         </div>
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex w-full flex-col items-center gap-3">
         {roles.map((role) => {
           const Icon = role.icon;
 
           return (
             <div
               key={role.id}
-              className="flex h-20 w-full max-w-[534px] items-center justify-between rounded-[10px] border border-[#6E6E6E] bg-white p-2.5 opacity-100"
+              className="flex h-20 w-full max-w-[534px] items-center justify-between gap-3 rounded-[10px] border border-[#6E6E6E] bg-white p-2.5 opacity-100"
             >
               <div className="relative h-11 w-11 shrink-0 rounded-[6px] bg-[#E8F3EE]">
                 <Icon

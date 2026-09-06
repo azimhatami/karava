@@ -12,9 +12,9 @@ function Filter({ filterField, options }) {
   }
 
   return(
-    <div className='flex items-center gap-x-2 text-xs'>
-      <span>وضعیت</span>
-      <div className='flex items-center gap-x-2 border border-secondary-100 bg-secondary-0 rounded-lg p-1'>
+    <div className="flex shrink-0 flex-nowrap items-center gap-x-2 text-xs">
+      <span className="whitespace-nowrap">وضعیت</span>
+      <div className="flex shrink-0 flex-nowrap items-center gap-x-2 rounded-lg border border-secondary-100 bg-secondary-0 p-1">
         {
           options.map(({ value, label }) => {
             const isActive = value === currentFilter;

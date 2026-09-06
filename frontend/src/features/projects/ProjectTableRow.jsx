@@ -10,6 +10,7 @@ import ConfirmDelete from '../../ui/ConfirmDelete';
 import useRemoveProject from './useRemoveProject';
 import CreateProjectForm from './CreateProjectForm';
 import ToggleProjectStatus from './ToggleProjectStatus';
+import ProjectTags from '../../ui/ProjectTags';
 import { Link } from 'react-router';
 
 
@@ -28,9 +29,7 @@ function ProjectTableRow({ project, index }) {
         <td>{toPersianNumbersWithComma(project.budget)}</td>
         <td>{shortDate(project.deadline)}</td>
         <td>
-          <div className='flex flex-wrap items-center gap-2 max-w-[200px]'>
-            {(project.tags || []).map(tag => <span className='badge badge-secondary' key={tag}>{tag}</span>)}
-          </div>
+          <ProjectTags tags={project.tags} className="max-w-[200px]" />
         </td>
         <td>{project.freelancer?.name || '-'}</td>
         <td>
