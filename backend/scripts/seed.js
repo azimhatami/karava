@@ -261,6 +261,7 @@ async function seed() {
     {
       price: 22000000,
       duration: 14,
+      durationUnit: "day",
       description: "آماده طراحی کامل در فیگما با دو دور بازبینی.",
       user: freelancers[1]._id,
       status: 1, // pending
@@ -269,6 +270,7 @@ async function seed() {
     {
       price: 24000000,
       duration: 10,
+      durationUnit: "day",
       description: "طراحی سریع با تمرکز روی تبدیل کاربر.",
       user: freelancers[0]._id,
       status: 0, // rejected
@@ -277,6 +279,7 @@ async function seed() {
     {
       price: 75000000,
       duration: 40,
+      durationUnit: "day",
       description: "اپ با React Native و اتصال به API موجود.",
       user: freelancers[2]._id,
       status: 1, // pending
@@ -285,6 +288,7 @@ async function seed() {
     {
       price: 70000000,
       duration: 35,
+      durationUnit: "day",
       description: "نسخه کامل اندروید و iOS با تست کاربری.",
       user: freelancers[0]._id,
       status: 2, // accepted — but keep project OPEN for demo variety; optional
@@ -293,6 +297,7 @@ async function seed() {
     {
       price: 10000000,
       duration: 12,
+      durationUnit: "day",
       description: "۱۰ مقاله ۳۰۰۰ کلمه‌ای با تحقیق کلمه کلیدی.",
       user: freelancers[3]._id,
       status: 1, // pending
@@ -301,6 +306,7 @@ async function seed() {
     {
       price: 55000000,
       duration: 25,
+      durationUnit: "day",
       description: "طراحی و پیاده‌سازی API با احراز هویت JWT.",
       user: freelancers[0]._id,
       status: 1, // pending
@@ -309,6 +315,7 @@ async function seed() {
     {
       price: 50000000,
       duration: 20,
+      durationUnit: "day",
       description: "پیاده‌سازی سریع با پوشش تست واحد.",
       user: freelancers[2]._id,
       status: 0, // rejected

@@ -7,17 +7,28 @@ const { addProposalSchema } = require("../validators/proposal.schema");
 const { ProjectModel } = require("../../models/project");
 const { copyObject } = require("../../../utils/functions");
 const { ROLES } = require("../../../utils/constants");
+const {
+  ACTION_TYPES,
+  assertProfileCompleteForAction,
+} = require("../../../utils/profileCompleteness");
 
 class ProposalController extends Controller {
   async addNewProposal(req, res) {
     const userId = req.user._id;
-    await addProposalSchema.validateAsync(req.body);
-    const { description, price, duration, projectId } = req.body;
+    const { description, price, duration, durationUnit = "day", projectId } =
+      await addProposalSchema.validateAsync(req.body);
+
+    assertProfileCompleteForAction(
+      req.user,
+      ACTION_TYPES.SEND_PROPOSAL,
+      "برای ارسال پیشنهاد باید ابتدا پروفایل خود را تکمیل کنید"
+    );
 
     const proposal = await ProposalModel.create({
       description,
       price,
       duration,
+      durationUnit,
       user: userId,
     });
     await ProjectModel.updateOne(

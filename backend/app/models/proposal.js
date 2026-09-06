@@ -5,6 +5,11 @@ const ProposalSchema = new mongoose.Schema(
   {
     price: { type: Number, required: true },
     duration: { type: Number, required: true },
+    durationUnit: {
+      type: String,
+      enum: ["day", "week", "month"],
+      default: "day",
+    },
     description: { type: String, required: true },
     user: { type: ObjectId, ref: "User", required: true },
     status: {
