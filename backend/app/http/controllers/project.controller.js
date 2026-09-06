@@ -196,7 +196,10 @@ class ProjectController extends Controller {
         createdAt: 1,
         category: 1,
         owner: 1,
+        freelancer: 1,
         proposals: 1,
+        attachments: 1,
+        deliverables: 1,
       })
       .populate([
         {
@@ -239,13 +242,53 @@ class ProjectController extends Controller {
 
     delete project.proposals;
 
+    const currentUserId = currentUser?._id ? String(currentUser._id) : null;
+    const isOwner =
+      currentUserId &&
+      project.owner?._id &&
+      String(project.owner._id) === currentUserId;
+    const isAssignedFreelancer =
+      currentUserId &&
+      project.freelancer &&
+      String(project.freelancer) === currentUserId;
+    const canSeeDeliverables =
+      currentUser?.role === "ADMIN" || isOwner || isAssignedFreelancer;
+
+    const attachments = (project.attachments || []).map((file) => ({
+      _id: file._id,
+      originalName: file.originalName,
+      mimeType: file.mimeType,
+      size: file.size,
+      url: file.url,
+      uploadedAt: file.uploadedAt,
+    }));
+
+    const deliverables = canSeeDeliverables
+      ? (project.deliverables || []).map((file) => ({
+          _id: file._id,
+          originalName: file.originalName,
+          mimeType: file.mimeType,
+          size: file.size,
+          url: file.url,
+          uploadedAt: file.uploadedAt,
+        }))
+      : [];
+
+    delete project.attachments;
+    delete project.deliverables;
+    delete project.freelancer;
+
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
         project: {
           ...project,
+          attachments,
+          deliverables,
           proposalCount,
           ownerProjectCount,
+          isOwner: Boolean(isOwner),
+          isAssignedFreelancer: Boolean(isAssignedFreelancer),
         },
         myProposal,
       },

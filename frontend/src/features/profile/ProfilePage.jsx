@@ -9,8 +9,13 @@ import {
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import { updateProfile } from '../../services/authService';
+import {
+  deletePortfolioFile,
+  uploadPortfolioFile,
+} from '../../services/uploadService';
 import TextField from '../../ui/TextField';
 import KaravaTagsInput from '../../ui/KaravaTagsInput';
+import FileUploadField, { FileList } from '../../ui/FileUploadField';
 import Loading from '../../ui/Loading';
 import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
@@ -348,6 +353,48 @@ function ProfilePage() {
             )}
           </div>
         </form>
+
+        {isFreelancer ? (
+          <div className="flex flex-col gap-4 rounded-[10px] border border-[#D1D5DB] p-4">
+            <div className="border-b border-[#E5E7EB] pb-3 text-right">
+              <h4 className="text-sm font-bold text-[#222020]">نمونه‌کارها</h4>
+              <p className="mt-1 text-xs text-[#6E6E6E]">
+                تصاویر پروژه‌های قبلی خود را آپلود کنید (jpg، png، webp — حداکثر ۵ مگابایت)
+              </p>
+            </div>
+
+            <FileUploadField
+              kind="portfolio"
+              label="افزودن نمونه‌کار"
+              hint="می‌توانید فایل را بکشید و رها کنید"
+              onUpload={async (file) => {
+                try {
+                  const { message } = await uploadPortfolioFile(file);
+                  toast.success(message || 'نمونه‌کار آپلود شد');
+                  queryClient.invalidateQueries({ queryKey: ['user'] });
+                } catch (error) {
+                  toast.error(getApiErrorMessage(error, 'آپلود نمونه‌کار انجام نشد'));
+                  throw error;
+                }
+              }}
+            />
+
+            <FileList
+              files={user.portfolio || []}
+              canDelete
+              emptyText="هنوز نمونه‌کاری آپلود نشده است"
+              onDelete={async (file) => {
+                try {
+                  const { message } = await deletePortfolioFile(file._id);
+                  toast.success(message || 'نمونه‌کار حذف شد');
+                  queryClient.invalidateQueries({ queryKey: ['user'] });
+                } catch (error) {
+                  toast.error(getApiErrorMessage(error, 'حذف نمونه‌کار انجام نشد'));
+                }
+              }}
+            />
+          </div>
+        ) : null}
       </section>
     </div>
   );

@@ -53,11 +53,12 @@ Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-t
 | Proposal duration units (`day` / `week` / `month`) | Implemented |
 | Localized price input with thousand separators | Implemented |
 | Persian / Arabic digit normalization (inputs + validators) | Implemented |
+| File uploads (portfolio, project attachments, deliverables) | Implemented |
 | Development OTP bypass (`111111`) and DB seed script | Implemented |
 | Dark mode | Implemented |
 | Payments / wallet | Not available |
 | Chat / messaging | Not available |
-| File upload | Not available (multer disabled) |
+| File upload | Local disk via swappable `fileStorage` (`backend/uploads/`) |
 
 ---
 
@@ -273,6 +274,14 @@ KAVENEGAR_API_KEY=YOUR_KAVENEGAR_API_KEY_HERE
 | `NODE_ENV` | In `development`, cookie `secure` is off and fixed OTP is allowed |
 | `KAVENEGAR_API_KEY` | SMS OTP delivery |
 | `SERVER_URL` | Base URL for avatar URLs |
+| `UPLOAD_DIR` | Upload root relative to backend (default `uploads`) |
+| `UPLOAD_MAX_IMAGE_MB` | Max image size in MB (default `5`) |
+| `UPLOAD_MAX_DOC_MB` | Max document size in MB (default `10`) |
+| `UPLOAD_MAX_PORTFOLIO` | Max portfolio items per user |
+| `UPLOAD_MAX_ATTACHMENTS` | Max attachments per project |
+| `UPLOAD_MAX_DELIVERABLES` | Max deliverables per project |
+| `UPLOAD_RATE_LIMIT_MAX` | Max uploads per window |
+| `UPLOAD_RATE_LIMIT_WINDOW_MS` | Rate-limit window in ms |
 
 ### Frontend — `frontend/.env` (optional)
 
@@ -302,6 +311,8 @@ Base path: `/api`
 | GET | `/refresh-token` | Refresh cookie | Renew tokens |
 | PATCH | `/update` | Token | Update profile (bio, skills, company, phone, …) |
 | GET | `/profile` | Token | Current user profile |
+| POST | `/portfolio/upload` | Token | Upload freelancer portfolio image (`multipart/form-data`, field `file`) |
+| DELETE | `/portfolio/:fileId` | Token | Delete a portfolio item |
 | POST | `/logout` | — | Clear auth cookies |
 
 ### Category — `/api/category`
@@ -319,10 +330,20 @@ Base path: `/api`
 | GET | `/details/:id` | Public (optional auth) | Public details; includes `myProposal` when logged in |
 | GET | `/owner-projects` | Token + verified; OWNER, ADMIN | Owner’s projects |
 | POST | `/add` | Token + verified; OWNER, ADMIN | Create project (requires complete profile) |
+| POST | `/:projectId/attachment` | Token + verified; OWNER, ADMIN | Upload project attachment (`multipart`, field `file`) |
+| POST | `/:projectId/deliverable` | Token + verified; FREELANCER, ADMIN | Upload deliverable (assigned freelancer only) |
 | GET | `/:id` | Token + verified; OWNER, ADMIN | Owner project detail |
 | PATCH | `/update/:id` | Token + verified; OWNER, ADMIN | Update project |
 | PATCH | `/:id` | Token + verified; OWNER, ADMIN | Set status `OPEN` / `CLOSED` |
 | DELETE | `/:id` | Token + verified; OWNER, ADMIN | Delete project |
+
+### Files — `/api/files`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| GET | `/files/:folder/:filename` | Portfolio: public; attachments: logged-in; deliverables: owner / assigned freelancer / admin | Download stored file |
+
+Folders: `portfolio`, `attachments`, `deliverables`.
 
 ### Proposal — `/api/proposal` (token + verified user)
 
@@ -353,6 +374,7 @@ Base path: `/api`
 - `name`, `avatar`, `biography`, `email`, `phoneNumber`, `password`
 - `skills[]` (freelancer)
 - `companyName`, `companyDescription` (owner)
+- `portfolio[]` — `{ filename, originalName, mimeType, size, storageKey, url, uploadedAt }`
 - `otp { code, expiresIn }`
 - `isVerifiedPhoneNumber`, `isActive`
 - `status` (`0` | `1` | `2`)
@@ -361,6 +383,7 @@ Base path: `/api`
 ### Project
 
 - `title`, `description`, `budget`, `tags[]`, `deadline`
+- `attachments[]`, `deliverables[]` — same file shape as portfolio
 - `status`: `OPEN` | `CLOSED`
 - `category` → Category
 - `owner` → User
@@ -414,6 +437,7 @@ Role-scoped routes are guarded by `ProtectedRoute` and match the user’s role t
 - Legacy cart / product helpers may still exist in `backend/utils/functions.js` and are unused.
 - Numeric inputs accept Persian (`۰-۹`) and Arabic-Indic (`٠-٩`) digits and normalize to Latin digits before submit / Joi validation.
 - Incomplete profile actions return `403` with `code: PROFILE_INCOMPLETE` and `missingFields`.
+- Uploaded files are stored under `backend/uploads/` (gitignored) via `utils/fileStorage.js` (local now, swappable later).
 - No Docker setup in the repo.
 - Payments, chat, and file upload are not implemented.
 

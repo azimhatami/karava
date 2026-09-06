@@ -7,6 +7,7 @@ const {
   optionalAuthMiddleware,
 } = require("../http/middlewares/user.middleware");
 const { ProjectController } = require("../http/controllers/project.controller");
+const { FileController } = require("../http/controllers/file.controller");
 const { adminRoutes } = require("./admin/admin.routes");
 const { categoryRoutes } = require("./category");
 const { projectRoutes } = require("./project");
@@ -17,6 +18,13 @@ const router = require("express").Router();
 
 router.use("/user", userAuthRoutes);
 router.use("/category", categoryRoutes);
+
+// Public / auth-aware file download (access rules enforced in controller)
+router.get(
+  "/files/:folder/:filename",
+  optionalAuthMiddleware,
+  expressAsyncHandler(FileController.downloadFile)
+);
 
 // Public: open project listing for guests (Home page)
 router.get(

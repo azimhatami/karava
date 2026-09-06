@@ -129,6 +129,12 @@ class Application {
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true }));
     this.#app.use(express.static(path.join(__dirname, "..")));
+
+    // Ensure local upload folders exist (storage layer is swappable)
+    const { ensureUploadRoot } = require("../utils/fileStorage");
+    ensureUploadRoot().catch((err) => {
+      console.error("Failed to prepare upload directory:", err?.message || err);
+    });
   }
 
   initClientSession() {

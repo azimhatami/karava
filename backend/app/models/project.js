@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const ObjectId = mongoose.Schema.Types.ObjectId;
+const { UploadedFileSchema } = require("./uploadedFile");
 
 const ProjectSchema = new mongoose.Schema(
   {
@@ -14,6 +15,8 @@ const ProjectSchema = new mongoose.Schema(
     category: { type: ObjectId, ref: "Category", required: true },
     budget: { type: Number, required: true },
     tags: [{ type: String }],
+    attachments: { type: [UploadedFileSchema], default: [] },
+    deliverables: { type: [UploadedFileSchema], default: [] },
     proposals: { type: [ObjectId], ref: "PROPOSAL", default: [] },
     deadline: { type: Date, required: true },
     owner: { type: ObjectId, required: true, ref: "User" },

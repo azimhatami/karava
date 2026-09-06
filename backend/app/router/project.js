@@ -1,7 +1,12 @@
 const expressAsyncHandler = require("express-async-handler");
 const { ProjectController } = require("../http/controllers/project.controller");
+const { FileController } = require("../http/controllers/file.controller");
 const { ROLES } = require("../../utils/constants");
 const { authorize } = require("../http/middlewares/permission.guard");
+const {
+  handleMulterUpload,
+  uploadRateLimit,
+} = require("../http/middlewares/upload.middleware");
 
 const router = require("express").Router();
 
@@ -15,6 +20,20 @@ router.post(
   "/add",
   authorize(ROLES.ADMIN, ROLES.OWNER),
   expressAsyncHandler(ProjectController.addNewProject)
+);
+router.post(
+  "/:projectId/attachment",
+  authorize(ROLES.ADMIN, ROLES.OWNER),
+  uploadRateLimit(),
+  handleMulterUpload("attachment"),
+  expressAsyncHandler(FileController.uploadProjectAttachment)
+);
+router.post(
+  "/:projectId/deliverable",
+  authorize(ROLES.ADMIN, ROLES.FREELANCER),
+  uploadRateLimit(),
+  handleMulterUpload("deliverable"),
+  expressAsyncHandler(FileController.uploadProjectDeliverable)
 );
 router.get(
   "/:id",

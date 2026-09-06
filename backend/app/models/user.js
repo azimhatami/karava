@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const ObjectId = mongoose.Schema.Types.ObjectId;
+const { UploadedFileSchema } = require("./uploadedFile");
 
 const UserSchema = new mongoose.Schema(
   {
@@ -9,6 +9,7 @@ const UserSchema = new mongoose.Schema(
     skills: { type: [String], default: [] },
     companyName: { type: String, trim: true, default: null },
     companyDescription: { type: String, trim: true, default: null },
+    portfolio: { type: [UploadedFileSchema], default: [] },
     email: { type: String, lowercase: true, trim: true },
     phoneNumber: { type: String, trim: true },
     password: { type: String },

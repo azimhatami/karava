@@ -4,6 +4,7 @@ import TextField from '../../ui/TextField';
 import RHFSelect from '../../ui/RHFSelect';
 import DatePickerField from '../../ui/DatePickerField';
 import KaravaTagsInput from '../../ui/KaravaTagsInput';
+import FileUploadField from '../../ui/FileUploadField';
 import useCategories from '../../hooks/useCategories';
 import useCreateProject from './useCreateProject';
 import Loading from '../../ui/Loading';
@@ -11,6 +12,10 @@ import useEditProject from './useEditProject';
 import useUser from '../authentication/useUser';
 import { showProfileIncompleteModal } from '../profile/ProfileIncompleteHost';
 import { parseLocalizedNumber } from '../../utils/normalizeDigits';
+import { validateUploadFile } from '../../utils/uploadValidation';
+import { uploadProjectAttachment } from '../../services/uploadService';
+import toast from '../../ui/toast';
+import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import {
   ACTION_TYPES,
   getProfileIncompletePayload,
@@ -52,6 +57,9 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
 
   const [tags, setTags] = useState(prevTags || []);
   const [date, setDate] = useState(new Date(deadline || ''));
+  const [attachmentFile, setAttachmentFile] = useState(null);
+  const [attachmentError, setAttachmentError] = useState('');
+  const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
   const { categories } = useCategories();
   const { createProject, isCreating } = useCreateProject();
   const { editProject, isEditing } = useEditProject();
@@ -76,7 +84,29 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
       editProject(
         { id: editId, newProject },
         {
-          onSuccess: () => {
+          onSuccess: async () => {
+            if (attachmentFile) {
+              const validationError = validateUploadFile(
+                attachmentFile,
+                'attachment',
+              );
+              if (validationError) {
+                setAttachmentError(validationError);
+                return;
+              }
+              try {
+                setIsUploadingAttachment(true);
+                await uploadProjectAttachment(editId, attachmentFile);
+                toast.success('ضمیمه پروژه آپلود شد');
+              } catch (error) {
+                toast.error(
+                  getApiErrorMessage(error, 'آپلود ضمیمه پروژه انجام نشد'),
+                );
+                return;
+              } finally {
+                setIsUploadingAttachment(false);
+              }
+            }
             onClose();
             reset();
           },
@@ -99,9 +129,33 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
     }
 
     createProject(newProject, {
-      onSuccess: () => {
+      onSuccess: async (response) => {
+        const projectId = response?.project?._id;
+        if (attachmentFile && projectId) {
+          const validationError = validateUploadFile(
+            attachmentFile,
+            'attachment',
+          );
+          if (validationError) {
+            setAttachmentError(validationError);
+            toast.error(validationError);
+            return;
+          }
+          try {
+            setIsUploadingAttachment(true);
+            await uploadProjectAttachment(projectId, attachmentFile);
+            toast.success('ضمیمه پروژه آپلود شد');
+          } catch (error) {
+            toast.error(
+              getApiErrorMessage(error, 'پروژه ثبت شد ولی آپلود ضمیمه ناموفق بود'),
+            );
+          } finally {
+            setIsUploadingAttachment(false);
+          }
+        }
         onClose();
         reset();
+        setAttachmentFile(null);
       },
       onError: (error) => {
         if (!isProfileIncompleteError(error)) return;
@@ -110,7 +164,7 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
     });
   };
 
-  const isSubmitting = isCreating || isEditing;
+  const isSubmitting = isCreating || isEditing || isUploadingAttachment;
 
   return (
     <form
@@ -178,6 +232,26 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
       <KaravaTagsInput tags={tags} onChange={setTags} />
 
       <DatePickerField label="ددلاین" date={date} setDate={setDate} />
+
+      <div className="space-y-2">
+        <FileUploadField
+          kind="attachment"
+          label="ضمیمه فایل (اختیاری)"
+          hint="مستندات، طرح یا اسپک — تصویر، pdf، doc، docx یا zip"
+          onUpload={async (file) => {
+            setAttachmentError('');
+            setAttachmentFile(file);
+          }}
+        />
+        {attachmentFile ? (
+          <p className="text-xs text-[#006045]">
+            فایل انتخاب‌شده: {attachmentFile.name} (پس از ذخیره پروژه آپلود می‌شود)
+          </p>
+        ) : null}
+        {attachmentError ? (
+          <p className="text-xs text-karava-red">{attachmentError}</p>
+        ) : null}
+      </div>
 
       <div className="mt-auto pt-2">
         {isSubmitting ? (
