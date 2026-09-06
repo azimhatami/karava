@@ -149,13 +149,28 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
             onChange={handleOtpChange}
             numInputs={6}
             shouldAutoFocus
-            inputType="tel"
+            // IMPORTANT: inputType "tel"/"number" reject Persian/Arabic digits
+            // because the library uses Number(value) which yields NaN for ۰-۹.
+            inputType="text"
             renderInput={(props) => (
               <input
                 {...props}
-                type="tel"
+                type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
+                onChange={(event) => {
+                  const normalized = digitsOnly(event.target.value).slice(-1);
+                  event.target.value = normalized;
+                  props.onChange?.(event);
+                }}
+                onPaste={(event) => {
+                  const pasted = digitsOnly(
+                    event.clipboardData?.getData('text') || '',
+                  ).slice(0, 6);
+                  if (!pasted) return;
+                  event.preventDefault();
+                  handleOtpChange(pasted);
+                }}
               />
             )}
             containerStyle="flex flex-row justify-between gap-2"

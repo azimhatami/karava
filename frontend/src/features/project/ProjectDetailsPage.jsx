@@ -1,9 +1,18 @@
+import ProjectAttachmentsSection from '../../ui/ProjectAttachmentsSection';
+import { uploadProjectDeliverable } from '../../services/uploadService';
+import toast from '../../ui/toast';
+import getApiErrorMessage from '../../utils/getApiErrorMessage';
+import { toPersianNumbers, toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
+import { formatProposalDuration } from '../../utils/formatProposalDuration';
+import shortDate from '../../utils/shortDate';
+import FileUploadField, { FileList } from '../../ui/FileUploadField';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   HiOutlineArrowRight,
   HiOutlineBriefcase,
   HiOutlineCalendarDays,
   HiOutlineClock,
-  HiOutlinePaperClip,
   HiOutlineTag,
   HiOutlineUser,
 } from 'react-icons/hi2';
@@ -13,16 +22,6 @@ import HomeHeader from '../home/HomeHeader';
 import Modal from '../../ui/Modal';
 import Loading from '../../ui/Loading';
 import CreateProposal from '../proposals/CreateProposal';
-import FileUploadField, { FileList } from '../../ui/FileUploadField';
-import { uploadProjectDeliverable } from '../../services/uploadService';
-import toast from '../../ui/toast';
-import getApiErrorMessage from '../../utils/getApiErrorMessage';
-import { toPersianNumbers, toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
-import { formatProposalDuration } from '../../utils/formatProposalDuration';
-import shortDate from '../../utils/shortDate';
-import { resolveFileUrl } from '../../utils/uploadValidation';
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
 const PROPOSAL_STATUS = {
   0: {
@@ -172,40 +171,12 @@ function ProjectDetailsPage() {
               )}
             </div>
 
-            <div className="space-y-3 text-right">
-              <div className="flex items-center gap-2">
-                <HiOutlinePaperClip className="h-4 w-4 text-[#006045]" />
-                <h2 className="text-sm font-bold text-[#222020]">ضمائم پروژه</h2>
-              </div>
-              {(project.attachments || []).length ? (
-                <ul className="space-y-2">
-                  {project.attachments.map((file) => (
-                    <li key={file._id || file.url}>
-                      {user ? (
-                        <a
-                          href={resolveFileUrl(file.url)}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-2 rounded-[8px] border border-[#006045] bg-white px-3 py-2 text-sm font-bold text-[#006045] hover:bg-[#F2FFF8]"
-                        >
-                          دانلود {file.originalName}
-                        </a>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => navigate('/auth')}
-                          className="inline-flex items-center gap-2 rounded-[8px] border border-[#D1D5DB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#6E6E6E]"
-                        >
-                          برای دانلود ضمیمه وارد شوید — {file.originalName}
-                        </button>
-                      )}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="text-sm text-[#6E6E6E]">ضمیمه‌ای ثبت نشده است</p>
-              )}
-            </div>
+            <ProjectAttachmentsSection
+              files={project.attachments || []}
+              requireAuth
+              isAuthenticated={Boolean(user)}
+              onRequireAuth={() => navigate('/auth')}
+            />
 
             {(project.isAssignedFreelancer ||
               myProposal?.status === 2 ||

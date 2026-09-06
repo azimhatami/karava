@@ -1,18 +1,20 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
 import TextField from '../../ui/TextField';
 import RHFSelect from '../../ui/RHFSelect';
 import DatePickerField from '../../ui/DatePickerField';
 import KaravaTagsInput from '../../ui/KaravaTagsInput';
 import FileUploadField from '../../ui/FileUploadField';
+import ProjectAttachmentsSection from '../../ui/ProjectAttachmentsSection';
 import useCategories from '../../hooks/useCategories';
 import useCreateProject from './useCreateProject';
 import Loading from '../../ui/Loading';
 import useEditProject from './useEditProject';
 import useUser from '../authentication/useUser';
+import { useQueryClient } from '@tanstack/react-query';
 import { showProfileIncompleteModal } from '../profile/ProfileIncompleteHost';
 import { parseLocalizedNumber } from '../../utils/normalizeDigits';
-import { validateUploadFile } from '../../utils/uploadValidation';
+import { validateUploadFile, formatFileSize, isImageFileMeta } from '../../utils/uploadValidation';
 import { uploadProjectAttachment } from '../../services/uploadService';
 import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
@@ -31,6 +33,7 @@ function getProfilePath(role) {
 
 function CreateProjectForm({ onClose, projectToEdit = {} }) {
   const { user } = useUser();
+  const queryClient = useQueryClient();
   const { _id: editId } = projectToEdit;
   const isEditMode = Boolean(editId);
 
@@ -60,9 +63,29 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
   const [attachmentFile, setAttachmentFile] = useState(null);
   const [attachmentError, setAttachmentError] = useState('');
   const [isUploadingAttachment, setIsUploadingAttachment] = useState(false);
+  const [savedAttachments, setSavedAttachments] = useState(
+    () => projectToEdit.attachments || [],
+  );
   const { categories } = useCategories();
   const { createProject, isCreating } = useCreateProject();
   const { editProject, isEditing } = useEditProject();
+
+  useEffect(() => {
+    setSavedAttachments(projectToEdit.attachments || []);
+  }, [projectToEdit]);
+
+  const pendingPreviewUrl = useMemo(() => {
+    if (!attachmentFile || !isImageFileMeta({ originalName: attachmentFile.name, mimeType: attachmentFile.type })) {
+      return null;
+    }
+    return URL.createObjectURL(attachmentFile);
+  }, [attachmentFile]);
+
+  useEffect(() => {
+    return () => {
+      if (pendingPreviewUrl) URL.revokeObjectURL(pendingPreviewUrl);
+    };
+  }, [pendingPreviewUrl]);
 
   const openIncomplete = (payload) => {
     showProfileIncompleteModal({
@@ -70,6 +93,29 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
       profilePath: getProfilePath(user?.role),
     });
     onClose?.();
+  };
+
+  const uploadAttachmentForProject = async (projectId, file) => {
+    const validationError = validateUploadFile(file, 'attachment');
+    if (validationError) {
+      setAttachmentError(validationError);
+      throw new Error(validationError);
+    }
+    setIsUploadingAttachment(true);
+    try {
+      const { file: uploaded, message } = await uploadProjectAttachment(
+        projectId,
+        file,
+      );
+      setSavedAttachments((prev) => [...prev, uploaded]);
+      setAttachmentFile(null);
+      toast.success(message || 'ضمیمه پروژه آپلود شد');
+      queryClient.invalidateQueries({ queryKey: ['owner-projects'] });
+      queryClient.invalidateQueries({ queryKey: ['project', projectId] });
+      return uploaded;
+    } finally {
+      setIsUploadingAttachment(false);
+    }
   };
 
   const onSubmit = (data) => {
@@ -86,25 +132,13 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
         {
           onSuccess: async () => {
             if (attachmentFile) {
-              const validationError = validateUploadFile(
-                attachmentFile,
-                'attachment',
-              );
-              if (validationError) {
-                setAttachmentError(validationError);
-                return;
-              }
               try {
-                setIsUploadingAttachment(true);
-                await uploadProjectAttachment(editId, attachmentFile);
-                toast.success('ضمیمه پروژه آپلود شد');
+                await uploadAttachmentForProject(editId, attachmentFile);
               } catch (error) {
                 toast.error(
                   getApiErrorMessage(error, 'آپلود ضمیمه پروژه انجام نشد'),
                 );
                 return;
-              } finally {
-                setIsUploadingAttachment(false);
               }
             }
             onClose();
@@ -131,31 +165,26 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
     createProject(newProject, {
       onSuccess: async (response) => {
         const projectId = response?.project?._id;
-        if (attachmentFile && projectId) {
-          const validationError = validateUploadFile(
-            attachmentFile,
-            'attachment',
-          );
-          if (validationError) {
-            setAttachmentError(validationError);
-            toast.error(validationError);
-            return;
-          }
+        if (!projectId) {
+          toast.error('پروژه ثبت شد ولی شناسه پروژه دریافت نشد');
+          onClose();
+          return;
+        }
+
+        if (attachmentFile) {
           try {
-            setIsUploadingAttachment(true);
-            await uploadProjectAttachment(projectId, attachmentFile);
-            toast.success('ضمیمه پروژه آپلود شد');
+            await uploadAttachmentForProject(projectId, attachmentFile);
           } catch (error) {
             toast.error(
-              getApiErrorMessage(error, 'پروژه ثبت شد ولی آپلود ضمیمه ناموفق بود'),
+              getApiErrorMessage(
+                error,
+                'پروژه ثبت شد ولی آپلود ضمیمه ناموفق بود',
+              ),
             );
-          } finally {
-            setIsUploadingAttachment(false);
           }
         }
         onClose();
         reset();
-        setAttachmentFile(null);
       },
       onError: (error) => {
         if (!isProfileIncompleteError(error)) return;
@@ -233,23 +262,67 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
 
       <DatePickerField label="ددلاین" date={date} setDate={setDate} />
 
-      <div className="space-y-2">
+      <div className="space-y-3">
         <FileUploadField
           kind="attachment"
           label="ضمیمه فایل (اختیاری)"
           hint="مستندات، طرح یا اسپک — تصویر، pdf، doc، docx یا zip"
+          disabled={isUploadingAttachment}
           onUpload={async (file) => {
             setAttachmentError('');
+            // In edit mode, upload immediately so the file appears in the form right away.
+            if (isEditMode && editId) {
+              try {
+                await uploadAttachmentForProject(editId, file);
+              } catch (error) {
+                toast.error(
+                  getApiErrorMessage(error, 'آپلود ضمیمه پروژه انجام نشد'),
+                );
+                throw error;
+              }
+              return;
+            }
             setAttachmentFile(file);
           }}
         />
+
         {attachmentFile ? (
-          <p className="text-xs text-[#006045]">
-            فایل انتخاب‌شده: {attachmentFile.name} (پس از ذخیره پروژه آپلود می‌شود)
-          </p>
+          <div className="flex items-center gap-3 rounded-[10px] border border-[#006045] bg-[#F2FFF8] p-3">
+            {pendingPreviewUrl ? (
+              <img
+                src={pendingPreviewUrl}
+                alt={attachmentFile.name}
+                className="h-14 w-14 rounded-[8px] object-cover"
+              />
+            ) : null}
+            <div className="min-w-0 flex-1 text-right">
+              <p className="truncate text-sm font-bold text-[#006045]">
+                {attachmentFile.name}
+              </p>
+              <p className="mt-1 text-xs text-[#6E6E6E]">
+                {formatFileSize(attachmentFile.size)} — پس از ذخیره پروژه آپلود می‌شود
+              </p>
+            </div>
+            <button
+              type="button"
+              className="text-xs font-bold text-[#BE185D]"
+              onClick={() => setAttachmentFile(null)}
+            >
+              حذف
+            </button>
+          </div>
         ) : null}
+
         {attachmentError ? (
           <p className="text-xs text-karava-red">{attachmentError}</p>
+        ) : null}
+
+        {savedAttachments.length ? (
+          <ProjectAttachmentsSection
+            files={savedAttachments}
+            title="ضمائم ذخیره‌شده"
+            emptyText=""
+          />
         ) : null}
       </div>
 
