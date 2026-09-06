@@ -1,3 +1,5 @@
+import { digitsOnly, numericFieldOptions } from '../utils/normalizeDigits';
+
 function TextField({
   label,
   name,
@@ -9,9 +11,26 @@ function TextField({
   placeholder,
   multiline = false,
   rows = 4,
+  numeric = false,
+  inputMode,
 }) {
   const fieldClassName = 'karava-form-input';
   const errorMessage = errors?.[name]?.message;
+  const isNumeric = numeric || type === 'number';
+  const resolvedType = isNumeric ? 'text' : type;
+  const resolvedInputMode = inputMode || (isNumeric ? 'numeric' : undefined);
+
+  const registration = register(
+    name,
+    isNumeric ? numericFieldOptions(validationSchema) : validationSchema,
+  );
+
+  const handleChange = (event) => {
+    if (isNumeric) {
+      event.target.value = digitsOnly(event.target.value);
+    }
+    registration.onChange(event);
+  };
 
   return (
     <div className="karava-form-field">
@@ -22,7 +41,7 @@ function TextField({
 
       {multiline ? (
         <textarea
-          {...register(name, validationSchema)}
+          {...registration}
           id={name}
           rows={rows}
           placeholder={placeholder}
@@ -31,17 +50,21 @@ function TextField({
         />
       ) : (
         <input
-          {...register(name, validationSchema)}
+          {...registration}
           id={name}
-          type={type}
+          type={resolvedType}
+          inputMode={resolvedInputMode}
           placeholder={placeholder}
           className={fieldClassName}
           autoComplete="off"
+          onChange={handleChange}
         />
       )}
 
       {errorMessage ? (
-        <span className="mt-1 block text-right text-xs text-karava-red">{errorMessage}</span>
+        <span className="mt-1 block text-right text-xs text-karava-red">
+          {errorMessage}
+        </span>
       ) : null}
     </div>
   );

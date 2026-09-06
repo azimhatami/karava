@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { HiOutlineXCircle, HiArrowLeft, HiDevicePhoneMobile } from 'react-icons/hi2';
 import Loading from '../../ui/Loading';
+import { digitsOnly, numericFieldOptions } from '../../utils/normalizeDigits';
 
 const roleBadgeLabels = {
   FREELANCER: 'ورود به عنوان کارجو',
@@ -16,6 +17,17 @@ const SendOTPForm = ({
   onBack,
 }) => {
   const navigate = useNavigate();
+  const phoneRegister = register(
+    'phoneNumber',
+    numericFieldOptions({
+      required: true,
+      minLength: { value: 11, message: 'شماره موبایل باید ۱۱ رقم باشد' },
+      pattern: {
+        value: /^09[0-9]{9}$/,
+        message: 'شماره موبایل نامعتبر است',
+      },
+    }),
+  );
 
   return (
     <div className="flex w-full max-w-[408px] min-h-[399px] flex-col gap-[31px] rounded-[6px] border border-[#D1D5DB] bg-white p-[10px]">
@@ -70,12 +82,16 @@ const SendOTPForm = ({
             شماره موبایل
           </label>
           <input
-            {...register('phoneNumber', { required: true })}
+            {...phoneRegister}
             id="phoneNumber"
-            type="tel"
-            inputMode="numeric"
+            type="text"
+            inputMode="tel"
             autoComplete="tel"
             placeholder="09123456789"
+            onChange={(event) => {
+              event.target.value = digitsOnly(event.target.value).slice(0, 11);
+              phoneRegister.onChange(event);
+            }}
             className="box-border h-[39px] w-[342px] max-w-full rotate-0 gap-2.5 rounded-[12px] border border-[#6E6E6E] bg-white p-2.5 text-center text-sm text-[#111827] opacity-100 outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-karava-green focus:ring-1 focus:ring-karava-green"
           />
         </div>

@@ -7,6 +7,7 @@ import CheckOTPForm from './CheckOTPForm';
 import RoleSelectForm from './RoleSelectForm';
 import SendOTPForm from './SendOTPForm';
 import { useForm } from 'react-hook-form';
+import { digitsOnly } from '../../utils/normalizeDigits';
 
 
 const AuthContainer = () => {
@@ -22,7 +23,7 @@ const AuthContainer = () => {
 
   const sendOtpHandler = async (data) => {
     try {
-      const phone = String(data.phoneNumber || '').trim();
+      const phone = digitsOnly(data.phoneNumber).slice(0, 11);
       const { message } = await mutateAsync({ phoneNumber: phone });
       setPhoneNumber(phone);
       setStep(2)

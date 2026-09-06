@@ -1,6 +1,7 @@
 const createError = require("http-errors");
 const Joi = require("joi");
 const { MongoIDPattern } = require("../../../utils/constants");
+const { joiLocalizedNumber } = require("../../../utils/joiLocalizedNumber");
 
 const addProjectSchema = Joi.object({
   title: Joi.string()
@@ -19,7 +20,7 @@ const addProjectSchema = Joi.object({
     .required()
     .regex(MongoIDPattern)
     .error(createError.BadRequest("دسته بندی مورد نظر  صحیح نمی باشد")),
-  budget: Joi.number().error(
+  budget: joiLocalizedNumber({ positive: true }).error(
     createError.BadRequest("قیمت وارد شده صحیح نمیباشد")
   ),
   deadline: Joi.date()

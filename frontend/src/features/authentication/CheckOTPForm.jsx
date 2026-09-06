@@ -11,6 +11,7 @@ import Loading from '../../ui/Loading';
 import { resetAuthRefreshState } from '../../services/httpService';
 import { logoutUser } from '../../services/authService';
 import karava from '../../theme/karava';
+import { digitsOnly } from '../../utils/normalizeDigits';
 
 const RESEND_TIME = 90;
 
@@ -76,8 +77,8 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
     e.preventDefault();
     try {
       const { user } = await mutateAsync({
-        phoneNumber: String(phoneNumber || '').trim(),
-        otp: String(otp || '').trim(),
+        phoneNumber: digitsOnly(phoneNumber).slice(0, 11),
+        otp: digitsOnly(otp),
       });
 
       if (selectedRole && user.role !== selectedRole) {
@@ -110,7 +111,7 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
 
   const handleOtpChange = (value) => {
     if (otpState === 'success') return;
-    setOtp(String(value));
+    setOtp(digitsOnly(value).slice(0, 6));
     if (otpState === 'error') setOtpState('empty');
   };
 
