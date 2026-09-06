@@ -4,7 +4,7 @@
 
 ## پیش‌نیاز
 
-- MongoDB در حال اجرا (مثلاً `mongodb://localhost:27017/karava`)
+- MongoDB در حال اجرا (مثلاً `mongodb://127.0.0.1:27017/karava`)
 - فایل `backend/.env` با `NODE_ENV=development` و `APP_DB` صحیح
 
 ## اجرای Seed
