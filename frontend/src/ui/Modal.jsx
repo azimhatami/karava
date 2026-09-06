@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { HiOutlineX } from 'react-icons/hi';
 import useOutsideClick from '../hooks/useOutsideClick';
 
@@ -6,8 +7,8 @@ function Modal({ open, onClose, title, children }) {
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-karava-text/30 p-4 backdrop-blur-sm">
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-karava-text/30 p-4 backdrop-blur-sm">
       <div
         ref={ref}
         className="flex max-h-[calc(100vh-2rem)] w-full max-w-[640px] flex-col overflow-hidden rounded-[6px] border border-[#D1D5DB] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
@@ -28,7 +29,8 @@ function Modal({ open, onClose, title, children }) {
 
         <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
