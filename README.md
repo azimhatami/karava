@@ -1,117 +1,128 @@
 # Karava
 
-پلتفرم فریلنسری فارسی (RTL) برای اتصال کارفرما و فریلنسر: ثبت پروژه، ارسال پیشنهاد، تأیید ادمین و داشبوردهای نقش‌محور.
+A Persian (RTL) freelancing marketplace that connects project owners and freelancers: post projects, submit proposals, admin verification, and role-based dashboards.
 
 ---
 
-## فهرست مطالب
+## Table of contents
 
-- [معرفی](#معرفی)
-- [قابلیت‌ها](#قابلیت‌ها)
-- [تکنولوژی‌ها](#تکنولوژی‌ها)
-- [ساختار پروژه](#ساختار-پروژه)
-- [معماری](#معماری)
-- [نقش‌ها و وضعیت کاربر](#نقش‌ها-و-وضعیت-کاربر)
-- [راه‌اندازی محلی](#راه‌اندازی-محلی)
-- [دیتای تستی و OTP توسعه](#دیتای-تستی-و-otp-توسعه)
-- [متغیرهای محیطی](#متغیرهای-محیطی)
+- [Overview](#overview)
+- [Features](#features)
+- [Tech stack](#tech-stack)
+- [Project structure](#project-structure)
+- [Architecture](#architecture)
+- [Roles and user status](#roles-and-user-status)
+- [Local setup](#local-setup)
+- [Seed data and development OTP](#seed-data-and-development-otp)
+- [Environment variables](#environment-variables)
 - [API](#api)
-- [مدل‌های دیتابیس](#مدل‌های-دیتابیس)
-- [مسیرهای فرانت‌اند](#مسیرهای-فرانت‌اند)
-- [نکات و محدودیت‌ها](#نکات-و-محدودیت‌ها)
+- [Database models](#database-models)
+- [Frontend routes](#frontend-routes)
+- [Notes and limitations](#notes-and-limitations)
 
 ---
 
-## معرفی
+## Overview
 
-**Karava** یک مارکت‌پلیس فریلنسری است که در آن:
+**Karava** is a freelancing marketplace where:
 
-1. کارفرما (`OWNER`) پروژه ثبت می‌کند.
-2. فریلنسر (`FREELANCER`) روی پروژه‌های باز پیشنهاد می‌فرستد.
-3. کارفرما پیشنهاد را می‌پذیرد یا رد می‌کند.
-4. ادمین (`ADMIN`) کاربران را تأیید و دسته‌بندی‌ها را مدیریت می‌کند.
+1. An owner (`OWNER`) creates a project.
+2. A freelancer (`FREELANCER`) submits proposals on open projects.
+3. The owner accepts or rejects a proposal.
+4. An admin (`ADMIN`) verifies users and manages categories.
 
-احراز هویت با **OTP پیامکی** (کاوه‌نگار) انجام می‌شود. رابط کاربری کاملاً فارسی و راست‌چین است.
-
----
-
-## قابلیت‌ها
-
-| قابلیت | وضعیت |
-|--------|--------|
-| ورود با OTP موبایل | پیاده‌سازی شده |
-| تکمیل پروفایل و انتخاب نقش | پیاده‌سازی شده |
-| تأیید کاربر توسط ادمین | پیاده‌سازی شده |
-| CRUD پروژه (کارفرما) | پیاده‌سازی شده |
-| لیست پروژه‌های باز و ارسال پیشنهاد | پیاده‌سازی شده |
-| پذیرش / رد پیشنهاد | پیاده‌سازی شده |
-| مدیریت دسته‌بندی (ادمین) | پیاده‌سازی شده |
-| داشبورد و آمار ساده هر نقش | پیاده‌سازی شده |
-| حالت تاریک (Dark Mode) | پیاده‌سازی شده |
-| پرداخت / کیف پول | موجود نیست |
-| چت / پیام‌رسانی | موجود نیست |
-| آپلود فایل | موجود نیست (multer غیرفعال) |
+Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-to-left.
 
 ---
 
-## تکنولوژی‌ها
+## Features
 
-### فرانت‌اند (`frontend/`)
+| Feature | Status |
+|---------|--------|
+| Login with mobile OTP | Implemented |
+| Role selection and complete-profile onboarding | Implemented |
+| Admin user verification | Implemented |
+| Project CRUD (owner) | Implemented |
+| Open project list and proposal submission | Implemented |
+| Accept / reject proposals | Implemented |
+| Category management (admin) | Implemented |
+| Role-based dashboards and simple stats | Implemented |
+| Public project details page | Implemented |
+| In-panel profile editing (skills, company, bio) | Implemented |
+| Profile completeness gate for create-project / send-proposal | Implemented |
+| Proposal duration units (`day` / `week` / `month`) | Implemented |
+| Localized price input with thousand separators | Implemented |
+| Persian / Arabic digit normalization (inputs + validators) | Implemented |
+| Development OTP bypass (`111111`) and DB seed script | Implemented |
+| Dark mode | Implemented |
+| Payments / wallet | Not available |
+| Chat / messaging | Not available |
+| File upload | Not available (multer disabled) |
+
+---
+
+## Tech stack
+
+### Frontend (`frontend/`)
 
 - React 18 + Vite 6
 - React Router 7
 - Tailwind CSS 3
 - TanStack React Query 5
-- Axios (با `withCredentials`)
-- react-hook-form، react-hot-toast، Headless UI
-- فونت Vazirmatn / Vazir
+- Axios (`withCredentials`)
+- react-hook-form, react-hot-toast / Karava toasts, Headless UI
+- Vazirmatn / Vazir fonts
 
-### بک‌اند (`backend/`)
+### Backend (`backend/`)
 
 - Node.js + Express 4
 - MongoDB + Mongoose 7
-- JWT + Cookie امضاشده (HTTP-only)
-- Joi برای اعتبارسنجی
-- Kavenegar برای SMS OTP
+- JWT + signed HTTP-only cookies
+- Joi validation (with localized digit coercion)
+- Kavenegar for SMS OTP
 
-### پیش‌نیازها
+### Prerequisites
 
-- Node.js و npm
+- Node.js and npm
 - MongoDB
-- کلید API کاوه‌نگار (برای ارسال واقعی OTP)
+- Kavenegar API key (for real OTP delivery; not required in development)
 
 ---
 
-## ساختار پروژه
+## Project structure
 
 ```
 Karava/
 ├── README.md
 ├── backend/
-│   ├── index.js                 # نقطه ورود
+│   ├── index.js                 # Entry point
+│   ├── .env.example
 │   ├── app/
-│   │   ├── server.js            # Express، CORS، DB، روت‌ها
-│   │   ├── router/              # تعریف مسیرهای API
+│   │   ├── server.js            # Express, CORS, DB, routes
+│   │   ├── router/              # API route definitions
 │   │   ├── http/
-│   │   │   ├── controllers/     # منطق کسب‌وکار
-│   │   │   ├── middlewares/     # JWT، نقش، تأیید کاربر
-│   │   │   └── validators/      # اسکیماهای Joi
+│   │   │   ├── controllers/     # Business logic
+│   │   │   ├── middlewares/     # JWT, roles, verified user, optional auth
+│   │   │   └── validators/      # Joi schemas
 │   │   └── models/              # User, Project, Proposal, Category
-│   └── utils/                   # نقش‌ها، JWT، OTP
+│   ├── scripts/                 # Seed script + docs
+│   └── utils/                   # Roles, JWT, OTP helpers, profile completeness
 └── frontend/
-    ├── vite.config.js           # پورت 3000
+    ├── .env.example
+    ├── vite.config.js           # Port 3000
     └── src/
-        ├── pages/               # صفحات مسیرها
-        ├── features/            # auth, owner, freelancer, admin, ...
-        ├── services/            # کلاینت‌های HTTP / API
-        ├── ui/                  # کامپوننت‌های مشترک
+        ├── pages/               # Route pages
+        ├── features/            # auth, owner, freelancer, admin, profile, ...
+        ├── services/            # HTTP / API clients
+        ├── ui/                  # Shared components
         ├── hooks/
-        └── context/             # مثلاً DarkMode
+        ├── utils/               # Digits, profile completeness, formatting
+        └── context/             # e.g. DarkMode
 ```
 
 ---
 
-## معماری
+## Architecture
 
 ```
 Browser (localhost:3000)
@@ -123,184 +134,209 @@ Express API (localhost:5000/api)
 MongoDB
 ```
 
-- پاسخ موفق: `{ statusCode, data: { ... } }`
-- پاسخ خطا: `{ statusCode, message }`
-- CORS با `credentials: true` و origin از `ALLOW_CORS_ORIGIN`
-- آدرس API فرانت در `frontend/src/services/httpService.js` به‌صورت ثابت روی `http://localhost:5000/api` تنظیم شده است.
+- Success response: `{ statusCode, data: { ... } }`
+- Error response: `{ statusCode, message }` (may include `code` / `missingFields` for profile incompleteness)
+- CORS with `credentials: true` and origin from `ALLOW_CORS_ORIGIN`
+- Frontend API base URL: `VITE_API_URL` (default `http://localhost:5000/api` in `frontend/src/services/httpService.js`)
 
-### جریان احراز هویت
+### Auth flow
 
-1. `POST /api/user/get-otp` — ارسال کد ۶ رقمی (انقضا ۹۰ ثانیه)
-2. `POST /api/user/check-otp` — تأیید و ست کردن کوکی‌های `accessToken` (۱ روز) و `refreshToken` (۱ سال)
-3. اگر پروفایل ناقص باشد → `POST /api/user/complete-profile`
-4. تا وقتی `status !== 2` باشد، مسیرهای حساس پروژه/پیشنهاد/ادمین مسدودند (`isVerifiedUser`)
-5. ادمین با `PATCH /api/admin/user/verify/:userId` وضعیت را تغییر می‌دهد
-6. در صورت ۴۰۱، فرانت یک‌بار `GET /api/user/refresh-token` را امتحان می‌کند
-
----
-
-## نقش‌ها و وضعیت کاربر
-
-### نقش‌ها (`OWNER` | `FREELANCER` | `ADMIN`)
-
-| نقش | دسترسی اصلی |
-|-----|-------------|
-| OWNER | ایجاد و مدیریت پروژه، بررسی پیشنهادها |
-| FREELANCER | مشاهده پروژه‌های باز، ارسال پیشنهاد |
-| ADMIN | تأیید کاربران، CRUD دسته‌بندی، دسترسی گسترده |
-
-### وضعیت کاربر (`status`)
-
-| مقدار | معنی |
-|-------|------|
-| `0` | رد شده |
-| `1` | در انتظار تأیید (پیش‌فرض) |
-| `2` | تأیید شده |
+1. `POST /api/user/get-otp` — send a 6-digit code (expires in 90 seconds)
+2. `POST /api/user/check-otp` — verify and set `accessToken` (1 day) and `refreshToken` (1 year) cookies
+3. If the profile is incomplete → `POST /api/user/complete-profile`
+4. While `status !== 2`, sensitive project / proposal / admin routes are blocked (`isVerifiedUser`)
+5. Admin changes status via `PATCH /api/admin/user/verify/:userId`
+6. On 401, the frontend retries once with `GET /api/user/refresh-token` (guest / public list flows avoid refresh loops)
+7. Creating a project or sending a proposal requires a complete profile (`PROFILE_INCOMPLETE` / `403` when missing)
 
 ---
 
-## راه‌اندازی محلی
+## Roles and user status
 
-### ۱. بک‌اند
+### Roles (`OWNER` | `FREELANCER` | `ADMIN`)
+
+| Role | Main access |
+|------|-------------|
+| OWNER | Create and manage projects, review proposals |
+| FREELANCER | Browse open projects, submit proposals |
+| ADMIN | Verify users, category CRUD, broader access |
+
+### User status (`status`)
+
+| Value | Meaning |
+|-------|---------|
+| `0` | Rejected |
+| `1` | Pending approval (default) |
+| `2` | Approved |
+
+---
+
+## Local setup
+
+### 1. Backend
 
 ```bash
 cd backend
-# فایل .env را بسازید (نمونه در بخش متغیرهای محیطی)
+cp .env.example .env   # adjust secrets as needed
 npm install
-npm run dev    # nodemon — پورت پیش‌فرض 5000
+npm run dev            # nodemon — default port 5000
 ```
 
-### ۲. فرانت‌اند
+### 2. Frontend
 
 ```bash
 cd frontend
+cp .env.example .env   # optional; defaults to http://localhost:5000/api
 npm install
-npm run dev    # Vite — پورت 3000
+npm run dev            # Vite — port 3000
 ```
 
-### آدرس‌ها
+### URLs
 
-| سرویس | آدرس |
-|--------|------|
-| فرانت‌اند | http://localhost:3000 |
-| بک‌اند | http://localhost:5000 |
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend | http://localhost:5000 |
 | API | http://localhost:5000/api |
 
-مقدار `ALLOW_CORS_ORIGIN` باید با origin فرانت یکی باشد (مثلاً `http://localhost:3000`).
+`ALLOW_CORS_ORIGIN` must match the frontend origin (e.g. `http://localhost:3000`).
 
 ---
 
-## دیتای تستی و OTP توسعه
+## Seed data and development OTP
 
-> **هشدار:** این قابلیت‌ها فقط وقتی `NODE_ENV=development` است فعال‌اند. در production از OTP ثابت استفاده نکنید و seed را روی دیتابیس واقعی اجرا نکنید.
+> **Warning:** These features are active only when `NODE_ENV=development`. Do not use the fixed OTP in production, and do not run seed against a real database.
 
-### Seed کردن دیتابیس
+### Seed the database
 
 ```bash
 cd backend
 npm run seed -- --force
 ```
 
-بدون `--force` اسکریپت عمداً متوقف می‌شود. جزئیات بیشتر: [`backend/scripts/README.md`](backend/scripts/README.md).
+Without `--force`, the script exits on purpose. More detail: [`backend/scripts/README.md`](backend/scripts/README.md).
 
-### لاگین بدون کاوه‌نگار (فقط development)
+### Login without Kavenegar (development only)
 
-1. یکی از شماره‌های seed را وارد کنید (مثلاً `09121111111` برای OWNER).
-2. کد OTP را **`111111`** بزنید.
-3. در لاگ backend پیام `OTP در محیط development: 111111` دیده می‌شود.
+1. Enter a seeded phone number (e.g. `09121111111` for OWNER).
+2. Enter OTP **`111111`**.
+3. Backend logs: `OTP در محیط development: 111111`.
 
-| نقش | شماره نمونه |
-|-----|-------------|
+| Role | Sample phone |
+|------|--------------|
 | ADMIN | `09128888888` |
 | OWNER | `09121111111` |
 | FREELANCER | `09124444444` |
 
 ---
 
-## متغیرهای محیطی
+## Environment variables
 
-فایل `backend/.env` (در گیت نیست). نمونه:
+### Backend — `backend/.env` (not committed)
+
+See [`backend/.env.example`](backend/.env.example):
 
 ```env
 PORT=5000
 APP_DB=mongodb://127.0.0.1:27017/karava
 ALLOW_CORS_ORIGIN=http://localhost:3000
-COOKIE_PARSER_SECRET_KEY=change-me-cookie
-ACCESS_TOKEN_SECRET_KEY=change-me-access
-REFRESH_TOKEN_SECRET_KEY=change-me-refresh
-TOKEN_SECRET_KEY=change-me-token
+
+COOKIE_PARSER_SECRET_KEY=change-me-cookie-secret
+ACCESS_TOKEN_SECRET_KEY=change-me-access-token-secret
+REFRESH_TOKEN_SECRET_KEY=change-me-refresh-token-secret
+TOKEN_SECRET_KEY=change-me-token-secret
+
+ACCESS_TOKEN_EXPIRES_IN=1d
+REFRESH_TOKEN_EXPIRES_IN=1y
+
+# Leave empty for local development (do not use "localhost")
 DOMAIN=
 NODE_ENV=development
-KAVENEGAR_API_KEY=your-kavenegar-key
 SERVER_URL=http://localhost:5000
+
+# Get your key from https://panel.kavenegar.com
+KAVENEGAR_API_KEY=YOUR_KAVENEGAR_API_KEY_HERE
 ```
 
-| متغیر | کاربرد |
-|--------|--------|
-| `PORT` | پورت سرور (پیش‌فرض ۵۰۰۰) |
-| `APP_DB` | URI اتصال MongoDB |
-| `ALLOW_CORS_ORIGIN` | Origin مجاز CORS |
-| `COOKIE_PARSER_SECRET_KEY` | امضای کوکی |
-| `ACCESS_TOKEN_SECRET_KEY` | JWT دسترسی |
-| `REFRESH_TOKEN_SECRET_KEY` | JWT رفرش |
-| `TOKEN_SECRET_KEY` | کلید پشتیبان تولید توکن |
-| `DOMAIN` | دامنه کوکی |
-| `NODE_ENV` | در `development` فلگ `secure` کوکی خاموش است |
-| `KAVENEGAR_API_KEY` | ارسال OTP |
-| `SERVER_URL` | پیشوند URL آواتار |
+| Variable | Purpose |
+|----------|---------|
+| `PORT` | Server port (default `5000`) |
+| `APP_DB` | MongoDB connection URI |
+| `ALLOW_CORS_ORIGIN` | Allowed CORS origin |
+| `COOKIE_PARSER_SECRET_KEY` | Cookie signing secret |
+| `ACCESS_TOKEN_SECRET_KEY` | Access JWT secret |
+| `REFRESH_TOKEN_SECRET_KEY` | Refresh JWT secret |
+| `TOKEN_SECRET_KEY` | Fallback token secret |
+| `ACCESS_TOKEN_EXPIRES_IN` | Access token TTL (e.g. `1d`) |
+| `REFRESH_TOKEN_EXPIRES_IN` | Refresh token TTL (e.g. `1y`) |
+| `DOMAIN` | Cookie domain (omit / empty for local host-only cookies) |
+| `NODE_ENV` | In `development`, cookie `secure` is off and fixed OTP is allowed |
+| `KAVENEGAR_API_KEY` | SMS OTP delivery |
+| `SERVER_URL` | Base URL for avatar URLs |
 
-فرانت‌اند فعلاً متغیر محیطی `VITE_*` ندارد.
+### Frontend — `frontend/.env` (optional)
+
+See [`frontend/.env.example`](frontend/.env.example):
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_API_URL` | Axios base URL for the API |
 
 ---
 
 ## API
 
-پایه: `/api`
+Base path: `/api`
 
-### کاربر — `/api/user`
+### User — `/api/user`
 
-| متد | مسیر | احراز هویت | توضیح |
-|-----|------|------------|--------|
-| POST | `/get-otp` | عمومی | ارسال OTP |
-| POST | `/check-otp` | عمومی | تأیید OTP |
-| POST | `/complete-profile` | توکن | تکمیل پروفایل |
-| GET | `/refresh-token` | کوکی رفرش | تمدید توکن |
-| PATCH | `/update` | توکن | ویرایش پروفایل |
-| GET | `/profile` | توکن | پروفایل فعلی |
-| POST | `/logout` | — | پاک کردن کوکی‌ها |
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/get-otp` | Public | Send OTP |
+| POST | `/check-otp` | Public | Verify OTP |
+| POST | `/complete-profile` | Token | Complete name, email, role |
+| GET | `/refresh-token` | Refresh cookie | Renew tokens |
+| PATCH | `/update` | Token | Update profile (bio, skills, company, phone, …) |
+| GET | `/profile` | Token | Current user profile |
+| POST | `/logout` | — | Clear auth cookies |
 
-### دسته‌بندی — `/api/category`
+### Category — `/api/category`
 
-| متد | مسیر | احراز هویت |
-|-----|------|------------|
-| GET | `/list` | عمومی |
-| GET | `/:id` | عمومی |
+| Method | Path | Auth |
+|--------|------|------|
+| GET | `/list` | Public |
+| GET | `/:id` | Public |
 
-### پروژه — `/api/project` (توکن + کاربر تأییدشده)
+### Project — `/api/project`
 
-| متد | مسیر | نقش |
-|-----|------|-----|
-| GET | `/list` | تأییدشده (فیلتر: search, category, sort, status) |
-| GET | `/owner-projects` | OWNER, ADMIN |
-| POST | `/add` | OWNER, ADMIN |
-| GET | `/:id` | OWNER, ADMIN |
-| PATCH | `/update/:id` | OWNER, ADMIN |
-| PATCH | `/:id` | OWNER, ADMIN (وضعیت OPEN/CLOSED) |
-| DELETE | `/:id` | OWNER, ADMIN |
+| Method | Path | Auth / role | Description |
+|--------|------|-------------|-------------|
+| GET | `/list` | Public | Open listing (filters: `search`, `category`, `sort`, `status`) |
+| GET | `/details/:id` | Public (optional auth) | Public details; includes `myProposal` when logged in |
+| GET | `/owner-projects` | Token + verified; OWNER, ADMIN | Owner’s projects |
+| POST | `/add` | Token + verified; OWNER, ADMIN | Create project (requires complete profile) |
+| GET | `/:id` | Token + verified; OWNER, ADMIN | Owner project detail |
+| PATCH | `/update/:id` | Token + verified; OWNER, ADMIN | Update project |
+| PATCH | `/:id` | Token + verified; OWNER, ADMIN | Set status `OPEN` / `CLOSED` |
+| DELETE | `/:id` | Token + verified; OWNER, ADMIN | Delete project |
 
-### پیشنهاد — `/api/proposal` (توکن + کاربر تأییدشده)
+### Proposal — `/api/proposal` (token + verified user)
 
-| متد | مسیر | نقش |
-|-----|------|-----|
-| GET | `/list` | FREELANCER, ADMIN |
-| POST | `/add` | FREELANCER, ADMIN |
-| GET | `/:id` | FREELANCER, ADMIN |
-| PATCH | `/:id` | OWNER, ADMIN (تغییر وضعیت) |
+| Method | Path | Role | Description |
+|--------|------|------|-------------|
+| GET | `/list` | FREELANCER, ADMIN | List proposals |
+| POST | `/add` | FREELANCER, ADMIN | Create proposal (`price`, `duration`, `durationUnit`; requires complete profile) |
+| GET | `/:id` | FREELANCER, ADMIN | Proposal by id |
+| PATCH | `/:id` | OWNER, ADMIN | Change proposal status |
 
-### ادمین — `/api/admin` (توکن + تأییدشده + ADMIN)
+### Admin — `/api/admin` (token + verified + ADMIN)
 
-| متد | مسیر |
-|-----|------|
+| Method | Path |
+|--------|------|
 | GET | `/user/list` |
 | PATCH | `/user/verify/:userId` |
 | GET | `/user/profile/:userId` |
@@ -310,15 +346,17 @@ SERVER_URL=http://localhost:5000
 
 ---
 
-## مدل‌های دیتابیس
+## Database models
 
 ### User
 
 - `name`, `avatar`, `biography`, `email`, `phoneNumber`, `password`
+- `skills[]` (freelancer)
+- `companyName`, `companyDescription` (owner)
 - `otp { code, expiresIn }`
 - `isVerifiedPhoneNumber`, `isActive`
-- `status` (0 | 1 | 2)
-- `role` (پیش‌فرض `OWNER`)
+- `status` (`0` | `1` | `2`)
+- `role` (default `OWNER`)
 
 ### Project
 
@@ -331,59 +369,67 @@ SERVER_URL=http://localhost:5000
 
 ### Proposal
 
-- `price`, `duration`, `description`
+- `price`, `duration`, `durationUnit` (`day` | `week` | `month`, default `day`)
+- `description`
 - `user` → User
-- `status`: `0` رد | `1` در انتظار | `2` پذیرفته
-- ارتباط با پروژه از طریق آرایه `Project.proposals` است (فیلد `projectId` روی Proposal نیست)
+- `status`: `0` rejected | `1` pending | `2` accepted
+- Linked to a project via `Project.proposals` (no `projectId` field on Proposal)
 
 ### Category
 
-- `title`, `englishTitle` (یکتا), `description`
-- `type` (پیش‌فرض `project`)
+- `title`, `englishTitle` (unique), `description`
+- `type` (default `project`)
 - `parentId`, `icon { sm, lg }`
 
 ---
 
-## مسیرهای فرانت‌اند
+## Frontend routes
 
-| مسیر | توضیح |
-|------|--------|
-| `/` | صفحه اصلی / لیست پروژه‌ها |
-| `/auth` | ورود با OTP |
-| `/complete-profile` | تکمیل نام، ایمیل، نقش |
-| `/owner/dashboard` | داشبورد کارفرما |
-| `/owner/projects` | پروژه‌های کارفرما |
-| `/owner/projects/:id` | جزئیات پروژه و پیشنهادها |
-| `/freelancer/dashboard` | داشبورد فریلنسر |
-| `/freelancer/projects` | پروژه‌های باز |
-| `/freelancer/proposals` | پیشنهادهای فریلنسر |
-| `/admin/dashboard` | داشبورد ادمین |
-| `/admin/users` | مدیریت کاربران |
-| `/admin/projects` | پروژه‌ها |
-| `/admin/proposals` | پیشنهادها |
+| Path | Description |
+|------|-------------|
+| `/` | Home / public project list |
+| `/projects/:projectId` | Public project details |
+| `/auth` | OTP login (role selection first) |
+| `/complete-profile` | Complete name, email, role |
+| `/owner/dashboard` | Owner dashboard |
+| `/owner/projects` | Owner projects |
+| `/owner/projects/:id` | Owner project detail and proposals |
+| `/owner/profile` | Owner profile |
+| `/freelancer/dashboard` | Freelancer dashboard |
+| `/freelancer/projects` | Open projects |
+| `/freelancer/proposals` | Freelancer proposals |
+| `/freelancer/profile` | Freelancer profile |
+| `/admin/dashboard` | Admin dashboard |
+| `/admin/users` | User management |
+| `/admin/projects` | Projects |
+| `/admin/proposals` | Proposals |
+| `/admin/profile` | Admin profile |
 
-دسترسی به مسیرهای نقش‌دار با `ProtectedRoute` و تطبیق نقش کاربر با بخش مسیر (`/owner`, `/freelancer`, `/admin`) کنترل می‌شود.
-
----
-
-## نکات و محدودیت‌ها
-
-- در `backend/utils/functions.js` توابع قدیمی سبد خرید / محصول باقی مانده‌اند و استفاده نمی‌شوند.
-- Docker در ریپو نیست.
-- پرداخت، چت و آپلود فایل پیاده نشده‌اند.
+Role-scoped routes are guarded by `ProtectedRoute` and match the user’s role to the path segment (`/owner`, `/freelancer`, `/admin`).
 
 ---
 
-## اسکریپت‌های مفید
+## Notes and limitations
+
+- Legacy cart / product helpers may still exist in `backend/utils/functions.js` and are unused.
+- Numeric inputs accept Persian (`۰-۹`) and Arabic-Indic (`٠-٩`) digits and normalize to Latin digits before submit / Joi validation.
+- Incomplete profile actions return `403` with `code: PROFILE_INCOMPLETE` and `missingFields`.
+- No Docker setup in the repo.
+- Payments, chat, and file upload are not implemented.
+
+---
+
+## Useful scripts
 
 ```bash
 # Backend
-cd backend && npm run dev      # توسعه
-cd backend && npm start        # پروداکشن
+cd backend && npm run dev      # development
+cd backend && npm start        # production
+cd backend && npm run seed -- --force
 
 # Frontend
-cd frontend && npm run dev     # توسعه
-cd frontend && npm run build   # بیلد
-cd frontend && npm run preview # پیش‌نمایش بیلد
-cd frontend && npm run lint    # لینت
+cd frontend && npm run dev     # development
+cd frontend && npm run build   # production build
+cd frontend && npm run preview # preview build
+cd frontend && npm run lint    # lint
 ```

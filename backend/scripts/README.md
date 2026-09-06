@@ -1,56 +1,58 @@
-# Seed و لاگین توسعه (Development)
+# Development seed and login
 
-> **هشدار:** OTP ثابت و اسکریپت seed فقط برای محیط توسعه هستند. هرگز `NODE_ENV=production` را با این قابلیت‌ها اجرا نکنید و seed را روی دیتابیس واقعی نزنید.
+> **Warning:** The fixed OTP and seed script are for development only. Never run them with `NODE_ENV=production`, and never seed a real database.
 
-## پیش‌نیاز
+## Prerequisites
 
-- MongoDB در حال اجرا (مثلاً `mongodb://127.0.0.1:27017/karava`)
-- فایل `backend/.env` با `NODE_ENV=development` و `APP_DB` صحیح
+- MongoDB running (e.g. `mongodb://127.0.0.1:27017/karava`)
+- `backend/.env` with `NODE_ENV=development` and a correct `APP_DB`
 
-## اجرای Seed
+## Running the seed
 
-از پوشه `backend`:
+From the `backend` folder:
 
 ```bash
 npm run seed -- --force
 ```
 
-یا:
+Or:
 
 ```bash
 node scripts/seed.js --force
 ```
 
-بدون `--force` اسکریپت اجرا نمی‌شود (جلوگیری از پاک شدن تصادفی دیتا).
+Without `--force`, the script does not run (prevents accidental data wipes).
 
-با `--force` این collectionها پاک و دوباره پر می‌شوند:
+With `--force`, these collections are cleared and reseeded:
 
 - `users`
 - `categories`
 - `projects`
 - `proposals`
 
-## لاگین با OTP ثابت (فقط development)
+Seeded proposals include `durationUnit` (`day` by default).
 
-وقتی `NODE_ENV=development` است:
+## Fixed OTP login (development only)
 
-1. شماره یکی از کاربران seed را وارد کنید (مثلاً `09121111111`).
-2. در مرحله OTP کد ثابت **`111111`** را بزنید.
-3. نیازی به کلید واقعی کاوه‌نگار نیست؛ SMS ارسال نمی‌شود و در لاگ سرور پیام زیر دیده می‌شود:
+When `NODE_ENV=development`:
+
+1. Enter a seeded phone number (e.g. `09121111111`).
+2. On the OTP step, enter the fixed code **`111111`**.
+3. A real Kavenegar key is not required; SMS is not sent. The server logs:
 
 ```text
 OTP در محیط development: 111111
 ```
 
-### شماره‌های نمونه بعد از seed
+### Sample numbers after seed
 
-| نقش | شماره موبایل |
-|-----|---------------|
+| Role | Phone numbers |
+|------|---------------|
 | ADMIN | `09128888888` |
 | OWNER | `09121111111`, `09122222222`, `09123333333` |
 | FREELANCER | `09124444444`, `09125555555`, `09126666666`, `09127777777` |
 
-### تست سریع با curl
+### Quick curl test
 
 ```bash
 curl -c cookies.txt -X POST http://localhost:5000/api/user/get-otp \
@@ -64,8 +66,10 @@ curl -b cookies.txt -c cookies.txt -X POST http://localhost:5000/api/user/check-
 curl -b cookies.txt http://localhost:5000/api/user/profile
 ```
 
+Persian / Arabic digits in `phoneNumber` and `otp` are accepted and normalized server-side.
+
 ## Production
 
-- در production، `get-otp` همچنان از کاوه‌نگار استفاده می‌کند.
-- OTP ثابت `111111` پذیرفته نمی‌شود.
-- اسکریپت seed اگر `NODE_ENV=production` باشد متوقف می‌شود.
+- In production, `get-otp` still uses Kavenegar.
+- Fixed OTP `111111` is not accepted.
+- The seed script exits if `NODE_ENV=production`.
