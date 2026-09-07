@@ -14,6 +14,7 @@ const { projectRoutes } = require("./project");
 const { proposalRoutes } = require("./proposal");
 const { userAuthRoutes } = require("./userAuth");
 const { conversationRoutes } = require("./conversation");
+const { walletRoutes } = require("./wallet");
 
 const router = require("express").Router();
 
@@ -47,6 +48,7 @@ router.use(
   projectRoutes
 );
 router.use("/proposal", verifyAccessToken, isVerifiedUser, proposalRoutes);
+router.use("/wallet", verifyAccessToken, isVerifiedUser, walletRoutes);
 router.use(
   "/conversations",
   verifyAccessToken,

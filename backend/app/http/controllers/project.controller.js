@@ -11,6 +11,8 @@ const {
   ACTION_TYPES,
   assertProfileCompleteForAction,
 } = require("../../../utils/profileCompleteness");
+const { ROLES } = require("../../../utils/constants");
+const { releaseEscrowOnComplete } = require("../../../utils/walletHelpers");
 
 class ProjectController extends Controller {
   async addNewProject(req, res) {
@@ -53,8 +55,10 @@ class ProjectController extends Controller {
     if (search) dbQuery["$text"] = { $search: search };
 
     // STATUS
-    if (["OPEN", "CLOSED"].includes(status)) {
+    if (["OPEN", "CLOSED", "COMPLETED"].includes(status)) {
       dbQuery["status"] = { $eq: status };
+    } else {
+      dbQuery["status"] = { $ne: "COMPLETED" };
     }
     // CATEGORY
     if (category && !category.includes("ALL")) {
@@ -325,13 +329,29 @@ class ProjectController extends Controller {
     const { id } = req.params;
     const { status } = req.body;
 
+    if (!["OPEN", "CLOSED"].includes(status)) {
+      throw createHttpError.BadRequest("وضعیت پروژه نامعتبر است");
+    }
+
+    const project = await this.findProjectById(id);
+    if (project.status === "COMPLETED") {
+      throw createHttpError.BadRequest(
+        "پروژه تکمیل‌شده قابل باز یا بسته کردن نیست"
+      );
+    }
+
+    const isAdmin = req.user.role === ROLES.ADMIN;
+    if (!isAdmin && String(project.owner) !== String(req.user._id)) {
+      throw createHttpError.Forbidden("شما اجازه تغییر این پروژه را ندارید");
+    }
+
     const updateResult = await ProjectModel.updateOne(
-      { _id: id },
-      { $set: { status } } // 0, 1, 2
+      { _id: id, status: { $ne: "COMPLETED" } },
+      { $set: { status } }
     );
 
     if (updateResult.modifiedCount === 0)
-      throw createHttpError.InternalServerError(" وضعیت پروپوزال آپدیت نشد");
+      throw createHttpError.InternalServerError("وضعیت پروژه آپدیت نشد");
 
     let message = "پروژه بسته شد";
     if (status === "OPEN") message = "وضعیت پروژه به حالت باز تغییر یافت";
@@ -340,6 +360,28 @@ class ProjectController extends Controller {
       statusCode: HttpStatus.OK,
       data: {
         message,
+      },
+    });
+  }
+  async completeProject(req, res) {
+    const { id } = req.params;
+    const project = await this.findProjectById(id);
+
+    const isAdmin = req.user.role === ROLES.ADMIN;
+    if (!isAdmin && String(project.owner) !== String(req.user._id)) {
+      throw createHttpError.Forbidden("فقط کارفرمای پروژه می‌تواند آن را تکمیل کند");
+    }
+
+    const { amount } = await releaseEscrowOnComplete({
+      ownerId: project.owner,
+      project,
+    });
+
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: {
+        message: "پروژه تکمیل شد و مبلغ به کیف پول فریلنسر واریز گردید",
+        amount,
       },
     });
   }

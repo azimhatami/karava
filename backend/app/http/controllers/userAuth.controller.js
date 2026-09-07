@@ -110,10 +110,20 @@ class userAuthController extends Controller {
       return updated || true;
     }
 
-    return await UserModel.create({
+    const created = await UserModel.create({
       phoneNumber,
       otp,
     });
+    try {
+      const { getOrCreateWallet } = require("../../../utils/walletHelpers");
+      await getOrCreateWallet(created._id);
+    } catch (err) {
+      console.error(
+        "Failed to create wallet for new user:",
+        err?.message || err
+      );
+    }
+    return created;
   }
   async checkUserExist(phoneNumber) {
     const user = await UserModel.findOne({ phoneNumber });

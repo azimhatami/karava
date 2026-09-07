@@ -336,6 +336,7 @@ Base path: `/api`
 | POST | `/:projectId/deliverable` | Token + verified; FREELANCER, ADMIN | Upload deliverable (assigned freelancer only) |
 | GET | `/:id` | Token + verified; OWNER, ADMIN | Owner project detail |
 | PATCH | `/update/:id` | Token + verified; OWNER, ADMIN | Update project |
+| PATCH | `/:id/complete` | Token + verified; OWNER, ADMIN | Mark project completed and release escrow to freelancer |
 | PATCH | `/:id` | Token + verified; OWNER, ADMIN | Set status `OPEN` / `CLOSED` |
 | DELETE | `/:id` | Token + verified; OWNER, ADMIN | Delete project |
 
@@ -354,7 +355,14 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 | GET | `/list` | FREELANCER, ADMIN | List proposals |
 | POST | `/add` | FREELANCER, ADMIN | Create proposal (`price`, `duration`, `durationUnit`; requires complete profile) |
 | GET | `/:id` | FREELANCER, ADMIN | Proposal by id |
-| PATCH | `/:id` | OWNER, ADMIN | Change proposal status |
+| PATCH | `/:id` | OWNER, ADMIN | Change proposal status (accept holds proposal price in escrow) |
+
+### Wallet — `/api/wallet` (token + verified; OWNER, FREELANCER, ADMIN)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | Balance, heldBalance, mock flag, paginated transactions (`page`, `limit`) |
+| POST | `/deposit` | Mock top-up (`amount` only; min 10,000 / max 200,000,000 تومان) |
 
 ### Admin — `/api/admin` (token + verified + ADMIN)
 
@@ -453,7 +461,7 @@ Role-scoped routes are guarded by `ProtectedRoute` and match the user’s role t
 - Incomplete profile actions return `403` with `code: PROFILE_INCOMPLETE` and `missingFields`.
 - Uploaded files are stored under `backend/uploads/` (gitignored) via `utils/fileStorage.js` (local now, swappable later).
 - No Docker setup in the repo.
-- Payments, chat, and file upload are not implemented.
+- Wallet deposits are simulated (no payment gateway). Accepting a proposal holds the proposal price; completing the project releases it to the freelancer. Un-accepting refunds held funds to the owner.
 
 ---
 

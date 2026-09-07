@@ -46,6 +46,11 @@ router.patch(
   expressAsyncHandler(ProjectController.updateProject)
 );
 router.patch(
+  "/:id/complete",
+  authorize(ROLES.ADMIN, ROLES.OWNER),
+  expressAsyncHandler(ProjectController.completeProject)
+);
+router.patch(
   "/:id",
   authorize(ROLES.ADMIN, ROLES.OWNER),
   expressAsyncHandler(ProjectController.changeProjectStatus)

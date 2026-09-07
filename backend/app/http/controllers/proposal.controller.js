@@ -14,6 +14,10 @@ const {
 const {
   ensureConversationForAcceptedProposal,
 } = require("../../../utils/conversationHelpers");
+const {
+  holdForAcceptedProposal,
+  refundEscrowForProject,
+} = require("../../../utils/walletHelpers");
 
 class ProposalController extends Controller {
   async addNewProposal(req, res) {
@@ -121,28 +125,53 @@ class ProposalController extends Controller {
       throw createHttpError.BadRequest("وضعیت ارسال شده صحیح نمیباشد");
     }
 
-    const proposal = await ProposalModel.findOneAndUpdate(
-      { _id: id },
-      { $set: { status } }, // 0, 1, 2
-      { new: true }
-    );
-    if (!proposal)
-      throw createHttpError.InternalServerError(" وضعیت پروپوزال آپدیت نشد");
+    const proposal = await ProposalModel.findById(id);
+    if (!proposal) throw createHttpError.NotFound("پیشنهاد یافت نشد");
 
     const project = await ProjectModel.findOne({
       proposals: { $in: [proposal._id] },
     });
-
     if (!project) throw createHttpError.NotFound("پروژه مرتبط یافت نشد");
 
-    let freelancer = copyObject(proposal).user;
+    const isAdmin = req.user.role === ROLES.ADMIN;
+    if (!isAdmin && String(project.owner) !== String(req.user._id)) {
+      throw createHttpError.Forbidden(
+        "شما اجازه تغییر وضعیت این پیشنهاد را ندارید"
+      );
+    }
 
+    if (project.status === "COMPLETED") {
+      throw createHttpError.BadRequest(
+        "این پروژه تکمیل شده و وضعیت پیشنهاد قابل تغییر نیست"
+      );
+    }
+
+    const previousStatus = Number(proposal.status);
+    const ownerId = project.owner;
+
+    if (status === 2 && previousStatus !== 2) {
+      await holdForAcceptedProposal({
+        ownerId,
+        project,
+        proposal,
+      });
+    }
+
+    if (previousStatus === 2 && status !== 2) {
+      await refundEscrowForProject({
+        ownerId,
+        project,
+        proposal,
+      });
+    }
+
+    proposal.status = status;
+    await proposal.save();
+
+    let freelancer = copyObject(proposal).user;
     if (status !== 2) freelancer = null;
 
-    await ProjectModel.updateOne(
-      { _id: project._id },
-      { $set: { freelancer } }
-    );
+    await ProjectModel.updateOne({ _id: project._id }, { $set: { freelancer } });
 
     let conversation = null;
     if (status === 2) {
