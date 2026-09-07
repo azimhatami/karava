@@ -78,6 +78,7 @@ function ProjectDetailsPage() {
   }
 
   const isOpen = project.status === 'OPEN';
+  const isCompleted = project.status === 'COMPLETED';
   const proposalStatus = PROPOSAL_STATUS[myProposal?.status];
 
   const handleProposalClick = () => {
@@ -107,12 +108,14 @@ function ProjectDetailsPage() {
           </Link>
           <span
             className={`inline-flex rounded-[6px] border px-2.5 py-1 text-xs font-medium ${
-              isOpen
-                ? 'border-[#00D281] bg-[#008245] text-white'
-                : 'border-[#C9093D] bg-[#FFF1F2] text-[#BE185D]'
+              isCompleted
+                ? 'border-[#7DD3FC] bg-[#E0F2FE] text-[#075985]'
+                : isOpen
+                  ? 'border-[#00D281] bg-[#008245] text-white'
+                  : 'border-[#C9093D] bg-[#FFF1F2] text-[#BE185D]'
             }`}
           >
-            {isOpen ? 'باز' : 'بسته'}
+            {isCompleted ? 'تکمیل‌شده' : isOpen ? 'باز' : 'بسته'}
           </span>
         </div>
 

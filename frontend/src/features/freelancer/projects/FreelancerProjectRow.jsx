@@ -16,6 +16,10 @@ const projectStatus = {
     label: 'بسته',
     className: 'border border-[#F9A8D4] bg-[#FDF2F8] text-[#BE185D]',
   },
+  COMPLETED: {
+    label: 'تکمیل‌شده',
+    className: 'bg-[#E0F2FE] text-[#075985]',
+  },
 };
 
 function FreelancerProjectRow({ project }) {

@@ -21,7 +21,9 @@ function ToggleProjectStatus({ project }) {
 
   return(
     <div>
-      {isToggling ? <div className='w-[3rem]'><Loading /></div> : (
+      {project.status === 'COMPLETED' ? (
+        <span className="badge bg-[#E0F2FE] text-[#075985]">تکمیل‌شده</span>
+      ) : isToggling ? <div className='w-[3rem]'><Loading /></div> : (
         <Toggle 
           label={project.status === 'OPEN' ? 'باز' : 'بسته'}
           enabled={project.status === 'OPEN' ? true : false}
