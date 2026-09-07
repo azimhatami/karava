@@ -21,6 +21,10 @@ import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import { getProfileCompletion } from '../../utils/profileCompleteness';
 import { digitsOnly } from '../../utils/normalizeDigits';
+import { Link } from 'react-router-dom';
+import useUserReviews from '../review/useUserReviews';
+import RatingBadge from '../review/RatingBadge';
+import ReviewsList from '../review/ReviewsList';
 
 const ROLE_LABELS = {
   FREELANCER: 'فریلنسر / کارجو',
@@ -45,6 +49,7 @@ function ProfilePage() {
   const { user, isLoading } = useUser();
   const queryClient = useQueryClient();
   const [skills, setSkills] = useState([]);
+  const { reviews, averageRating, totalReviews } = useUserReviews(user?._id);
 
   const {
     register,
@@ -159,6 +164,16 @@ function ProfilePage() {
             >
               {statusMeta.label}
             </span>
+            <RatingBadge
+              averageRating={user.averageRating ?? averageRating}
+              totalReviews={user.totalReviews ?? totalReviews}
+            />
+            <Link
+              to={`/users/${user._id}`}
+              className="text-xs font-bold text-[#006045] underline"
+            >
+              پروفایل عمومی
+            </Link>
           </div>
         </div>
 
@@ -395,6 +410,13 @@ function ProfilePage() {
             />
           </div>
         ) : null}
+      </section>
+
+      <section className="overflow-hidden rounded-[12px] border border-[#D1D5DB] bg-white">
+        <div className="border-b border-[#E5E7EB] px-4 py-3">
+          <h3 className="text-sm font-bold text-[#222020]">نظرات دریافتی</h3>
+        </div>
+        <ReviewsList reviews={reviews} />
       </section>
     </div>
   );

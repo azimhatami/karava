@@ -31,6 +31,7 @@ import Profile from './pages/Profile';
 import ProjectDetails from './pages/ProjectDetails';
 import Messages from './pages/Messages';
 import Wallet from './pages/Wallet';
+import PublicProfile from './pages/PublicProfile';
 import { ProfileIncompleteHost } from './features/profile/ProfileIncompleteHost';
 import './App.css'
 
@@ -64,6 +65,7 @@ function App() {
             <Route path='/auth' element={<Auth />} />
             <Route path='/complete-profile' element={<CompleteProfile />} />
             <Route path='/projects/:projectId' element={<ProjectDetails />} />
+            <Route path='/users/:userId' element={<PublicProfile />} />
             <Route path='/' element={<Home />} />
             <Route 
               path='/admin' 

@@ -450,6 +450,7 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 |------|-------------|
 | `/` | Home / public project list |
 | `/projects/:projectId` | Public project details |
+| `/users/:userId` | Public user profile and reviews |
 | `/auth` | OTP login (role selection first) |
 | `/complete-profile` | Complete name, email, role |
 | `/owner/dashboard` | Owner dashboard |
