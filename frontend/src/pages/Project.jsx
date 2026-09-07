@@ -3,6 +3,7 @@ import Loading from '../ui/Loading';
 import ProjectHeader from '../features/project/ProjectHeader';
 import ProposalsTable from '../features/project/ProposalsTable';
 import ProjectAttachmentsSection from '../ui/ProjectAttachmentsSection';
+import ReviewSection from '../features/review/ReviewSection';
 
 function Project() {
   const { isLoading, project } = useProject();
@@ -22,6 +23,10 @@ function Project() {
         <ProjectAttachmentsSection files={project.attachments || []} />
       </div>
       <ProposalsTable proposals={project.proposals || []} />
+      <ReviewSection
+        project={project}
+        canParticipate={project.status === 'COMPLETED'}
+      />
     </div>
   );
 }

@@ -72,24 +72,43 @@ class ProposalController extends Controller {
     const proposals = await ProposalModel.find(dbQuery).sort(sortQuery);
 
     const { ConversationModel } = require("../../models/conversation");
-    const proposalIds = proposals
+    const proposalIds = proposals.map((p) => p._id);
+
+    const acceptedIds = proposals
       .filter((p) => Number(p.status) === 2)
       .map((p) => p._id);
 
-    const conversations = proposalIds.length
-      ? await ConversationModel.find({ proposal: { $in: proposalIds } })
-          .select({ proposal: 1 })
-          .lean()
-      : [];
+    const [conversations, linkedProjects] = await Promise.all([
+      acceptedIds.length
+        ? ConversationModel.find({ proposal: { $in: acceptedIds } })
+            .select({ proposal: 1 })
+            .lean()
+        : [],
+      proposalIds.length
+        ? ProjectModel.find({ proposals: { $in: proposalIds } })
+            .select({ title: 1, status: 1, proposals: 1 })
+            .lean()
+        : [],
+    ]);
 
     const conversationByProposal = new Map(
       conversations.map((c) => [String(c.proposal), String(c._id)])
     );
+    const projectByProposal = new Map();
+    for (const project of linkedProjects) {
+      for (const proposalId of project.proposals || []) {
+        projectByProposal.set(String(proposalId), project);
+      }
+    }
 
     const enriched = proposals.map((proposal) => {
       const obj = proposal.toObject();
       obj.conversationId =
         conversationByProposal.get(String(proposal._id)) || null;
+      const project = projectByProposal.get(String(proposal._id));
+      obj.projectId = project?._id || null;
+      obj.projectTitle = project?.title || null;
+      obj.projectStatus = project?.status || null;
       return obj;
     });
 

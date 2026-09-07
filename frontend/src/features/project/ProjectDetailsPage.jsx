@@ -22,6 +22,7 @@ import HomeHeader from '../home/HomeHeader';
 import Modal from '../../ui/Modal';
 import Loading from '../../ui/Loading';
 import CreateProposal from '../proposals/CreateProposal';
+import ReviewSection from '../review/ReviewSection';
 
 const PROPOSAL_STATUS = {
   0: {
@@ -279,6 +280,13 @@ function ProjectDetailsPage() {
             </div>
           </aside>
         </section>
+
+        <ReviewSection
+          project={project}
+          canParticipate={
+            Boolean(project.isOwner || project.isAssignedFreelancer)
+          }
+        />
       </div>
 
       <Modal

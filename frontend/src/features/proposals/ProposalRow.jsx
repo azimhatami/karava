@@ -46,7 +46,7 @@ function ProposalRow({ proposal }) {
           {statusMeta.label}
         </span>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-wrap items-center justify-center gap-2">
         {Number(status) === 2 && conversationId ? (
           <Link
             to={`/freelancer/messages/${conversationId}`}
@@ -54,9 +54,18 @@ function ProposalRow({ proposal }) {
           >
             شروع گفتگو
           </Link>
-        ) : (
+        ) : null}
+        {proposal.projectId ? (
+          <Link
+            to={`/projects/${proposal.projectId}`}
+            className="inline-flex h-8 items-center justify-center rounded-[6px] border border-[#006045] bg-white px-3 text-xs font-bold text-[#006045] hover:bg-[#006045] hover:text-white"
+          >
+            {proposal.projectStatus === 'COMPLETED' ? 'ثبت نظر' : 'مشاهده پروژه'}
+          </Link>
+        ) : null}
+        {!conversationId && !proposal.projectId ? (
           <span className="text-xs text-[#9CA3AF]">—</span>
-        )}
+        ) : null}
       </div>
     </div>
   );
