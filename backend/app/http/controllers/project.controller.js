@@ -171,10 +171,30 @@ class ProjectController extends Controller {
       },
     ]);
 
+    const { ConversationModel } = require("../../models/conversation");
+    const acceptedIds = (project.proposals || [])
+      .filter((p) => Number(p.status) === 2)
+      .map((p) => p._id);
+    const conversations = acceptedIds.length
+      ? await ConversationModel.find({ proposal: { $in: acceptedIds } })
+          .select({ proposal: 1 })
+          .lean()
+      : [];
+    const conversationByProposal = new Map(
+      conversations.map((c) => [String(c.proposal), String(c._id)])
+    );
+
+    const projectObj = project.toObject();
+    projectObj.proposals = (projectObj.proposals || []).map((proposal) => ({
+      ...proposal,
+      conversationId:
+        conversationByProposal.get(String(proposal._id)) || null,
+    }));
+
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
-        project,
+        project: projectObj,
       },
     });
   }

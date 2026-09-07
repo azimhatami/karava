@@ -11,6 +11,9 @@ const {
   ACTION_TYPES,
   assertProfileCompleteForAction,
 } = require("../../../utils/profileCompleteness");
+const {
+  ensureConversationForAcceptedProposal,
+} = require("../../../utils/conversationHelpers");
 
 class ProposalController extends Controller {
   async addNewProposal(req, res) {
@@ -64,10 +67,32 @@ class ProposalController extends Controller {
 
     const proposals = await ProposalModel.find(dbQuery).sort(sortQuery);
 
+    const { ConversationModel } = require("../../models/conversation");
+    const proposalIds = proposals
+      .filter((p) => Number(p.status) === 2)
+      .map((p) => p._id);
+
+    const conversations = proposalIds.length
+      ? await ConversationModel.find({ proposal: { $in: proposalIds } })
+          .select({ proposal: 1 })
+          .lean()
+      : [];
+
+    const conversationByProposal = new Map(
+      conversations.map((c) => [String(c.proposal), String(c._id)])
+    );
+
+    const enriched = proposals.map((proposal) => {
+      const obj = proposal.toObject();
+      obj.conversationId =
+        conversationByProposal.get(String(proposal._id)) || null;
+      return obj;
+    });
+
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
-        proposals,
+        proposals: enriched,
       },
     });
   }
@@ -90,12 +115,16 @@ class ProposalController extends Controller {
   }
   async changeProposalStatus(req, res) {
     const { id } = req.params;
-    let { status, projectId } = req.body;
+    let { status } = req.body;
     status = Number(status);
+    if (![0, 1, 2].includes(status)) {
+      throw createHttpError.BadRequest("وضعیت ارسال شده صحیح نمیباشد");
+    }
 
     const proposal = await ProposalModel.findOneAndUpdate(
       { _id: id },
-      { $set: { status } } // 0, 1, 2
+      { $set: { status } }, // 0, 1, 2
+      { new: true }
     );
     if (!proposal)
       throw createHttpError.InternalServerError(" وضعیت پروپوزال آپدیت نشد");
@@ -103,6 +132,8 @@ class ProposalController extends Controller {
     const project = await ProjectModel.findOne({
       proposals: { $in: [proposal._id] },
     });
+
+    if (!project) throw createHttpError.NotFound("پروژه مرتبط یافت نشد");
 
     let freelancer = copyObject(proposal).user;
 
@@ -113,6 +144,21 @@ class ProposalController extends Controller {
       { $set: { freelancer } }
     );
 
+    let conversation = null;
+    if (status === 2) {
+      try {
+        conversation = await ensureConversationForAcceptedProposal({
+          proposal,
+          project,
+        });
+      } catch (err) {
+        console.error(
+          "Failed to create conversation for accepted proposal:",
+          err?.message || err
+        );
+      }
+    }
+
     let message = "وضعیت پروپوزال تایید شد";
     if (status === 0) message = "وضعیت پروپوزال به حالت رد شده تغییر یافت";
     if (status === 1)
@@ -122,6 +168,7 @@ class ProposalController extends Controller {
       statusCode: HttpStatus.OK,
       data: {
         message,
+        conversationId: conversation?._id || null,
       },
     });
   }

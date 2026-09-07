@@ -6,13 +6,14 @@ import ProposalRow from './ProposalRow';
 import Pagination from '../../ui/Pagination';
 
 const PROPOSALS_GRID_COLS =
-  'grid-cols-[minmax(0,2.4fr)_1.2fr_1.2fr_1.2fr]';
+  'grid-cols-[minmax(0,2.1fr)_1fr_1fr_1fr_1.1fr]';
 
 const columns = [
   { key: 'description', label: 'توضیحات' },
   { key: 'duration', label: 'زمان تحویل' },
   { key: 'price', label: 'هزینه (تومان)' },
   { key: 'status', label: 'وضعیت' },
+  { key: 'chat', label: 'گفتگو' },
 ];
 
 function ProposalTable() {

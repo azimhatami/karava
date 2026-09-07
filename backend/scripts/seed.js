@@ -16,6 +16,8 @@ const { UserModel } = require("../app/models/user");
 const { CategoryModel } = require("../app/models/category");
 const { ProjectModel } = require("../app/models/project");
 const { ProposalModel } = require("../app/models/proposal");
+const { ConversationModel } = require("../app/models/conversation");
+const { MessageModel } = require("../app/models/message");
 
 const DEV_OTP = 111111;
 const FORCE = process.argv.includes("--force");
@@ -157,6 +159,8 @@ async function seed() {
 
   console.log("Clearing collections...");
   await Promise.all([
+    MessageModel.deleteMany({}),
+    ConversationModel.deleteMany({}),
     ProposalModel.deleteMany({}),
     ProjectModel.deleteMany({}),
     CategoryModel.deleteMany({}),
@@ -340,6 +344,37 @@ async function seed() {
     await ProjectModel.updateOne({ _id: project._id }, update);
   }
 
+  console.log("Seeding conversations & sample messages...");
+  const accepted = createdProposals.filter((p) => Number(p.status) === 2);
+  for (const proposal of accepted) {
+    const projectDoc = await ProjectModel.findOne({
+      proposals: proposal._id,
+    });
+    if (!projectDoc) continue;
+
+    const conversation = await ConversationModel.create({
+      project: projectDoc._id,
+      proposal: proposal._id,
+      owner: projectDoc.owner,
+      freelancer: proposal.user,
+    });
+
+    await MessageModel.create([
+      {
+        conversation: conversation._id,
+        sender: projectDoc.owner,
+        text: "سلام، پیشنهاد شما پذیرفته شد. لطفاً برای شروع هماهنگی پیام دهید.",
+        isRead: true,
+      },
+      {
+        conversation: conversation._id,
+        sender: proposal.user,
+        text: "سلام، ممنون. از فردا کار را شروع می‌کنم و پیشرفت را همینجا گزارش می‌دهم.",
+        isRead: false,
+      },
+    ]);
+  }
+
   const userCounts = {
     OWNER: owners.length,
     FREELANCER: freelancers.length,
@@ -356,6 +391,8 @@ async function seed() {
     `  Projects   : ${projects.length} (OPEN=${openProjects.length}, CLOSED=${projects.length - openProjects.length})`
   );
   console.log(`  Proposals  : ${createdProposals.length}`);
+  const conversationCount = await ConversationModel.countDocuments();
+  console.log(`  Chats      : ${conversationCount}`);
   console.log("\nTest phone numbers (dev OTP = 111111):");
   console.log("  ADMIN      :", admin.phoneNumber);
   owners.forEach((u) => console.log(`  OWNER      : ${u.phoneNumber}  (${u.name})`));

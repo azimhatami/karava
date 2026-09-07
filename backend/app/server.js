@@ -122,9 +122,35 @@ class Application {
     }, DB_CONNECT_RETRY_MS);
   }
 
+  getCorsOriginDelegate() {
+    const fromEnv = String(process.env.ALLOW_CORS_ORIGIN || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    const devOrigins = [
+      "http://localhost:3000",
+      "http://127.0.0.1:3000",
+      "http://[::1]:3000",
+    ];
+
+    const allowlist = new Set([
+      ...fromEnv,
+      ...(process.env.NODE_ENV === "development" ? devOrigins : []),
+    ]);
+
+    return (origin, callback) => {
+      // curl / same-origin / non-browser clients send no Origin header
+      if (!origin || allowlist.has(origin)) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    };
+  }
+
   configServer() {
     this.#app.use(
-      cors({ credentials: true, origin: process.env.ALLOW_CORS_ORIGIN })
+      cors({ credentials: true, origin: this.getCorsOriginDelegate() })
     );
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true }));

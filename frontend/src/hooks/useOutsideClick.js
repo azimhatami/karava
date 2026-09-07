@@ -1,20 +1,36 @@
 import { useRef, useEffect } from 'react';
 
 
-function useOutsideClick(handler, listenCapturing = true) {
+function useOutsideClick(handler, listenCapturing = true, enabled = true) {
   const ref = useRef();
+  const handlerRef = useRef(handler);
+  handlerRef.current = handler;
 
   useEffect(() => {
+    if (!enabled) return;
+
     function handleClick(e) {
-      if (ref.current && !ref.current.contains(e.target)) {
-        handler();
-      }
+      const el = ref.current;
+      if (!el) return;
+      if (el.contains(e.target)) return;
+
+      // Native <select> popups fire clicks that are not inside the dialog.
+      const tag = e.target?.tagName;
+      if (tag === 'OPTION' || tag === 'SELECT') return;
+
+      handlerRef.current?.();
     }
 
-    document.addEventListener('click', handleClick, listenCapturing)
+    // Skip the same click that opened the overlay.
+    const timeoutId = window.setTimeout(() => {
+      document.addEventListener('click', handleClick, listenCapturing);
+    }, 0);
 
-    return () => document.removeEventListener('click', handleClick, listenCapturing)
-  }, [handler, listenCapturing])
+    return () => {
+      window.clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClick, listenCapturing);
+    };
+  }, [enabled, listenCapturing]);
 
   return ref;
 }

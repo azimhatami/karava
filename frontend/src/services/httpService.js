@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const BASE_URL = import.meta.env.VITE_API_URL || '/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -16,9 +16,35 @@ export function resetAuthRefreshState() {
   refreshPromise = null;
 }
 
+function requestUrl(config) {
+  return config?.url || '';
+}
+
 function isRefreshTokenRequest(config) {
-  const url = config?.url || '';
-  return url.includes('/user/refresh-token');
+  return requestUrl(config).includes('/user/refresh-token');
+}
+
+/**
+ * Expected guest/public probes: 401 here means "not logged in", not "session expired".
+ * Do not attempt refresh (avoids poisoning refreshFailed for the rest of the SPA).
+ */
+function isGuestAuthProbe(config) {
+  const url = requestUrl(config);
+  return (
+    url.includes('/user/profile') ||
+    url.includes('/project/list') ||
+    url.includes('/project/details') ||
+    url.includes('/category/')
+  );
+}
+
+function isAuthSessionEndpoint(config) {
+  const url = requestUrl(config);
+  return (
+    url.includes('/user/get-otp') ||
+    url.includes('/user/check-otp') ||
+    url.includes('/user/logout')
+  );
 }
 
 async function refreshAccessToken() {
@@ -61,6 +87,11 @@ api.interceptors.response.use(
       return Promise.reject(err);
     }
 
+    // Guest landing probes and login/logout: 401 is expected — keep the original error.
+    if (isGuestAuthProbe(originalConfig) || isAuthSessionEndpoint(originalConfig)) {
+      return Promise.reject(err);
+    }
+
     // Already retried this request, or we already know refresh will fail.
     if (originalConfig._retry || refreshFailed) {
       return Promise.reject(err);
@@ -71,8 +102,8 @@ api.interceptors.response.use(
     try {
       await refreshAccessToken();
       return api(originalConfig);
-    } catch (error) {
-      return Promise.reject(error);
+    } catch {
+      return Promise.reject(err);
     }
   }
 );

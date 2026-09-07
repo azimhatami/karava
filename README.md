@@ -54,6 +54,7 @@ Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-t
 | Localized price input with thousand separators | Implemented |
 | Persian / Arabic digit normalization (inputs + validators) | Implemented |
 | File uploads (portfolio, project attachments, deliverables) | Implemented |
+| Post-acceptance chat with polling | Implemented |
 | Development OTP bypass (`111111`) and DB seed script | Implemented |
 | Dark mode | Implemented |
 | Payments / wallet | Not available |

@@ -13,6 +13,7 @@ const { categoryRoutes } = require("./category");
 const { projectRoutes } = require("./project");
 const { proposalRoutes } = require("./proposal");
 const { userAuthRoutes } = require("./userAuth");
+const { conversationRoutes } = require("./conversation");
 
 const router = require("express").Router();
 
@@ -46,6 +47,12 @@ router.use(
   projectRoutes
 );
 router.use("/proposal", verifyAccessToken, isVerifiedUser, proposalRoutes);
+router.use(
+  "/conversations",
+  verifyAccessToken,
+  isVerifiedUser,
+  conversationRoutes
+);
 router.use(
   "/admin",
   verifyAccessToken,

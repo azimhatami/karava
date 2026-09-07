@@ -3,16 +3,19 @@ import {
   HiOutlineBriefcase,
   HiOutlineDocumentText,
   HiOutlineUserCircle,
+  HiOutlineChatBubbleLeftRight,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useProjects from '../../hooks/useProjects';
 import useProposals from '../proposals/useProposals';
+import { useUnreadMessagesCount } from '../messages/useConversations';
 import PanelSidebar from '../shared/PanelSidebar';
 
 function FreelancerSidebar() {
   const { user } = useUser();
   const { projects } = useProjects();
   const { proposals } = useProposals();
+  const unreadMessages = useUnreadMessagesCount();
 
   const openProjectsCount = projects.filter((p) => p.status === 'OPEN').length;
 
@@ -34,6 +37,12 @@ function FreelancerSidebar() {
       label: 'درخواست های من',
       icon: HiOutlineDocumentText,
       badge: proposals.length,
+    },
+    {
+      to: '/freelancer/messages',
+      label: 'گفتگوها',
+      icon: HiOutlineChatBubbleLeftRight,
+      badge: unreadMessages,
     },
     {
       to: '/freelancer/profile',

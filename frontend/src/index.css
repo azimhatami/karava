@@ -142,6 +142,11 @@
 }
 
 html,
+html.light-mode {
+  color-scheme: light;
+}
+
+html,
 body {
   padding: 0;
   margin: 0;
@@ -208,6 +213,8 @@ table td {
 
 .owner-projects-table {
   table-layout: fixed;
+  background-color: #ffffff;
+  color: #374151;
 }
 
 .owner-projects-table th,

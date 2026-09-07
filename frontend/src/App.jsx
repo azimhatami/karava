@@ -29,6 +29,7 @@ import AdminDashboard from './pages/AdminDashboard';
 import Users from './pages/Users';
 import Profile from './pages/Profile';
 import ProjectDetails from './pages/ProjectDetails';
+import Messages from './pages/Messages';
 import { ProfileIncompleteHost } from './features/profile/ProfileIncompleteHost';
 import './App.css'
 
@@ -90,6 +91,8 @@ function App() {
               <Route path='dashboard' element={<OwnerDashboard />}/>
               <Route path='projects' element={<Projects />}/>
               <Route path='projects/:id' element={<Project />}/>
+              <Route path='messages' element={<Messages basePath="/owner/messages" />}/>
+              <Route path='messages/:conversationId' element={<Messages basePath="/owner/messages" />}/>
               <Route path='profile' element={<Profile />}/>
             </Route>
             <Route 
@@ -104,6 +107,8 @@ function App() {
               <Route path='dashboard' element={<FreelancerDashboard />} />
               <Route path='proposals' element={<Proposals />} />
               <Route path='projects' element={<SubmitedProjects />} />
+              <Route path='messages' element={<Messages basePath="/freelancer/messages" />}/>
+              <Route path='messages/:conversationId' element={<Messages basePath="/freelancer/messages" />}/>
               <Route path='profile' element={<Profile />}/>
             </Route>
             <Route path='*' element={<NotFound />} />
