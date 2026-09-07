@@ -1,11 +1,11 @@
+import { useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
 import Table from '../../ui/Table';
 import truncateText from '../../utils/truncateText';
 import Modal from '../../ui/Modal';
 import ChangeProposalStatus from './ChangeProposalStatus';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import { formatProposalDuration } from '../../utils/formatProposalDuration';
-import { useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
 import useChangeProposalStatus from './useChangeProposalStatus';
 
 const statusStyle = [
@@ -28,16 +28,27 @@ function ProposalRow({ proposal, index }) {
   const statusIndex = Number(status);
   const statusMeta = statusStyle[statusIndex] || statusStyle[1];
   const [open, setOpen] = useState(false);
+  const [walletBlocked, setWalletBlocked] = useState(false);
   const conversationId = proposal.conversationId;
   const { id: projectId } = useParams();
   const { isUpdating, changeProposalStatus } = useChangeProposalStatus();
 
   const updateStatus = (nextStatus) => {
-    changeProposalStatus({
-      proposalId: proposal._id,
-      projectId,
-      status: nextStatus,
-    });
+    setWalletBlocked(false);
+    changeProposalStatus(
+      {
+        proposalId: proposal._id,
+        projectId,
+        status: nextStatus,
+      },
+      {
+        onError: (error) => {
+          if (error?.response?.data?.code === 'INSUFFICIENT_WALLET_BALANCE') {
+            setWalletBlocked(true);
+          }
+        },
+      },
+    );
   };
 
   return (
@@ -106,6 +117,15 @@ function ProposalRow({ proposal, index }) {
                 className="inline-flex h-8 items-center justify-center rounded-[6px] bg-[#006045] px-3 text-xs font-bold text-white transition-colors hover:bg-[#004d37]"
               >
                 شروع گفتگو
+              </Link>
+            ) : null}
+
+            {walletBlocked ? (
+              <Link
+                to="/owner/wallet"
+                className="inline-flex h-8 items-center justify-center rounded-[6px] bg-[#FEF9C3] px-3 text-xs font-bold text-[#854D0E] hover:bg-[#FDE047]"
+              >
+                شارژ کیف پول
               </Link>
             ) : null}
           </div>

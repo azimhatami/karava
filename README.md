@@ -59,7 +59,7 @@ Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-t
 | Development OTP bypass (`111111`) and DB seed script | Implemented |
 | Dark mode | Implemented |
 | Payments / wallet | Mock internal wallet (deposit, escrow hold on accept, release on complete) |
-| Chat / messaging | Not available |
+| Chat / messaging | Post-acceptance conversations with polling |
 | File upload | Local disk via swappable `fileStorage` (`backend/uploads/`) |
 
 ---
@@ -439,10 +439,14 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 | `/owner/dashboard` | Owner dashboard |
 | `/owner/projects` | Owner projects |
 | `/owner/projects/:id` | Owner project detail and proposals |
+| `/owner/messages` | Owner conversations |
+| `/owner/wallet` | Owner mock wallet |
 | `/owner/profile` | Owner profile |
 | `/freelancer/dashboard` | Freelancer dashboard |
 | `/freelancer/projects` | Open projects |
 | `/freelancer/proposals` | Freelancer proposals |
+| `/freelancer/messages` | Freelancer conversations |
+| `/freelancer/wallet` | Freelancer mock wallet |
 | `/freelancer/profile` | Freelancer profile |
 | `/admin/dashboard` | Admin dashboard |
 | `/admin/users` | User management |

@@ -3,6 +3,7 @@ import {
   HiOutlineRectangleStack,
   HiOutlineUserCircle,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineWallet,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useOwnerProjects from '../projects/useOwnerProjects';
@@ -32,6 +33,11 @@ function OwnerSidebar() {
       label: 'گفتگوها',
       icon: HiOutlineChatBubbleLeftRight,
       badge: unreadMessages,
+    },
+    {
+      to: '/owner/wallet',
+      label: 'کیف پول',
+      icon: HiOutlineWallet,
     },
     {
       to: '/owner/profile',

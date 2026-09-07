@@ -15,6 +15,7 @@ function useChangeProposalStatus() {
       queryClient.invalidateQueries({ queryKey: ['conversations'] });
       queryClient.invalidateQueries({ queryKey: ['owner-projects'] });
       queryClient.invalidateQueries({ queryKey: ['proposals'] });
+      queryClient.invalidateQueries({ queryKey: ['wallet'] });
     },
     onError: (error) => {
       toast.error(getApiErrorMessage(error, 'تغییر وضعیت پیشنهاد انجام نشد.'));

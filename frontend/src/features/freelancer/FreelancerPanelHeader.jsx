@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { HiMagnifyingGlass, HiOutlineUser } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
+import WalletBalanceChip from '../../ui/WalletBalanceChip';
 
 function FreelancerPanelHeader() {
   const { user } = useUser();
@@ -28,6 +29,7 @@ function FreelancerPanelHeader() {
         </div>
 
         <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
+          <WalletBalanceChip to="/freelancer/wallet" />
           <div className="flex h-[42px] w-[184px] rotate-0 items-center rounded-[12px] border border-[#006045] bg-white p-[10px] text-sm text-[#111827] opacity-100">
             <div className="flex h-[21px] w-[162px] rotate-0 items-center gap-1 opacity-100">
               <HiOutlineUser className="h-[21px] w-[21px] shrink-0 rotate-0 text-[#00362E] opacity-100" />

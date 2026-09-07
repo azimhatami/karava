@@ -4,6 +4,7 @@ import {
   HiOutlineDocumentText,
   HiOutlineUserCircle,
   HiOutlineChatBubbleLeftRight,
+  HiOutlineWallet,
 } from 'react-icons/hi2';
 import useUser from '../authentication/useUser';
 import useProjects from '../../hooks/useProjects';
@@ -43,6 +44,11 @@ function FreelancerSidebar() {
       label: 'گفتگوها',
       icon: HiOutlineChatBubbleLeftRight,
       badge: unreadMessages,
+    },
+    {
+      to: '/freelancer/wallet',
+      label: 'کیف پول',
+      icon: HiOutlineWallet,
     },
     {
       to: '/freelancer/profile',
