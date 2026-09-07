@@ -10,6 +10,7 @@ import ProjectTags from '../../ui/ProjectTags';
 import ConfirmDelete from '../../ui/ConfirmDelete';
 import CreateProjectForm from '../projects/CreateProjectForm';
 import useRemoveProject from '../projects/useRemoveProject';
+import RatingBadge from '../review/RatingBadge';
 
 const projectStatus = {
   OPEN: {
@@ -54,7 +55,22 @@ function OwnerProjectTableRow({ project, isAlternate = false }) {
         <ProjectTags tags={project.tags} />
       </td>
       <td className="px-1 py-[19px] text-center text-sm text-[#374151]">
-        {project.freelancer?.name || '-'}
+        {project.freelancer?._id ? (
+          <div className="flex flex-col items-center gap-1">
+            <Link
+              to={`/users/${project.freelancer._id}`}
+              className="font-bold text-[#006045] hover:underline"
+            >
+              {project.freelancer.name}
+            </Link>
+            <RatingBadge
+              averageRating={project.freelancer.averageRating}
+              totalReviews={project.freelancer.totalReviews}
+            />
+          </div>
+        ) : (
+          '-'
+        )}
       </td>
       <td className="px-1 py-[19px] text-center">
         <span

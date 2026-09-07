@@ -3,6 +3,7 @@ import { HiOutlineEye } from 'react-icons/hi2';
 import truncateText from '../../../utils/truncateText';
 import shortDate from '../../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../../utils/toPersianNumbers';
+import RatingBadge from '../../review/RatingBadge';
 
 const PROJECTS_GRID_COLS =
   'grid-cols-[minmax(0,2.4fr)_1.2fr_1.1fr_1fr_0.8fr]';
@@ -28,10 +29,23 @@ function FreelancerProjectRow({ project }) {
 
   return (
     <div
-      className={`box-border grid h-[68px] w-full shrink-0 rotate-0 items-center border-b border-[#000000] px-1 py-[19px] opacity-100 transition-colors hover:bg-[#F2FFF8] ${PROJECTS_GRID_COLS}`}
+      className={`box-border grid min-h-[68px] w-full shrink-0 rotate-0 items-center border-b border-[#000000] px-1 py-[19px] opacity-100 transition-colors hover:bg-[#F2FFF8] ${PROJECTS_GRID_COLS}`}
     >
       <span className="min-w-0 truncate text-center text-sm text-[#374151]">
-        {truncateText(title || '', 30)}
+        <span className="block truncate">{truncateText(title || '', 30)}</span>
+        {project.owner?._id ? (
+          <Link
+            to={`/users/${project.owner._id}`}
+            className="mt-1 inline-flex items-center justify-center gap-1 text-xs text-[#006045] hover:underline"
+          >
+            {project.owner.name}
+            <RatingBadge
+              averageRating={project.owner.averageRating}
+              totalReviews={project.owner.totalReviews}
+              emptyLabel=""
+            />
+          </Link>
+        ) : null}
       </span>
       <span className="text-center text-sm text-[#374151]">
         {toPersianNumbersWithComma(budget || 0)} تومان

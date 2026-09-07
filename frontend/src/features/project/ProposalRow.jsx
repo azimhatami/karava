@@ -7,6 +7,7 @@ import ChangeProposalStatus from './ChangeProposalStatus';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import { formatProposalDuration } from '../../utils/formatProposalDuration';
 import useChangeProposalStatus from './useChangeProposalStatus';
+import RatingBadge from '../review/RatingBadge';
 
 const statusStyle = [
   {
@@ -55,7 +56,24 @@ function ProposalRow({ proposal, index }) {
     <>
       <Table.Row>
         <td>{index + 1}</td>
-        <td>{user?.name || '-'}</td>
+        <td>
+          <div className="flex flex-col items-start gap-1">
+            {user?._id ? (
+              <Link
+                to={`/users/${user._id}`}
+                className="font-bold text-[#006045] hover:underline"
+              >
+                {user?.name || '-'}
+              </Link>
+            ) : (
+              <span>{user?.name || '-'}</span>
+            )}
+            <RatingBadge
+              averageRating={user?.averageRating}
+              totalReviews={user?.totalReviews}
+            />
+          </div>
+        </td>
         <td>
           <p>{truncateText(proposal.description, 30)}</p>
         </td>

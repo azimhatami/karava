@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
 import truncateText from '../../utils/truncateText';
+import RatingBadge from '../review/RatingBadge';
 
 function ProjectCard({ project }) {
   const isOpen = project.status === 'OPEN';
@@ -23,10 +24,24 @@ function ProjectCard({ project }) {
           </span>
         </div>
 
-        <div className="flex h-[139px] w-full max-w-[366px] flex-col gap-[23px] opacity-100">
+        <div className="flex h-[139px] w-full max-w-[366px] flex-col gap-[16px] opacity-100">
           <h3 className="h-[17px] w-full max-w-[366px] truncate text-right font-['Inter'] text-[14px] font-bold leading-none tracking-normal text-[#0F172B] opacity-100">
             {project.title}
           </h3>
+          {project.owner?._id ? (
+            <Link
+              to={`/users/${project.owner._id}`}
+              className="flex items-center justify-between gap-2 text-right"
+            >
+              <span className="truncate text-xs font-bold text-[#006045]">
+                {project.owner?.name || 'کارفرما'}
+              </span>
+              <RatingBadge
+                averageRating={project.owner?.averageRating}
+                totalReviews={project.owner?.totalReviews}
+              />
+            </Link>
+          ) : null}
           <p className="h-[51px] w-full max-w-[366px] overflow-hidden text-right font-['Inter'] text-[14px] font-medium leading-none tracking-normal text-[#677487] opacity-100">
             {truncateText(project.description || '', 90)}
           </p>

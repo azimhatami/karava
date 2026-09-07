@@ -23,6 +23,7 @@ import Modal from '../../ui/Modal';
 import Loading from '../../ui/Loading';
 import CreateProposal from '../proposals/CreateProposal';
 import ReviewSection from '../review/ReviewSection';
+import RatingBadge from '../review/RatingBadge';
 
 const PROPOSAL_STATUS = {
   0: {
@@ -226,7 +227,22 @@ function ProjectDetailsPage() {
                 <h2 className="text-sm font-bold">اطلاعات کارفرما</h2>
               </div>
               <div className="space-y-2 text-right text-sm text-[#222020]">
-                <p className="font-bold">{project.owner?.name || 'کارفرما'}</p>
+                {project.owner?._id ? (
+                  <Link
+                    to={`/users/${project.owner._id}`}
+                    className="font-bold text-[#006045] hover:underline"
+                  >
+                    {project.owner?.name || 'کارفرما'}
+                  </Link>
+                ) : (
+                  <p className="font-bold">{project.owner?.name || 'کارفرما'}</p>
+                )}
+                <div>
+                  <RatingBadge
+                    averageRating={project.owner?.averageRating}
+                    totalReviews={project.owner?.totalReviews}
+                  />
+                </div>
                 {project.owner?.companyName ? (
                   <p className="text-[#006045]">{project.owner.companyName}</p>
                 ) : null}
