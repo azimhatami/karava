@@ -18,6 +18,8 @@ const { ProjectModel } = require("../app/models/project");
 const { ProposalModel } = require("../app/models/proposal");
 const { ConversationModel } = require("../app/models/conversation");
 const { MessageModel } = require("../app/models/message");
+const { WalletModel } = require("../app/models/wallet");
+const { WalletTransactionModel } = require("../app/models/walletTransaction");
 
 const DEV_OTP = 111111;
 const FORCE = process.argv.includes("--force");
@@ -161,6 +163,8 @@ async function seed() {
   await Promise.all([
     MessageModel.deleteMany({}),
     ConversationModel.deleteMany({}),
+    WalletTransactionModel.deleteMany({}),
+    WalletModel.deleteMany({}),
     ProposalModel.deleteMany({}),
     ProjectModel.deleteMany({}),
     CategoryModel.deleteMany({}),
@@ -176,6 +180,16 @@ async function seed() {
     freelancersData.map(userDefaults)
   );
   const [admin] = await UserModel.insertMany([userDefaults(adminData)]);
+
+  console.log("Seeding wallets...");
+  const allUsers = [...owners, ...freelancers, admin];
+  await WalletModel.insertMany(
+    allUsers.map((user) => ({
+      user: user._id,
+      balance: 0,
+      heldBalance: 0,
+    }))
+  );
 
   const byEnglish = Object.fromEntries(
     categories.map((c) => [c.englishTitle, c])
@@ -393,6 +407,7 @@ async function seed() {
   console.log(`  Proposals  : ${createdProposals.length}`);
   const conversationCount = await ConversationModel.countDocuments();
   console.log(`  Chats      : ${conversationCount}`);
+  console.log(`  Wallets    : ${await WalletModel.countDocuments()}`);
   console.log("\nTest phone numbers (dev OTP = 111111):");
   console.log("  ADMIN      :", admin.phoneNumber);
   owners.forEach((u) => console.log(`  OWNER      : ${u.phoneNumber}  (${u.name})`));

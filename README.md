@@ -55,9 +55,10 @@ Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-t
 | Persian / Arabic digit normalization (inputs + validators) | Implemented |
 | File uploads (portfolio, project attachments, deliverables) | Implemented |
 | Post-acceptance chat with polling | Implemented |
+| Mock internal wallet (deposit, escrow, release) | Implemented |
 | Development OTP bypass (`111111`) and DB seed script | Implemented |
 | Dark mode | Implemented |
-| Payments / wallet | Not available |
+| Payments / wallet | Mock internal wallet (deposit, escrow hold on accept, release on complete) |
 | Chat / messaging | Not available |
 | File upload | Local disk via swappable `fileStorage` (`backend/uploads/`) |
 
@@ -385,7 +386,8 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 
 - `title`, `description`, `budget`, `tags[]`, `deadline`
 - `attachments[]`, `deliverables[]` — same file shape as portfolio
-- `status`: `OPEN` | `CLOSED`
+- `status`: `OPEN` | `CLOSED` | `COMPLETED`
+- `escrowAmount`, `escrowProposal`, `escrowStatus` (`none` \| `held` \| `released` \| `refunded`)
 - `category` → Category
 - `owner` → User
 - `freelancer` → User | null
@@ -404,6 +406,17 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 - `title`, `englishTitle` (unique), `description`
 - `type` (default `project`)
 - `parentId`, `icon { sm, lg }`
+
+### Wallet
+
+- `user` → User (unique)
+- `balance` (spendable), `heldBalance` (escrow total)
+
+### WalletTransaction
+
+- `wallet` → Wallet
+- `type`: `deposit` | `hold` | `release` | `refund`
+- `amount`, `relatedProject`, `relatedProposal`, `description`
 
 ---
 
