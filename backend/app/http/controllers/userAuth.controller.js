@@ -258,11 +258,16 @@ class userAuthController extends Controller {
   async getUserProfile(req, res) {
     const { _id: userId } = req.user;
     const user = await UserModel.findById(userId, { otp: 0 });
+    const {
+      getRatingStatsByUserIds,
+      withRatingStats,
+    } = require("../../../utils/reviewHelpers");
+    const statsMap = await getRatingStatsByUserIds([userId]);
 
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
-        user,
+        user: withRatingStats(user, statsMap),
       },
     });
   }

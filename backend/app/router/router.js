@@ -15,6 +15,8 @@ const { proposalRoutes } = require("./proposal");
 const { userAuthRoutes } = require("./userAuth");
 const { conversationRoutes } = require("./conversation");
 const { walletRoutes } = require("./wallet");
+const { reviewRoutes } = require("./review");
+const { ReviewController } = require("../http/controllers/review.controller");
 
 const router = require("express").Router();
 
@@ -49,6 +51,18 @@ router.use(
 );
 router.use("/proposal", verifyAccessToken, isVerifiedUser, proposalRoutes);
 router.use("/wallet", verifyAccessToken, isVerifiedUser, walletRoutes);
+
+router.get(
+  "/review/user/:userId",
+  expressAsyncHandler(ReviewController.getReviewsForUser)
+);
+router.get(
+  "/review/project/:projectId",
+  optionalAuthMiddleware,
+  expressAsyncHandler(ReviewController.getReviewsForProject)
+);
+router.use("/review", verifyAccessToken, isVerifiedUser, reviewRoutes);
+
 router.use(
   "/conversations",
   verifyAccessToken,

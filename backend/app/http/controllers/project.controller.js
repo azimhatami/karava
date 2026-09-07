@@ -13,6 +13,10 @@ const {
 } = require("../../../utils/profileCompleteness");
 const { ROLES } = require("../../../utils/constants");
 const { releaseEscrowOnComplete } = require("../../../utils/walletHelpers");
+const {
+  getRatingStatsByUserIds,
+  withRatingStats,
+} = require("../../../utils/reviewHelpers");
 
 class ProjectController extends Controller {
   async addNewProject(req, res) {
@@ -83,17 +87,30 @@ class ProjectController extends Controller {
 
     const projects = await ProjectModel.find(dbQuery)
       .select({
-        owner: 0,
         freelancer: 0,
         proposals: 0,
       })
-      .populate([{ path: "category", select: { title: 1, englishTitle: 1 } }])
-      .sort(sortQuery);
+      .populate([
+        { path: "category", select: { title: 1, englishTitle: 1 } },
+        { path: "owner", select: { name: 1 } },
+      ])
+      .sort(sortQuery)
+      .lean();
+
+    const ratingMap = await getRatingStatsByUserIds(
+      projects.map((project) => project.owner?._id)
+    );
+    const projectsWithRatings = projects.map((project) => ({
+      ...project,
+      owner: project.owner
+        ? withRatingStats(project.owner, ratingMap)
+        : project.owner,
+    }));
 
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
-        projects,
+        projects: projectsWithRatings,
       },
     });
   }
@@ -131,12 +148,29 @@ class ProjectController extends Controller {
         { path: "owner", select: { name: 1 } },
         { path: "freelancer", select: { name: 1 } },
       ])
-      .sort(sortQuery);
+      .sort(sortQuery)
+      .lean();
+
+    const ratingMap = await getRatingStatsByUserIds(
+      projects.flatMap((project) => [
+        project.owner?._id,
+        project.freelancer?._id,
+      ])
+    );
+    const projectsWithRatings = projects.map((project) => ({
+      ...project,
+      owner: project.owner
+        ? withRatingStats(project.owner, ratingMap)
+        : project.owner,
+      freelancer: project.freelancer
+        ? withRatingStats(project.freelancer, ratingMap)
+        : project.freelancer,
+    }));
 
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
-        projects,
+        projects: projectsWithRatings,
       },
     });
   }
@@ -189,10 +223,26 @@ class ProjectController extends Controller {
     );
 
     const projectObj = project.toObject();
+    const ratingUserIds = [
+      projectObj.owner?._id,
+      projectObj.freelancer?._id,
+      ...(projectObj.proposals || []).map((proposal) => proposal.user?._id),
+    ];
+    const ratingMap = await getRatingStatsByUserIds(ratingUserIds);
+
+    projectObj.owner = projectObj.owner
+      ? withRatingStats(projectObj.owner, ratingMap)
+      : projectObj.owner;
+    projectObj.freelancer = projectObj.freelancer
+      ? withRatingStats(projectObj.freelancer, ratingMap)
+      : projectObj.freelancer;
     projectObj.proposals = (projectObj.proposals || []).map((proposal) => ({
       ...proposal,
       conversationId:
         conversationByProposal.get(String(proposal._id)) || null,
+      user: proposal.user
+        ? withRatingStats(proposal.user, ratingMap)
+        : proposal.user,
     }));
 
     return res.status(HttpStatus.OK).json({
@@ -302,11 +352,18 @@ class ProjectController extends Controller {
     delete project.deliverables;
     delete project.freelancer;
 
+    const ownerRatingMap = await getRatingStatsByUserIds([
+      project.owner?._id,
+    ]);
+
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {
         project: {
           ...project,
+          owner: project.owner
+            ? withRatingStats(project.owner, ownerRatingMap)
+            : project.owner,
           attachments,
           deliverables,
           proposalCount,

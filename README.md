@@ -56,6 +56,7 @@ Authentication uses **SMS OTP** (Kavenegar). The UI is fully Persian and right-t
 | File uploads (portfolio, project attachments, deliverables) | Implemented |
 | Post-acceptance chat with polling | Implemented |
 | Mock internal wallet (deposit, escrow, release) | Implemented |
+| Reviews and ratings after project completion | Implemented |
 | Development OTP bypass (`111111`) and DB seed script | Implemented |
 | Dark mode | Implemented |
 | Payments / wallet | Mock internal wallet (deposit, escrow hold on accept, release on complete) |
@@ -357,6 +358,14 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 | GET | `/:id` | FREELANCER, ADMIN | Proposal by id |
 | PATCH | `/:id` | OWNER, ADMIN | Change proposal status (accept holds proposal price in escrow) |
 
+### Review — `/api/review`
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| POST | `/` | Token + verified; OWNER, FREELANCER | Create a review for a completed project (`projectId`, `rating` 1–5, optional `comment`). `reviewee` is derived server-side |
+| GET | `/user/:userId` | Public | Reviews received by a user, plus `averageRating` and `totalReviews` |
+| GET | `/project/:projectId` | Public (optional auth) | Reviews for a project; includes `myReview` and `canReview` when logged in |
+
 ### Wallet — `/api/wallet` (token + verified; OWNER, FREELANCER, ADMIN)
 
 | Method | Path | Description |
@@ -425,6 +434,13 @@ Folders: `portfolio`, `attachments`, `deliverables`.
 - `wallet` → Wallet
 - `type`: `deposit` | `hold` | `release` | `refund`
 - `amount`, `relatedProject`, `relatedProposal`, `description`
+
+### Review
+
+- `project` → Project, `proposal` → Proposal
+- `reviewer`, `reviewee` → User
+- `rating` (1–5), `comment` (optional, max 500)
+- Unique index on `(project, reviewer)`
 
 ---
 
