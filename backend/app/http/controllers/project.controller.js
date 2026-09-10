@@ -122,15 +122,13 @@ class ProjectController extends Controller {
     const { search, category, sort } = req.query;
 
     if (search) dbQuery["$text"] = { $search: search };
-    if (category) {
+    if (category && !category.includes("ALL")) {
       const categories = category.split(",");
-      const categoryIds = [];
-      for (const item of categories) {
-        const { _id } = await CategoryModel.findOne({ englishTitle: item });
-        categoryIds.push(_id);
-      }
+      const found = await CategoryModel.find({
+        englishTitle: { $in: categories },
+      }).select({ _id: 1 });
       dbQuery["category"] = {
-        $in: categoryIds,
+        $in: found.map((item) => item._id),
       };
     }
 
@@ -176,7 +174,8 @@ class ProjectController extends Controller {
   }
   async getProjectById(req, res) {
     const { id } = req.params;
-    await this.findProjectById(id);
+    const existing = await this.findProjectById(id);
+    this.assertProjectOwnership(existing, req.user);
     const project = await ProjectModel.findById(id).populate([
       {
         path: "category",
@@ -377,10 +376,20 @@ class ProjectController extends Controller {
   }
   async findProjectById(id) {
     if (!mongoose.isValidObjectId(id))
-      throw createHttpError.BadRequest("شناسه پروژ ارسال شده صحیح نمیباشد");
+      throw createHttpError.BadRequest("شناسه پروژه ارسال شده صحیح نمیباشد");
     const project = await ProjectModel.findById(id);
     if (!project) throw createHttpError.NotFound("پروژه یافت نشد.");
     return project;
+  }
+  /**
+   * Role alone is not enough: an OWNER must own the project it acts on,
+   * otherwise any logged-in owner could read/edit/delete anyone's project.
+   */
+  assertProjectOwnership(project, user) {
+    if (user.role === ROLES.ADMIN) return;
+    if (String(project.owner) !== String(user._id)) {
+      throw createHttpError.Forbidden("شما به این پروژه دسترسی ندارید");
+    }
   }
   async changeProjectStatus(req, res) {
     const { id } = req.params;
@@ -424,9 +433,13 @@ class ProjectController extends Controller {
     const { id } = req.params;
     const project = await this.findProjectById(id);
 
-    const isAdmin = req.user.role === ROLES.ADMIN;
-    if (!isAdmin && String(project.owner) !== String(req.user._id)) {
-      throw createHttpError.Forbidden("فقط کارفرمای پروژه می‌تواند آن را تکمیل کند");
+    if (
+      req.user.role !== ROLES.ADMIN &&
+      String(project.owner) !== String(req.user._id)
+    ) {
+      throw createHttpError.Forbidden(
+        "فقط کارفرمای پروژه می‌تواند آن را تکمیل کند"
+      );
     }
 
     const { amount } = await releaseEscrowOnComplete({
@@ -445,22 +458,34 @@ class ProjectController extends Controller {
   async deleteProject(req, res) {
     const { id } = req.params;
     const project = await this.findProjectById(id);
+    this.assertProjectOwnership(project, req.user);
 
     if (project.freelancer)
       throw createHttpError.BadRequest("پروژه قابل حذف نیست");
 
+    if (project.escrowStatus === "held")
+      throw createHttpError.BadRequest(
+        "برای این پروژه مبلغی در حالت انتظار است و قابل حذف نیست"
+      );
+
     const result = await ProjectModel.deleteOne({ _id: id });
-    if (result.deletedCount)
-      return res.status(HttpStatus.OK).json({
-        statusCode: HttpStatus.OK,
-        data: {
-          message: "پروژه با موفقیت حذف شد",
-        },
-      });
+    if (!result.deletedCount)
+      throw createHttpError.InternalServerError("حذف پروژه انجام نشد");
+
+    return res.status(HttpStatus.OK).json({
+      statusCode: HttpStatus.OK,
+      data: {
+        message: "پروژه با موفقیت حذف شد",
+      },
+    });
   }
   async updateProject(req, res) {
     const { id } = req.params;
-    await this.findProjectById(id);
+    const project = await this.findProjectById(id);
+    this.assertProjectOwnership(project, req.user);
+    if (project.status === "COMPLETED") {
+      throw createHttpError.BadRequest("پروژه تکمیل‌شده قابل ویرایش نیست");
+    }
     const { title, description, tags, deadline, category, budget } =
       await addProjectSchema.validateAsync(req.body);
     const updateResult = await ProjectModel.updateOne(
@@ -469,8 +494,9 @@ class ProjectController extends Controller {
         $set: { title, description, tags, deadline, category, budget },
       }
     );
-    if (updateResult.modifiedCount == 0)
-      throw createError.InternalServerError("به روزرسانی انجام نشد");
+    // matchedCount, not modifiedCount: resubmitting identical values is not an error
+    if (updateResult.matchedCount === 0)
+      throw createHttpError.InternalServerError("به روزرسانی انجام نشد");
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
       data: {

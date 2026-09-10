@@ -23,20 +23,15 @@ const DEV_OTP = "111111";
 const isDevelopment = () => process.env.NODE_ENV === "development";
 
 class userAuthController extends Controller {
-  constructor() {
-    super();
-    this.code = 0;
-    this.phoneNumber = null;
-  }
   async getOtp(req, res) {
     const { phoneNumber } = await getOtpSchema.validateAsync(req.body);
 
-    this.phoneNumber = phoneNumber;
-    this.code = isDevelopment()
-      ? Number(DEV_OTP)
-      : generateRandomNumber(6);
+    // Per-request local, never instance state: this controller is a singleton,
+    // so two users requesting an OTP at the same time used to overwrite
+    // each other's code.
+    const code = isDevelopment() ? Number(DEV_OTP) : generateRandomNumber(6);
 
-    const result = await this.saveUser(phoneNumber);
+    const result = await this.saveUser(phoneNumber, code);
     if (!result) throw createError.Unauthorized("ورود شما انجام نشد.");
 
     if (isDevelopment()) {
@@ -55,7 +50,7 @@ class userAuthController extends Controller {
       });
     }
 
-    this.sendOTP(phoneNumber, res);
+    this.sendOTP(phoneNumber, code, res);
   }
   async checkOtp(req, res) {
     const { otp: code, phoneNumber } = await checkOtpSchema.validateAsync(
@@ -97,9 +92,9 @@ class userAuthController extends Controller {
       },
     });
   }
-  async saveUser(phoneNumber) {
+  async saveUser(phoneNumber, code) {
     const otp = {
-      code: this.code,
+      code,
       expiresIn: Date.now() + CODE_EXPIRES,
     };
 
@@ -131,7 +126,8 @@ class userAuthController extends Controller {
   }
   async updateUser(phoneNumber, objectData = {}) {
     Object.keys(objectData).forEach((key) => {
-      if (["", " ", 0, null, undefined, "0", NaN].includes(objectData[key]))
+      const value = objectData[key];
+      if (value === undefined || value === null || value === "" || value === " ")
         delete objectData[key];
     });
     const updatedResult = await UserModel.updateOne(
@@ -140,14 +136,14 @@ class userAuthController extends Controller {
     );
     return !!updatedResult.modifiedCount;
   }
-  sendOTP(phoneNumber, res) {
+  sendOTP(phoneNumber, code, res) {
     const kaveNegarApi = Kavenegar.KavenegarApi({
       apikey: `${process.env.KAVENEGAR_API_KEY}`,
     });
     kaveNegarApi.VerifyLookup(
       {
         receptor: phoneNumber,
-        token: this.code,
+        token: code,
         template: "registerVerify",
       },
       (response, status) => {
@@ -180,8 +176,10 @@ class userAuthController extends Controller {
     if (!user.isVerifiedPhoneNumber)
       throw createError.Forbidden("شماره موبایل خود را تایید کنید.");
 
-    const duplicateUser = await UserModel.findOne({ email });
-    console.log(duplicateUser);
+    const duplicateUser = await UserModel.findOne({
+      email,
+      _id: { $ne: user._id },
+    });
     if (duplicateUser)
       throw createError.BadRequest(
         "کاربری با این ایمیل قبلا ثبت نام کرده است."
@@ -228,13 +226,34 @@ class userAuthController extends Controller {
       updatePayload.companyDescription = companyDescription;
     }
 
+    // Guard the $or: an undefined value would collapse to {} and match every
+    // other user, turning a normal save into a bogus "duplicate" error.
+    const uniqueChecks = [];
+    if (email) uniqueChecks.push({ email });
+    if (phoneNumber) uniqueChecks.push({ phoneNumber });
+
+    if (uniqueChecks.length) {
+      const conflict = await UserModel.findOne({
+        _id: { $ne: userId },
+        $or: uniqueChecks,
+      }).select({ email: 1, phoneNumber: 1 });
+      if (conflict) {
+        throw createError.BadRequest(
+          conflict.email === email
+            ? "کاربر دیگری با این ایمیل ثبت‌نام کرده است"
+            : "کاربر دیگری با این شماره موبایل ثبت‌نام کرده است"
+        );
+      }
+    }
+
     const updateResult = await UserModel.updateOne(
       { _id: userId },
       {
         $set: updatePayload,
       }
     );
-    if (!updateResult.modifiedCount === 0)
+    // matchedCount: submitting the same values again is not a failure
+    if (updateResult.matchedCount === 0)
       throw createError.BadRequest("اطلاعات ویرایش نشد");
     return res.status(HttpStatus.OK).json({
       statusCode: HttpStatus.OK,
@@ -246,6 +265,7 @@ class userAuthController extends Controller {
   async refreshToken(req, res) {
     const userId = await verifyRefreshToken(req);
     const user = await UserModel.findById(userId);
+    if (!user) throw createError.Unauthorized("حساب کاربری یافت نشد");
     await setAccessToken(res, user);
     await setRefreshToken(res, user);
     return res.status(HttpStatus.OK).json({

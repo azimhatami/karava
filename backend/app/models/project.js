@@ -25,7 +25,7 @@ const ProjectSchema = new mongoose.Schema(
     tags: [{ type: String }],
     attachments: { type: [UploadedFileSchema], default: [] },
     deliverables: { type: [UploadedFileSchema], default: [] },
-    proposals: { type: [ObjectId], ref: "PROPOSAL", default: [] },
+    proposals: { type: [ObjectId], ref: "Proposal", default: [] },
     deadline: { type: Date, required: true },
     owner: { type: ObjectId, required: true, ref: "User" },
     freelancer: { type: ObjectId, default: null, ref: "User" },
@@ -34,6 +34,12 @@ const ProjectSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// The project list endpoints run { $text: { $search } }; without this index
+// MongoDB rejects the query with "text index required for $text query" (code 27).
+ProjectSchema.index({ title: "text", description: "text", tags: "text" });
+ProjectSchema.index({ owner: 1, createdAt: -1 });
+ProjectSchema.index({ status: 1, createdAt: -1 });
 
 module.exports = {
   ProjectModel: mongoose.model("Project", ProjectSchema),

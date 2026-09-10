@@ -154,7 +154,11 @@ class Application {
     );
     this.#app.use(express.json());
     this.#app.use(express.urlencoded({ extended: true }));
-    this.#app.use(express.static(path.join(__dirname, "..")));
+    // NOTE: never serve the backend root statically — it exposes source code,
+    // scripts and, more importantly, bypasses the access rules that
+    // /api/files/:folder/:filename enforces for private deliverables.
+    // Only "portfolio" files are public, and they are still served through the
+    // controller so the original filename is restored on download.
 
     // Ensure local upload folders exist (storage layer is swappable)
     const { ensureUploadRoot } = require("../utils/fileStorage");

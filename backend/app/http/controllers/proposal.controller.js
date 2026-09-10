@@ -31,6 +31,41 @@ class ProposalController extends Controller {
       "برای ارسال پیشنهاد باید ابتدا پروفایل خود را تکمیل کنید"
     );
 
+    // The project must exist and still accept proposals. Without this the
+    // proposal was created first and pushed blindly, so a wrong/expired
+    // projectId left an orphan proposal behind.
+    const project = await ProjectModel.findById(projectId).select({
+      status: 1,
+      owner: 1,
+      proposals: 1,
+    });
+    if (!project) throw createHttpError.NotFound("پروژه یافت نشد");
+
+    if (project.status !== "OPEN") {
+      throw createHttpError.BadRequest(
+        "این پروژه باز نیست و امکان ارسال پیشنهاد برای آن وجود ندارد"
+      );
+    }
+
+    if (String(project.owner) === String(userId)) {
+      throw createHttpError.BadRequest(
+        "برای پروژه خودتان نمی‌توانید پیشنهاد ارسال کنید"
+      );
+    }
+
+    // One proposal per freelancer per project.
+    if ((project.proposals || []).length) {
+      const duplicate = await ProposalModel.exists({
+        _id: { $in: project.proposals },
+        user: userId,
+      });
+      if (duplicate) {
+        throw createHttpError.BadRequest(
+          "شما قبلاً برای این پروژه پیشنهاد ارسال کرده‌اید"
+        );
+      }
+    }
+
     const proposal = await ProposalModel.create({
       description,
       price,
@@ -38,12 +73,13 @@ class ProposalController extends Controller {
       durationUnit,
       user: userId,
     });
-    await ProjectModel.updateOne(
-      { _id: projectId },
-      { $push: { proposals: proposal._id } }
-    );
     if (!proposal?._id)
       throw createHttpError.InternalServerError("پیشنهاد ثبت نشد");
+
+    await ProjectModel.updateOne(
+      { _id: project._id },
+      { $push: { proposals: proposal._id } }
+    );
 
     return res.status(HttpStatus.CREATED).json({
       statusCode: HttpStatus.CREATED,
@@ -187,10 +223,21 @@ class ProposalController extends Controller {
     proposal.status = status;
     await proposal.save();
 
-    let freelancer = copyObject(proposal).user;
-    if (status !== 2) freelancer = null;
-
-    await ProjectModel.updateOne({ _id: project._id }, { $set: { freelancer } });
+    // Only touch project.freelancer for the proposal that actually owns the
+    // assignment. Rejecting some *other* pending proposal used to clear the
+    // accepted freelancer, which left the escrow held and made the project
+    // impossible to complete.
+    if (status === 2) {
+      await ProjectModel.updateOne(
+        { _id: project._id },
+        { $set: { freelancer: copyObject(proposal).user } }
+      );
+    } else if (previousStatus === 2) {
+      await ProjectModel.updateOne(
+        { _id: project._id },
+        { $set: { freelancer: null } }
+      );
+    }
 
     let conversation = null;
     if (status === 2) {
