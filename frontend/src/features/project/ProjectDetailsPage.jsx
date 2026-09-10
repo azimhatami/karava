@@ -52,7 +52,7 @@ function ProjectDetailsPage() {
     return (
       <div className="min-h-screen bg-karava-bg-subtle">
         <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
-          <HomeHeader />
+          <HomeHeader variant="paper" />
           <div className="flex justify-center py-20">
             <Loading />
           </div>
@@ -65,7 +65,7 @@ function ProjectDetailsPage() {
     return (
       <div className="min-h-screen bg-karava-bg-subtle">
         <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
-          <HomeHeader />
+          <HomeHeader variant="paper" />
           <div className="mt-10">
             <QueryErrorState
               error={error}
@@ -109,7 +109,7 @@ function ProjectDetailsPage() {
   return (
     <div className="min-h-screen bg-karava-bg-subtle">
       <div className="mx-auto w-full max-w-[1440px] space-y-6 px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
-        <HomeHeader />
+        <HomeHeader variant="paper" />
 
         <div className="flex items-center justify-between gap-3">
           <Link

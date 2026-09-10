@@ -21,6 +21,28 @@ export default {
   theme: {
     extend: {
       colors: {
+        // "مرکب / Ink" — home-page identity. Accents are an oklch harmonic
+        // pair (same L & C, hue apart): mint = action, amber = escrow.
+        ink: {
+          DEFAULT: '#071411',
+          raised: '#0D211B',
+          paper: '#F7F5EF',
+          card: '#FFFFFF',
+          line: '#E4E1D6',
+          hair: '#EEEBE3',
+          well: '#F1EFE8',
+          text: '#0E1F1A',
+          body: '#3C4C46',
+          muted: '#5C6E66',
+          dim: '#8CA69B',
+          mint: '#45E499',
+          'mint-mid': '#1E7C50',
+          'mint-deep': '#005D37',
+          'mint-tint': '#D4F9E2',
+          amber: '#FFAC28',
+          'amber-deep': '#894D00',
+          'amber-tint': '#FFEDD6',
+        },
         karava: {
           'bg-subtle': '#F8F9FD',
           white: '#FFFFFF',
