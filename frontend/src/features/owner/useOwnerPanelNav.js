@@ -8,12 +8,16 @@ import {
 import useUser from '../authentication/useUser';
 import useOwnerProjects from '../projects/useOwnerProjects';
 import { useUnreadMessagesCount } from '../messages/useConversations';
-import PanelSidebar from '../shared/PanelSidebar';
 
-function OwnerSidebar() {
+export default function useOwnerPanelNav() {
   const { user } = useUser();
   const { projects } = useOwnerProjects();
   const unreadMessages = useUnreadMessagesCount();
+
+  const roleLabel = {
+    name: user?.name || 'کاربر',
+    title: 'کارفرما',
+  };
 
   const navItems = [
     {
@@ -46,12 +50,5 @@ function OwnerSidebar() {
     },
   ];
 
-  return (
-    <PanelSidebar
-      roleLabel={{ name: user?.name || 'کاربر', title: 'کارفرما' }}
-      navItems={navItems}
-    />
-  );
+  return { roleLabel, navItems };
 }
-
-export default OwnerSidebar;

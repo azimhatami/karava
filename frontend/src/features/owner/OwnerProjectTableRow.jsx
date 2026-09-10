@@ -11,6 +11,7 @@ import ConfirmDelete from '../../ui/ConfirmDelete';
 import CreateProjectForm from '../projects/CreateProjectForm';
 import useRemoveProject from '../projects/useRemoveProject';
 import RatingBadge from '../review/RatingBadge';
+import { MobileDataCard } from '../../ui/ResponsiveTable';
 
 const projectStatus = {
   OPEN: {
@@ -27,11 +28,125 @@ const projectStatus = {
   },
 };
 
-function OwnerProjectTableRow({ project, isAlternate = false }) {
+function OwnerProjectTableRow({ project, isAlternate = false, variant = 'desktop' }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { removeProject, isDeleting } = useRemoveProject();
   const statusMeta = projectStatus[project.status] || projectStatus.CLOSED;
+
+  const statusBadge = (
+    <span
+      className={`inline-flex min-w-[4.5rem] items-center justify-center rounded-[4px] px-2 py-0.5 text-center text-xs font-medium ${statusMeta.className}`}
+    >
+      {statusMeta.label}
+    </span>
+  );
+
+  const freelancerCell = project.freelancer?._id ? (
+    <div className="flex flex-col items-start gap-1 md:items-center">
+      <Link
+        to={`/users/${project.freelancer._id}`}
+        className="font-bold text-[#006045] hover:underline"
+      >
+        {project.freelancer.name}
+      </Link>
+      <RatingBadge
+        averageRating={project.freelancer.averageRating}
+        totalReviews={project.freelancer.totalReviews}
+      />
+    </div>
+  ) : (
+    '—'
+  );
+
+  const actions = (
+    <div className="flex flex-wrap items-center gap-2">
+      <Link
+        to={`/owner/projects/${project._id}`}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-karava-blue-light/20 text-karava-blue transition-colors hover:bg-karava-blue-light/30"
+        aria-label="مشاهده پروژه"
+      >
+        <HiEye className="h-4 w-4" />
+      </Link>
+      <button
+        type="button"
+        onClick={() => setIsEditOpen(true)}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF9C3] text-[#CA8A04] transition-colors hover:bg-[#FEF08A]"
+        aria-label="ویرایش پروژه"
+      >
+        <TbPencilMinus className="h-4 w-4" />
+      </button>
+      <button
+        type="button"
+        onClick={() => setIsDeleteOpen(true)}
+        className="flex h-8 w-8 items-center justify-center rounded-full bg-karava-red/10 text-karava-red transition-colors hover:bg-karava-red/20"
+        aria-label="حذف پروژه"
+      >
+        <HiOutlineTrash className="h-4 w-4" />
+      </button>
+
+      <Modal
+        open={isEditOpen}
+        title={`ویرایش ${project.title}`}
+        onClose={() => setIsEditOpen(false)}
+      >
+        <CreateProjectForm
+          projectToEdit={project}
+          onClose={() => setIsEditOpen(false)}
+        />
+      </Modal>
+
+      <Modal
+        open={isDeleteOpen}
+        title={`حذف ${project.title}`}
+        onClose={() => setIsDeleteOpen(false)}
+      >
+        <ConfirmDelete
+          name={project.title}
+          onClose={() => setIsDeleteOpen(false)}
+          onConfirm={() =>
+            removeProject(project._id, {
+              onSuccess: () => setIsDeleteOpen(false),
+            })
+          }
+          disabled={isDeleting}
+        />
+      </Modal>
+    </div>
+  );
+
+  if (variant === 'card') {
+    return (
+      <MobileDataCard
+        title={project.title}
+        fields={[
+          {
+            key: 'category',
+            label: 'دسته بندی',
+            value: project.category?.title || '—',
+          },
+          {
+            key: 'budget',
+            label: 'بودجه (تومان)',
+            value: `${toPersianNumbersWithComma(project.budget || 0)} تومان`,
+          },
+          {
+            key: 'deadline',
+            label: 'ددلاین',
+            value: project.deadline ? shortDate(project.deadline) : '—',
+          },
+          {
+            key: 'tags',
+            label: 'تگ ها',
+            value: <ProjectTags tags={project.tags} />,
+          },
+          { key: 'freelancer', label: 'فریلنسر', value: freelancerCell },
+          { key: 'status', label: 'وضعیت', value: statusBadge },
+        ]}
+        actions={actions}
+      />
+    );
+  }
 
   return (
     <tr
@@ -55,84 +170,11 @@ function OwnerProjectTableRow({ project, isAlternate = false }) {
         <ProjectTags tags={project.tags} />
       </td>
       <td className="px-1 py-[19px] text-center text-sm text-[#374151]">
-        {project.freelancer?._id ? (
-          <div className="flex flex-col items-center gap-1">
-            <Link
-              to={`/users/${project.freelancer._id}`}
-              className="font-bold text-[#006045] hover:underline"
-            >
-              {project.freelancer.name}
-            </Link>
-            <RatingBadge
-              averageRating={project.freelancer.averageRating}
-              totalReviews={project.freelancer.totalReviews}
-            />
-          </div>
-        ) : (
-          '-'
-        )}
+        {freelancerCell}
       </td>
-      <td className="px-1 py-[19px] text-center">
-        <span
-          className={`inline-flex min-w-[4.5rem] items-center justify-center rounded-[4px] px-2 py-0.5 text-center text-xs font-medium ${statusMeta.className}`}
-        >
-          {statusMeta.label}
-        </span>
-      </td>
+      <td className="px-1 py-[19px] text-center">{statusBadge}</td>
       <td className="px-1 py-[19px]">
-        <div className="flex items-center justify-center gap-2">
-          <Link
-            to={`/owner/projects/${project._id}`}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-karava-blue-light/20 text-karava-blue transition-colors hover:bg-karava-blue-light/30"
-            aria-label="مشاهده پروژه"
-          >
-            <HiEye className="h-4 w-4" />
-          </Link>
-          <button
-            type="button"
-            onClick={() => setIsEditOpen(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FEF9C3] text-[#CA8A04] transition-colors hover:bg-[#FEF08A]"
-            aria-label="ویرایش پروژه"
-          >
-            <TbPencilMinus className="h-4 w-4" />
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsDeleteOpen(true)}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-karava-red/10 text-karava-red transition-colors hover:bg-karava-red/20"
-            aria-label="حذف پروژه"
-          >
-            <HiOutlineTrash className="h-4 w-4" />
-          </button>
-
-          <Modal
-            open={isEditOpen}
-            title={`ویرایش ${project.title}`}
-            onClose={() => setIsEditOpen(false)}
-          >
-            <CreateProjectForm
-              projectToEdit={project}
-              onClose={() => setIsEditOpen(false)}
-            />
-          </Modal>
-
-          <Modal
-            open={isDeleteOpen}
-            title={`حذف ${project.title}`}
-            onClose={() => setIsDeleteOpen(false)}
-          >
-            <ConfirmDelete
-              name={project.title}
-              onClose={() => setIsDeleteOpen(false)}
-              onConfirm={() =>
-                removeProject(project._id, {
-                  onSuccess: () => setIsDeleteOpen(false),
-                })
-              }
-              disabled={isDeleting}
-            />
-          </Modal>
-        </div>
+        <div className="flex items-center justify-center gap-2">{actions}</div>
       </td>
     </tr>
   );

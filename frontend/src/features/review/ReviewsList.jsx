@@ -2,13 +2,17 @@ import { Link } from 'react-router-dom';
 import StarRating from './StarRating';
 import shortDate from '../../utils/shortDate';
 import Empty from '../../ui/Empty';
+import { HiOutlineChatBubbleBottomCenterText } from 'react-icons/hi2';
 
 function ReviewsList({ reviews = [] }) {
   if (!reviews.length) {
     return (
-      <div className="p-4">
-        <Empty resourceName="نظری" />
-      </div>
+      <Empty
+        resourceName="نظری"
+        title="هنوز نظری ثبت نشده است"
+        description="پس از تکمیل پروژه، کاربران می‌توانند امتیاز و نظر خود را ثبت کنند."
+        icon={HiOutlineChatBubbleBottomCenterText}
+      />
     );
   }
 

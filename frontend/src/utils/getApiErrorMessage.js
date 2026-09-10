@@ -42,7 +42,7 @@ export default function getApiErrorMessage(
     const status = error.response.status;
     if (status === 401) return fallback;
     if (status >= 500) {
-      return 'خطای داخلی سرور. لطفاً دوباره تلاش کنید.';
+      return 'الان سرویس در دسترس نیست. لطفاً کمی بعد دوباره تلاش کنید.';
     }
     return fallback;
   }

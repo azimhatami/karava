@@ -6,7 +6,7 @@ export function useConversations() {
   const { user } = useUser();
   const isAuthenticated = Boolean(user);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['conversations'],
     queryFn: getConversationsAPI,
     enabled: isAuthenticated,
@@ -17,6 +17,8 @@ export function useConversations() {
     conversations: data?.conversations || [],
     isLoading: isAuthenticated ? isLoading : false,
     isError: isAuthenticated ? isError : false,
+    error: isAuthenticated ? error : null,
+    refetch,
   };
 }
 

@@ -30,6 +30,7 @@ function CreateProposal({ onClose, projectId }) {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -89,7 +90,12 @@ function CreateProposal({ onClose, projectId }) {
         projectId,
       },
       {
-        onSuccess: () => onClose(),
+        onSuccess: () => {
+          reset();
+          setPriceDisplay('');
+          setPriceError('');
+          onClose();
+        },
         onError: (error) => {
           if (!isProfileIncompleteError(error)) return;
           openIncomplete(getProfileIncompletePayload(error));
@@ -160,6 +166,10 @@ function CreateProposal({ onClose, projectId }) {
           {errors.duration ? (
             <span className="mt-1 block text-right text-xs text-karava-red">
               {errors.duration.message}
+            </span>
+          ) : errors.durationUnit ? (
+            <span className="mt-1 block text-right text-xs text-karava-red">
+              {errors.durationUnit.message}
             </span>
           ) : null}
         </div>

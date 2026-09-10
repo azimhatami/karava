@@ -1,4 +1,5 @@
 import Loading from '../../ui/Loading';
+import QueryErrorState from '../../ui/QueryErrorState';
 import useProposals from '../proposals/useProposals';
 import useProjects from '../../hooks/useProjects';
 import useUser from '../authentication/useUser';
@@ -8,18 +9,42 @@ import ProfileCompletionCard from '../profile/ProfileCompletionCard';
 
 function DashboardLayout() {
   const { user } = useUser();
-  const { isLoading: proposalsLoading, proposals } = useProposals();
-  const { isLoading: projectsLoading, projects } = useProjects();
+  const {
+    isLoading: proposalsLoading,
+    isError: proposalsError,
+    error: proposalsErr,
+    refetch: refetchProposals,
+    proposals,
+  } = useProposals();
+  const {
+    isLoading: projectsLoading,
+    isError: projectsError,
+    error: projectsErr,
+    refetch: refetchProjects,
+    projects,
+  } = useProjects();
 
   if (proposalsLoading || projectsLoading) return <Loading />;
 
+  if (proposalsError || projectsError) {
+    return (
+      <QueryErrorState
+        error={proposalsErr || projectsErr}
+        onRetry={() => {
+          if (proposalsError) refetchProposals();
+          if (projectsError) refetchProjects();
+        }}
+      />
+    );
+  }
+
   return (
     <div className="flex w-full flex-col gap-8">
-      <div className="flex h-[77px] w-full shrink-0 rotate-0 flex-col gap-2.5 p-2.5 opacity-100">
-        <h2 className="h-[19px] w-full rotate-0 text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100">
+      <div className="flex min-h-[77px] w-full shrink-0 flex-col gap-2.5 p-2.5">
+        <h2 className="w-full text-right text-base font-bold leading-none text-[#222020]">
           داشبورد فریلنسر
         </h2>
-        <p className="h-[19px] w-full rotate-0 whitespace-nowrap text-right font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100">
+        <p className="w-full text-right text-sm font-bold leading-6 text-[#222020] md:text-base md:leading-none">
           خوش آمدید {user?.name || 'کاربر'}! وضعیت درخواست ها، درآمد و پروژه
           های مناسب
         </p>

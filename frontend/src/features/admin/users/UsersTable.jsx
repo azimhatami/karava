@@ -2,11 +2,11 @@ import { useState } from 'react';
 import useUsers from '../useUsers';
 import Loading from '../../../ui/Loading';
 import Empty from '../../../ui/Empty';
+import QueryErrorState from '../../../ui/QueryErrorState';
 import Pagination from '../../../ui/Pagination';
-import UserRow from './UserRow';
-
-const USERS_GRID_COLS =
-  'grid-cols-[1.1fr_1.6fr_1.1fr_0.9fr_1fr_0.8fr]';
+import UserRow, { USERS_GRID_COLS } from './UserRow';
+import ResponsiveTable from '../../../ui/ResponsiveTable';
+import { HiOutlineUsers } from 'react-icons/hi2';
 
 const columns = [
   { key: 'name', label: 'نام' },
@@ -18,11 +18,23 @@ const columns = [
 ];
 
 function UsersTable() {
-  const { isLoading, users } = useUsers();
+  const { isLoading, isError, error, refetch, users } = useUsers();
   const [currentPage, setCurrentPage] = useState(1);
 
   if (isLoading) return <Loading />;
-  if (!users.length) return <Empty resourceName="کاربر" />;
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={refetch} />;
+  }
+  if (!users.length) {
+    return (
+      <Empty
+        resourceName="کاربری"
+        title="هنوز کاربری ثبت نشده است"
+        description="با ثبت‌نام کاربران جدید، لیست اینجا نمایش داده می‌شود."
+        icon={HiOutlineUsers}
+      />
+    );
+  }
 
   const itemsPerPage = 4;
   const totalPages = Math.ceil(users.length / itemsPerPage);
@@ -31,29 +43,38 @@ function UsersTable() {
   const currentData = users.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full rotate-0 flex-col gap-[7px] opacity-100">
-      <div className="flex h-[494px] w-full rotate-0 flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3 opacity-100">
-        <div className="flex min-h-0 w-full flex-1 flex-col overflow-auto">
-          <div
-            className={`grid h-[19px] w-full shrink-0 rotate-0 items-center ${USERS_GRID_COLS} opacity-100`}
-          >
-            {columns.map((column) => (
-              <span
-                key={column.key}
-                className="h-[19px] rotate-0 whitespace-nowrap text-center font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100"
-              >
-                {column.label}
-              </span>
-            ))}
-          </div>
+    <section className="flex w-full flex-col gap-[7px]">
+      <ResponsiveTable
+        columns={columns}
+        data={currentData}
+        desktop={
+          <div className="flex h-[494px] w-full flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
+            <div className="min-h-0 w-full flex-1 overflow-x-auto">
+              <div className="flex min-h-0 min-w-[720px] flex-1 flex-col">
+                <div
+                  className={`grid h-[19px] w-full shrink-0 items-center ${USERS_GRID_COLS}`}
+                >
+                  {columns.map((column) => (
+                    <span
+                      key={column.key}
+                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
+                    >
+                      {column.label}
+                    </span>
+                  ))}
+                </div>
 
-          <div className="flex min-h-0 flex-1 flex-col">
-            {currentData.map((user) => (
-              <UserRow key={user._id} user={user} />
-            ))}
+                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                  {currentData.map((user) => (
+                    <UserRow key={user._id} user={user} />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+        renderCard={(user) => <UserRow user={user} variant="card" />}
+      />
 
       <Pagination
         itemsPerPage={itemsPerPage}

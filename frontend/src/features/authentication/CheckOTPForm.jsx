@@ -75,10 +75,16 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
 
   const checkOtpHandler = async (e) => {
     e.preventDefault();
+    const normalizedOtp = digitsOnly(otp);
+    if (normalizedOtp.length !== 6) {
+      setOtpState('error');
+      toast.error('کد تایید باید ۶ رقم باشد');
+      return;
+    }
     try {
       const { user } = await mutateAsync({
         phoneNumber: digitsOnly(phoneNumber).slice(0, 11),
-        otp: digitsOnly(otp),
+        otp: normalizedOtp,
       });
 
       if (selectedRole && user.role !== selectedRole) {
@@ -189,6 +195,11 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
             }}
           />
         </div>
+        {otpState === 'error' && otp.length !== 6 ? (
+          <p className="text-center text-xs text-karava-red">
+            کد تایید باید ۶ رقم باشد
+          </p>
+        ) : null}
 
         <div className="flex h-[17px] w-[436px] max-w-full rotate-0 items-center justify-center opacity-100">
           {time > 0 ? (

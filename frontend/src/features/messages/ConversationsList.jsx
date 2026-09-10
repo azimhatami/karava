@@ -3,16 +3,26 @@ import { HiOutlineChatBubbleLeftRight } from 'react-icons/hi2';
 import { useConversations } from './useConversations';
 import Loading from '../../ui/Loading';
 import Empty from '../../ui/Empty';
+import QueryErrorState from '../../ui/QueryErrorState';
 import truncateText from '../../utils/truncateText';
 import shortDate from '../../utils/shortDate';
 
 function ConversationsList({ basePath }) {
-  const { conversations, isLoading } = useConversations();
+  const { conversations, isLoading, isError, error, refetch } =
+    useConversations();
 
   if (isLoading) return <Loading />;
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={refetch} />;
+  }
   if (!conversations.length) {
     return (
-      <Empty resourceName="گفتگویی" />
+      <Empty
+        resourceName="گفتگویی"
+        title="هنوز گفتگویی ندارید"
+        description="پس از پذیرش پیشنهاد، گفتگو از صفحه پروژه بین کارفرما و فریلنسر آغاز می‌شود."
+        icon={HiOutlineChatBubbleLeftRight}
+      />
     );
   }
 

@@ -32,12 +32,12 @@ function ProjectsHeader() {
   const { transformedCategories } = useCategories();
 
   return (
-    <div className="mb-6 flex w-full flex-nowrap items-center justify-between gap-4">
+    <div className="mb-6 flex w-full flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
       <h2 className="owner-panel-title shrink-0 whitespace-nowrap">
         لیست پروژه ها
       </h2>
 
-      <div className="flex min-w-0 flex-nowrap items-center justify-end gap-3">
+      <div className="flex min-w-0 flex-wrap items-center justify-start gap-3 sm:justify-end">
         <Filter filterField="status" options={statusOptions} />
         <FilterDropDown filterField="sort" options={sortOptions} />
         <FilterDropDown

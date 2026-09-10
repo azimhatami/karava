@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getWalletAPI } from '../../services/walletService';
 
 function useWallet(page = 1) {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['wallet', page],
     queryFn: () => getWalletAPI({ page, limit: 10 }),
     retry: (failureCount, queryError) => {
@@ -15,6 +15,7 @@ function useWallet(page = 1) {
     isLoading,
     isError,
     error,
+    refetch,
     isMock: data?.isMock !== false,
     wallet: data?.wallet || { balance: 0, heldBalance: 0 },
     transactions: data?.transactions || [],

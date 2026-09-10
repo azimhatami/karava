@@ -18,7 +18,7 @@ function ChatThread({ conversationId, backPath }) {
   const [text, setText] = useState('');
   const bottomRef = useRef(null);
 
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['conversation-messages', conversationId],
     queryFn: () => getConversationMessagesAPI(conversationId),
     enabled: Boolean(conversationId) && Boolean(user),
@@ -61,10 +61,22 @@ function ChatThread({ conversationId, backPath }) {
 
   if (isError || !conversation) {
     return (
-      <div className="rounded-[12px] border border-[#F9A8D4] bg-[#FFF1F2] p-6 text-center text-sm text-[#BE185D]">
-        دسترسی به این گفتگو ممکن نیست یا گفتگو یافت نشد.
-        <div className="mt-3">
-          <Link to={backPath} className="font-bold text-[#006045]">
+      <div className="rounded-[12px] border border-[#FECACA] bg-[#FEF2F2] p-6 text-center">
+        <p className="text-sm font-bold text-[#9F1239]">
+          دسترسی به این گفتگو ممکن نیست یا گفتگو یافت نشد.
+        </p>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="inline-flex h-10 items-center justify-center rounded-[6px] border border-karava-green bg-white px-4 text-sm font-bold text-karava-green hover:bg-[#F2FFF8]"
+          >
+            تلاش مجدد
+          </button>
+          <Link
+            to={backPath}
+            className="inline-flex h-10 items-center justify-center rounded-[6px] bg-karava-green px-4 text-sm font-bold text-white hover:bg-karava-green-dark"
+          >
             بازگشت به لیست گفتگوها
           </Link>
         </div>
@@ -85,7 +97,7 @@ function ChatThread({ conversationId, backPath }) {
   };
 
   return (
-    <div className="flex h-[640px] w-full flex-col overflow-hidden rounded-[12px] border border-[#245A49] bg-white">
+    <div className="flex h-[min(640px,calc(100dvh-12rem))] w-full flex-col overflow-hidden rounded-[12px] border border-[#245A49] bg-white">
       <div className="flex items-center justify-between gap-3 border-b border-[#E5E7EB] px-4 py-3">
         <div className="min-w-0 text-right">
           <p className="truncate text-sm font-bold text-[#222020]">
@@ -133,9 +145,14 @@ function ChatThread({ conversationId, backPath }) {
             );
           })
         ) : (
-          <p className="py-10 text-center text-sm text-[#6E6E6E]">
-            هنوز پیامی رد و بدل نشده. اولین پیام را ارسال کنید.
-          </p>
+          <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
+            <p className="text-sm font-bold text-[#374151]">
+              هنوز پیامی رد و بدل نشده
+            </p>
+            <p className="text-xs text-[#6E6E6E]">
+              اولین پیام را ارسال کنید تا گفتگو شروع شود.
+            </p>
+          </div>
         )}
         <div ref={bottomRef} />
       </div>

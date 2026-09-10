@@ -63,11 +63,11 @@ function HomeFilters() {
         />
       </div>
 
-      <div ref={categoryRef} className="relative">
+      <div ref={categoryRef} className="relative w-full sm:w-[288px]">
         <button
           type="button"
           onClick={() => setIsCategoryOpen((open) => !open)}
-          className="flex h-[46px] w-[288px] items-center justify-between rounded-[12px] border border-[#6E6E6E] bg-white p-[10px] text-sm text-[#111827] opacity-100"
+          className="flex h-[46px] w-full items-center justify-between rounded-[12px] border border-[#6E6E6E] bg-white p-[10px] text-sm text-[#111827]"
         >
           <span className="h-[17px] w-[104px] text-right font-['Inter'] text-[14px] font-bold leading-none tracking-normal text-[#1C2E25] opacity-100">
             {currentCategoryLabel}
@@ -111,7 +111,7 @@ function HomeFilters() {
         )}
       </div>
 
-      <div className="flex h-[46px] w-[184px] items-center justify-between rounded-[12px] border border-[#6E6E6E] bg-white p-[10px] opacity-100">
+      <div className="flex h-[46px] w-full items-center justify-between rounded-[12px] border border-[#6E6E6E] bg-white p-[10px] sm:w-[184px]">
         {statusOptions.map((option) => {
           const isActive = option.value === currentStatus;
 

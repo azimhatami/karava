@@ -9,13 +9,17 @@ import useUser from '../authentication/useUser';
 import useUsers from './useUsers';
 import useProjects from '../../hooks/useProjects';
 import useProposals from '../proposals/useProposals';
-import PanelSidebar from '../shared/PanelSidebar';
 
-function AdminSidebar() {
+export default function useAdminPanelNav() {
   const { user } = useUser();
   const { users } = useUsers();
   const { projects } = useProjects();
   const { proposals } = useProposals();
+
+  const roleLabel = {
+    name: user?.name || 'کاربر',
+    title: 'ادمین',
+  };
 
   const navItems = [
     {
@@ -49,12 +53,5 @@ function AdminSidebar() {
     },
   ];
 
-  return (
-    <PanelSidebar
-      roleLabel={{ name: user?.name || 'کاربر', title: 'ادمین' }}
-      navItems={navItems}
-    />
-  );
+  return { roleLabel, navItems };
 }
-
-export default AdminSidebar;

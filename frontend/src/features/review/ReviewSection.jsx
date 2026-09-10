@@ -3,14 +3,13 @@ import ReviewForm from './ReviewForm';
 import ReviewsList from './ReviewsList';
 import useProjectReviews from './useProjectReviews';
 import Loading from '../../ui/Loading';
+import QueryErrorState from '../../ui/QueryErrorState';
 
 function ReviewSection({ project, canParticipate = false }) {
   const projectId = project?._id;
   const isCompleted = project?.status === 'COMPLETED';
-  const { isLoading, reviews, myReview, canReview } = useProjectReviews(
-    projectId,
-    Boolean(projectId),
-  );
+  const { isLoading, isError, error, refetch, reviews, myReview, canReview } =
+    useProjectReviews(projectId, Boolean(projectId));
 
   if (!projectId) return null;
 
@@ -18,6 +17,14 @@ function ReviewSection({ project, canParticipate = false }) {
     return (
       <section className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
         <Loading />
+      </section>
+    );
+  }
+
+  if (isError) {
+    return (
+      <section className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
+        <QueryErrorState error={error} onRetry={refetch} />
       </section>
     );
   }

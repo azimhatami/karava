@@ -21,6 +21,7 @@ import useUser from '../authentication/useUser';
 import HomeHeader from '../home/HomeHeader';
 import Modal from '../../ui/Modal';
 import Loading from '../../ui/Loading';
+import QueryErrorState from '../../ui/QueryErrorState';
 import CreateProposal from '../proposals/CreateProposal';
 import ReviewSection from '../review/ReviewSection';
 import RatingBadge from '../review/RatingBadge';
@@ -43,7 +44,7 @@ const PROPOSAL_STATUS = {
 function ProjectDetailsPage() {
   const navigate = useNavigate();
   const { user } = useUser();
-  const { project, myProposal, isLoading, isError, refetch } =
+  const { project, myProposal, isLoading, isError, error, refetch } =
     usePublicProjectDetails();
   const [open, setOpen] = useState(false);
 
@@ -65,14 +66,24 @@ function ProjectDetailsPage() {
       <div className="min-h-screen bg-karava-bg-subtle">
         <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
           <HomeHeader />
-          <div className="mt-10 rounded-[12px] border border-[#D1D5DB] bg-white p-8 text-center">
-            <p className="font-bold text-[#BE185D]">پروژه یافت نشد</p>
-            <Link
-              to="/"
-              className="mt-4 inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
-            >
-              بازگشت به لیست پروژه‌ها
-            </Link>
+          <div className="mt-10">
+            <QueryErrorState
+              error={error}
+              message={
+                error?.response?.status === 404
+                  ? 'پروژه یافت نشد یا حذف شده است.'
+                  : undefined
+              }
+              onRetry={refetch}
+            />
+            <div className="mt-4 text-center">
+              <Link
+                to="/"
+                className="inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
+              >
+                بازگشت به لیست پروژه‌ها
+              </Link>
+            </div>
           </div>
         </div>
       </div>

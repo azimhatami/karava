@@ -6,18 +6,18 @@ import { useLocation } from 'react-router'
 function useProjects() {
   const { search } = useLocation();
   const queryObject = Object.fromEntries(new URLSearchParams(search));
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['projects', queryObject],
     queryFn: () => getProjectsAPI(search),
-    retry: (failureCount, error) => {
-      if (error?.response?.status === 401) return false;
+    retry: (failureCount, queryError) => {
+      if (queryError?.response?.status === 401) return false;
       return failureCount < 2;
     },
   });
 
   const projects = data?.projects ?? [];
 
-  return { isLoading, isError, projects };
+  return { isLoading, isError, error, refetch, projects };
 }
 
 

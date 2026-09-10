@@ -24,6 +24,8 @@ function ReviewForm({ projectId, onSuccess }) {
       {
         onSuccess: () => {
           setComment('');
+          setRating(0);
+          setError('');
           onSuccess?.();
         },
       },
@@ -62,7 +64,7 @@ function ReviewForm({ projectId, onSuccess }) {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="btn btn-primary w-full disabled:opacity-60"
+        className="karava-form-submit disabled:opacity-60"
       >
         {isSubmitting ? 'در حال ثبت...' : 'ثبت نظر'}
       </button>

@@ -13,6 +13,7 @@ const SendOTPForm = ({
   onSubmit,
   isSendingOtp,
   register,
+  errors,
   selectedRole,
   onBack,
 }) => {
@@ -20,7 +21,7 @@ const SendOTPForm = ({
   const phoneRegister = register(
     'phoneNumber',
     numericFieldOptions({
-      required: true,
+      required: 'شماره موبایل ضروری است',
       minLength: { value: 11, message: 'شماره موبایل باید ۱۱ رقم باشد' },
       pattern: {
         value: /^09[0-9]{9}$/,
@@ -94,6 +95,11 @@ const SendOTPForm = ({
             }}
             className="box-border h-[39px] w-[342px] max-w-full rotate-0 gap-2.5 rounded-[12px] border border-[#6E6E6E] bg-white p-2.5 text-center text-sm text-[#111827] opacity-100 outline-none transition-colors placeholder:text-[#9CA3AF] focus:border-karava-green focus:ring-1 focus:ring-karava-green"
           />
+          {errors?.phoneNumber ? (
+            <span className="mt-1 block text-right text-xs text-karava-red">
+              {errors.phoneNumber.message || 'شماره موبایل نامعتبر است'}
+            </span>
+          ) : null}
         </div>
 
         <div className="flex gap-3">

@@ -12,7 +12,7 @@ import { digitsOnly } from '../../utils/normalizeDigits';
 
 const AuthContainer = () => {
 
-  const { handleSubmit, register, getValues } = useForm();
+  const { handleSubmit, register, getValues, formState: { errors } } = useForm();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [selectedRole, setSelectedRole] = useState(null);
   const [step, setStep] = useState(0);
@@ -54,6 +54,7 @@ const AuthContainer = () => {
             onSubmit={handleSubmit(sendOtpHandler)}
             isSendingOtp={isSendingOtp}
             register={register}
+            errors={errors}
           />
         );
       case 2:

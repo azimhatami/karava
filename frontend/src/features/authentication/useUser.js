@@ -3,7 +3,7 @@ import { getUser } from '../../services/authService';
 
 
 function useUser() {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['user'],
     queryFn: getUser,
     retry: false,
@@ -12,7 +12,7 @@ function useUser() {
 
   const { user } = data || {};
 
-  return { isLoading, isError, user };
+  return { isLoading, isError, error, refetch, user };
 }
 
 

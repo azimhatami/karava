@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { HiOutlineWallet } from 'react-icons/hi2';
+import { HiOutlineWallet, HiOutlineBanknotes } from 'react-icons/hi2';
 import useWallet from './useWallet';
 import useDepositWallet from './useDepositWallet';
 import Loading from '../../ui/Loading';
 import Empty from '../../ui/Empty';
+import QueryErrorState from '../../ui/QueryErrorState';
+import ResponsiveTable, { MobileDataCard } from '../../ui/ResponsiveTable';
 import Modal from '../../ui/Modal';
 import PriceField, { getPriceNumber } from '../../ui/PriceField';
 import shortDate from '../../utils/shortDate';
@@ -34,7 +36,16 @@ function WalletPanel() {
   const [depositOpen, setDepositOpen] = useState(false);
   const [amountInput, setAmountInput] = useState('');
   const [amountError, setAmountError] = useState('');
-  const { isLoading, wallet, transactions, pagination, isMock } = useWallet(page);
+  const {
+    isLoading,
+    isError,
+    error,
+    refetch,
+    wallet,
+    transactions,
+    pagination,
+    isMock,
+  } = useWallet(page);
   const { isDepositing, depositWallet } = useDepositWallet();
 
   const onDeposit = (event) => {
@@ -55,6 +66,9 @@ function WalletPanel() {
   };
 
   if (isLoading) return <Loading />;
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={refetch} />;
+  }
 
   return (
     <section className="flex w-full flex-col gap-4">
@@ -85,7 +99,7 @@ function WalletPanel() {
           <button
             type="button"
             onClick={() => setDepositOpen(true)}
-            className="mt-4 inline-flex h-10 items-center justify-center rounded-[6px] bg-[#006045] px-4 text-sm font-bold text-white hover:bg-[#004d37]"
+            className="btn btn-primary mt-4 inline-flex h-10 w-auto px-4"
           >
             شارژ کیف پول
           </button>
@@ -108,41 +122,91 @@ function WalletPanel() {
           <h3 className="text-sm font-bold text-[#222020]">تاریخچه تراکنش‌ها</h3>
         </div>
         {!transactions.length ? (
-          <div className="p-6">
-            <Empty resourceName="تراکنشی" />
-          </div>
+          <Empty
+            resourceName="تراکنشی"
+            title="هنوز تراکنشی ثبت نشده است"
+            description="با شارژ کیف پول یا پذیرش پیشنهاد، تراکنش‌ها اینجا نمایش داده می‌شوند."
+            icon={HiOutlineBanknotes}
+            actionLabel="شارژ کیف پول"
+            onAction={() => setDepositOpen(true)}
+          />
         ) : (
-          <ul className="divide-y divide-[#E5E7EB]">
-            {transactions.map((tx) => (
-              <li
-                key={tx._id}
-                className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
-              >
-                <div className="min-w-0 text-right">
-                  <p className="text-sm font-bold text-[#222020]">
-                    {TX_LABELS[tx.type] || tx.type}
-                  </p>
-                  <p className="mt-1 truncate text-xs text-[#6E6E6E]">
-                    {tx.description ||
-                      tx.relatedProject?.title ||
-                      'بدون توضیح'}
-                  </p>
-                </div>
-                <div className="text-left">
-                  <p
-                    className={`text-sm font-bold ${
-                      TX_AMOUNT_CLASS[tx.type] || 'text-[#222020]'
-                    }`}
+          <ResponsiveTable
+            columns={[
+              { key: 'type', label: 'نوع' },
+              { key: 'description', label: 'توضیح' },
+              { key: 'amount', label: 'مبلغ' },
+              { key: 'date', label: 'تاریخ' },
+            ]}
+            data={transactions}
+            desktop={
+              <ul className="divide-y divide-[#E5E7EB]">
+                {transactions.map((tx) => (
+                  <li
+                    key={tx._id}
+                    className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
                   >
-                    {formatSignedAmount(tx.type, tx.amount)} تومان
-                  </p>
-                  <p className="mt-1 text-xs text-[#9CA3AF]">
-                    {tx.createdAt ? shortDate(tx.createdAt) : '—'}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+                    <div className="min-w-0 text-right">
+                      <p className="text-sm font-bold text-[#222020]">
+                        {TX_LABELS[tx.type] || tx.type}
+                      </p>
+                      <p className="mt-1 truncate text-xs text-[#6E6E6E]">
+                        {tx.description ||
+                          tx.relatedProject?.title ||
+                          'بدون توضیح'}
+                      </p>
+                    </div>
+                    <div className="text-left">
+                      <p
+                        className={`text-sm font-bold ${
+                          TX_AMOUNT_CLASS[tx.type] || 'text-[#222020]'
+                        }`}
+                      >
+                        {formatSignedAmount(tx.type, tx.amount)} تومان
+                      </p>
+                      <p className="mt-1 text-xs text-[#9CA3AF]">
+                        {tx.createdAt ? shortDate(tx.createdAt) : '—'}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            }
+            renderCard={(tx) => (
+              <MobileDataCard
+                className="m-3 border-[#D1D5DB]"
+                title={TX_LABELS[tx.type] || tx.type}
+                fields={[
+                  {
+                    key: 'description',
+                    label: 'توضیح',
+                    value:
+                      tx.description ||
+                      tx.relatedProject?.title ||
+                      'بدون توضیح',
+                  },
+                  {
+                    key: 'amount',
+                    label: 'مبلغ',
+                    value: (
+                      <span
+                        className={`font-bold ${
+                          TX_AMOUNT_CLASS[tx.type] || 'text-[#222020]'
+                        }`}
+                      >
+                        {formatSignedAmount(tx.type, tx.amount)} تومان
+                      </span>
+                    ),
+                  },
+                  {
+                    key: 'date',
+                    label: 'تاریخ',
+                    value: tx.createdAt ? shortDate(tx.createdAt) : '—',
+                  },
+                ]}
+              />
+            )}
+          />
         )}
       </div>
 
@@ -191,7 +255,7 @@ function WalletPanel() {
           <button
             type="submit"
             disabled={isDepositing}
-            className="btn btn-primary w-full"
+            className="karava-form-submit"
           >
             {isDepositing ? 'در حال شارژ...' : 'تایید شارژ آزمایشی'}
           </button>

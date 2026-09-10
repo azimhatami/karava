@@ -2,11 +2,11 @@ import { useState } from 'react';
 import useProposals from './useProposals';
 import Loading from '../../ui/Loading';
 import Empty from '../../ui/Empty';
-import ProposalRow from './ProposalRow';
+import QueryErrorState from '../../ui/QueryErrorState';
+import ProposalRow, { PROPOSALS_GRID_COLS } from './ProposalRow';
 import Pagination from '../../ui/Pagination';
-
-const PROPOSALS_GRID_COLS =
-  'grid-cols-[minmax(0,2.1fr)_1fr_1fr_1fr_1.1fr]';
+import ResponsiveTable from '../../ui/ResponsiveTable';
+import { HiOutlineDocumentText } from 'react-icons/hi2';
 
 const columns = [
   { key: 'description', label: 'توضیحات' },
@@ -17,11 +17,25 @@ const columns = [
 ];
 
 function ProposalTable() {
-  const { isLoading, proposals } = useProposals();
+  const { isLoading, isError, error, refetch, proposals } = useProposals();
   const [currentPage, setCurrentPage] = useState(1);
 
   if (isLoading) return <Loading />;
-  if (!proposals.length) return <Empty resourceName="درخواست" />;
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={refetch} />;
+  }
+  if (!proposals.length) {
+    return (
+      <Empty
+        resourceName="درخواستی"
+        title="هنوز درخواستی ارسال نکرده‌اید"
+        description="از بخش فرصت‌های شغلی پروژه‌ای را انتخاب و پیشنهاد خود را ثبت کنید."
+        icon={HiOutlineDocumentText}
+        actionLabel="مشاهده پروژه‌ها"
+        actionTo="/freelancer/projects"
+      />
+    );
+  }
 
   const itemsPerPage = 4;
   const totalPages = Math.ceil(proposals.length / itemsPerPage);
@@ -30,31 +44,42 @@ function ProposalTable() {
   const currentData = proposals.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full max-w-[912px] rotate-0 flex-col gap-[7px] opacity-100">
+    <section className="flex w-full max-w-[912px] flex-col gap-[7px]">
       <h3 className="owner-panel-title">درخواست ها</h3>
 
-      <div className="flex h-[494px] w-full max-w-[912px] rotate-0 flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3 opacity-100">
-        <div className="flex min-h-0 w-full max-w-[886px] flex-1 flex-col overflow-auto">
-          <div
-            className={`grid h-[19px] w-full max-w-[886px] shrink-0 rotate-0 items-center ${PROPOSALS_GRID_COLS} opacity-100`}
-          >
-            {columns.map((column) => (
-              <span
-                key={column.key}
-                className="h-[19px] rotate-0 whitespace-nowrap text-center font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100"
-              >
-                {column.label}
-              </span>
-            ))}
-          </div>
+      <ResponsiveTable
+        columns={columns}
+        data={currentData}
+        desktop={
+          <div className="flex h-[494px] w-full max-w-[912px] flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
+            <div className="min-h-0 w-full max-w-[886px] flex-1 overflow-x-auto">
+              <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
+                <div
+                  className={`grid h-[19px] w-full shrink-0 items-center ${PROPOSALS_GRID_COLS}`}
+                >
+                  {columns.map((column) => (
+                    <span
+                      key={column.key}
+                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
+                    >
+                      {column.label}
+                    </span>
+                  ))}
+                </div>
 
-          <div className="flex min-h-0 flex-1 flex-col">
-            {currentData.map((proposal) => (
-              <ProposalRow key={proposal._id} proposal={proposal} />
-            ))}
+                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                  {currentData.map((proposal) => (
+                    <ProposalRow key={proposal._id} proposal={proposal} />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+        renderCard={(proposal) => (
+          <ProposalRow proposal={proposal} variant="card" />
+        )}
+      />
 
       <Pagination
         itemsPerPage={itemsPerPage}

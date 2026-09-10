@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getReviewsForProjectAPI } from '../../services/reviewService';
 
 function useProjectReviews(projectId, enabled = true) {
-  const { data, isLoading, isError, refetch } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['project-reviews', projectId],
     queryFn: () => getReviewsForProjectAPI(projectId),
     enabled: Boolean(projectId) && enabled,
@@ -11,6 +11,7 @@ function useProjectReviews(projectId, enabled = true) {
   return {
     isLoading,
     isError,
+    error,
     refetch,
     reviews: data?.reviews || [],
     myReview: data?.myReview || null,

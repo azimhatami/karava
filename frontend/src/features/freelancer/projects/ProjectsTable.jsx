@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import Loading from '../../../ui/Loading';
 import Empty from '../../../ui/Empty';
+import QueryErrorState from '../../../ui/QueryErrorState';
 import Pagination from '../../../ui/Pagination';
-import FreelancerProjectRow from './FreelancerProjectRow';
+import FreelancerProjectRow, {
+  PROJECTS_GRID_COLS,
+} from './FreelancerProjectRow';
 import useProjects from '../../../hooks/useProjects';
-
-const PROJECTS_GRID_COLS =
-  'grid-cols-[minmax(0,2.4fr)_1.2fr_1.1fr_1fr_0.8fr]';
+import ResponsiveTable from '../../../ui/ResponsiveTable';
+import { HiOutlineBriefcase } from 'react-icons/hi2';
 
 const columns = [
   { key: 'title', label: 'عنوان پروژه' },
@@ -17,11 +19,23 @@ const columns = [
 ];
 
 function ProjectsTable() {
-  const { isLoading, projects } = useProjects();
+  const { isLoading, isError, error, refetch, projects } = useProjects();
   const [currentPage, setCurrentPage] = useState(1);
 
   if (isLoading) return <Loading />;
-  if (!projects.length) return <Empty />;
+  if (isError) {
+    return <QueryErrorState error={error} onRetry={refetch} />;
+  }
+  if (!projects.length) {
+    return (
+      <Empty
+        resourceName="پروژه‌ای"
+        title="پروژه‌ای برای نمایش وجود ندارد"
+        description="فعلاً فرصت شغلی بازی مطابق فیلترها پیدا نشد. بعداً دوباره سر بزنید."
+        icon={HiOutlineBriefcase}
+      />
+    );
+  }
 
   const itemsPerPage = 4;
   const totalPages = Math.ceil(projects.length / itemsPerPage);
@@ -30,29 +44,40 @@ function ProjectsTable() {
   const currentData = projects.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full rotate-0 flex-col gap-[7px] opacity-100">
-      <div className="flex h-[494px] w-full rotate-0 flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3 opacity-100">
-        <div className="flex min-h-0 w-full flex-1 flex-col overflow-auto">
-          <div
-            className={`grid h-[19px] w-full shrink-0 rotate-0 items-center ${PROJECTS_GRID_COLS} opacity-100`}
-          >
-            {columns.map((column) => (
-              <span
-                key={column.key}
-                className="h-[19px] rotate-0 whitespace-nowrap text-center font-['Inter'] text-base font-bold leading-none tracking-normal text-[#222020] opacity-100"
-              >
-                {column.label}
-              </span>
-            ))}
-          </div>
+    <section className="flex w-full flex-col gap-[7px]">
+      <ResponsiveTable
+        columns={columns}
+        data={currentData}
+        desktop={
+          <div className="flex h-[494px] w-full flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
+            <div className="min-h-0 w-full flex-1 overflow-x-auto">
+              <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
+                <div
+                  className={`grid h-[19px] w-full shrink-0 items-center ${PROJECTS_GRID_COLS}`}
+                >
+                  {columns.map((column) => (
+                    <span
+                      key={column.key}
+                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
+                    >
+                      {column.label}
+                    </span>
+                  ))}
+                </div>
 
-          <div className="flex min-h-0 flex-1 flex-col">
-            {currentData.map((project) => (
-              <FreelancerProjectRow key={project._id} project={project} />
-            ))}
+                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
+                  {currentData.map((project) => (
+                    <FreelancerProjectRow key={project._id} project={project} />
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        }
+        renderCard={(project) => (
+          <FreelancerProjectRow project={project} variant="card" />
+        )}
+      />
 
       <Pagination
         itemsPerPage={itemsPerPage}

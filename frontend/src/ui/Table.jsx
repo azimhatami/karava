@@ -1,7 +1,7 @@
-function Table({children}) {
-  return(
-    <div className='overflow-x-auto bg-white'>
-      <table>{children}</table>
+function Table({ children }) {
+  return (
+    <div className="overflow-x-auto bg-white">
+      <table className="min-w-[720px]">{children}</table>
     </div>
   );
 }

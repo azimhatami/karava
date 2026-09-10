@@ -85,7 +85,7 @@
 
 .rti--tag {
   background-color: rgb(var(--color-secondary-500));
-  color: rgb(var(--color-secondary-100)));
+  color: rgb(var(--color-secondary-100));
 }
 
 @layer components {
@@ -120,6 +120,9 @@
   }
   .btn-danger {
     @apply bg-secondary-0 text-red-500 border-red-500 border hover:bg-red-500 hover:text-secondary-100 shadow-md shadow-red-300;
+  }
+  .btn-outline {
+    @apply border border-[#D1D5DB] bg-white text-karava-text hover:bg-karava-bg-subtle shadow-none;
   }
   .btn-success {
     @apply bg-success text-secondary-0 shadow-md shadow-secondary-300 font-semibold;

@@ -17,6 +17,7 @@ import TextField from '../../ui/TextField';
 import KaravaTagsInput from '../../ui/KaravaTagsInput';
 import FileUploadField, { FileList } from '../../ui/FileUploadField';
 import Loading from '../../ui/Loading';
+import QueryErrorState from '../../ui/QueryErrorState';
 import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import { getProfileCompletion } from '../../utils/profileCompleteness';
@@ -46,10 +47,18 @@ function getInitials(name = '') {
 }
 
 function ProfilePage() {
-  const { user, isLoading } = useUser();
+  const { user, isLoading, isError, error, refetch } = useUser();
   const queryClient = useQueryClient();
   const [skills, setSkills] = useState([]);
-  const { reviews, averageRating, totalReviews } = useUserReviews(user?._id);
+  const {
+    reviews,
+    averageRating,
+    totalReviews,
+    isLoading: reviewsLoading,
+    isError: reviewsError,
+    error: reviewsErr,
+    refetch: refetchReviews,
+  } = useUserReviews(user?._id);
 
   const {
     register,
@@ -102,11 +111,13 @@ function ProfilePage() {
   };
 
   if (isLoading) return <Loading />;
-  if (!user) {
+  if (isError || !user) {
     return (
-      <p className="py-10 text-center font-bold text-red-500">
-        اطلاعات کاربر دریافت نشد
-      </p>
+      <QueryErrorState
+        error={error}
+        message="اطلاعات کاربر دریافت نشد"
+        onRetry={refetch}
+      />
     );
   }
 
@@ -416,7 +427,15 @@ function ProfilePage() {
         <div className="border-b border-[#E5E7EB] px-4 py-3">
           <h3 className="text-sm font-bold text-[#222020]">نظرات دریافتی</h3>
         </div>
-        <ReviewsList reviews={reviews} />
+        {reviewsLoading ? (
+          <div className="flex justify-center py-8">
+            <Loading />
+          </div>
+        ) : reviewsError ? (
+          <QueryErrorState error={reviewsErr} onRetry={refetchReviews} />
+        ) : (
+          <ReviewsList reviews={reviews} />
+        )}
       </section>
     </div>
   );

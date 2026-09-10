@@ -6,6 +6,7 @@ import {
 } from 'react-icons/hi2';
 import HomeHeader from '../home/HomeHeader';
 import Loading from '../../ui/Loading';
+import QueryErrorState from '../../ui/QueryErrorState';
 import useUserReviews from '../review/useUserReviews';
 import StarRating from '../review/StarRating';
 import ReviewsList from '../review/ReviewsList';
@@ -23,6 +24,8 @@ function PublicProfilePage() {
   const {
     isLoading,
     isError,
+    error,
+    refetch,
     user,
     reviews,
     averageRating,
@@ -47,14 +50,24 @@ function PublicProfilePage() {
       <div className="min-h-screen bg-karava-bg-subtle">
         <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
           <HomeHeader />
-          <div className="mt-10 rounded-[12px] border border-[#D1D5DB] bg-white p-8 text-center">
-            <p className="font-bold text-[#BE185D]">پروفایل یافت نشد</p>
-            <Link
-              to="/"
-              className="mt-4 inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
-            >
-              بازگشت به صفحه اصلی
-            </Link>
+          <div className="mt-10">
+            <QueryErrorState
+              error={error}
+              message={
+                error?.response?.status === 404
+                  ? 'پروفایل یافت نشد یا در دسترس نیست.'
+                  : undefined
+              }
+              onRetry={refetch}
+            />
+            <div className="mt-4 text-center">
+              <Link
+                to="/"
+                className="inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
+              >
+                بازگشت به صفحه اصلی
+              </Link>
+            </div>
           </div>
         </div>
       </div>

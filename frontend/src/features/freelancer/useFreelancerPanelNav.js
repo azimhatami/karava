@@ -10,15 +10,18 @@ import useUser from '../authentication/useUser';
 import useProjects from '../../hooks/useProjects';
 import useProposals from '../proposals/useProposals';
 import { useUnreadMessagesCount } from '../messages/useConversations';
-import PanelSidebar from '../shared/PanelSidebar';
 
-function FreelancerSidebar() {
+export default function useFreelancerPanelNav() {
   const { user } = useUser();
   const { projects } = useProjects();
   const { proposals } = useProposals();
   const unreadMessages = useUnreadMessagesCount();
-
   const openProjectsCount = projects.filter((p) => p.status === 'OPEN').length;
+
+  const roleLabel = {
+    name: user?.name || 'کاربر',
+    title: 'کارجو',
+  };
 
   const navItems = [
     {
@@ -57,12 +60,5 @@ function FreelancerSidebar() {
     },
   ];
 
-  return (
-    <PanelSidebar
-      roleLabel={{ name: user?.name || 'کاربر', title: 'کارجو' }}
-      navItems={navItems}
-    />
-  );
+  return { roleLabel, navItems };
 }
-
-export default FreelancerSidebar;

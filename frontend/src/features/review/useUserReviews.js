@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getReviewsForUserAPI } from '../../services/reviewService';
 
 function useUserReviews(userId, page = 1) {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['user-reviews', userId, page],
     queryFn: () => getReviewsForUserAPI(userId, { page, limit: 20 }),
     enabled: Boolean(userId),
@@ -16,6 +16,7 @@ function useUserReviews(userId, page = 1) {
     isLoading,
     isError,
     error,
+    refetch,
     user: data?.user || null,
     reviews: data?.reviews || [],
     averageRating: data?.averageRating || 0,

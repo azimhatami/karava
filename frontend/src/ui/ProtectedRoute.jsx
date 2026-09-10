@@ -4,14 +4,15 @@ import toast from './toast';
 
 import useAuthorize from '../features/authentication/useAuthorize';
 import Loading from './Loading';
-
+import QueryErrorState from './QueryErrorState';
 
 function ProtectedRoute({ children }) {
-  const { isAuthenticated, isAuthorized, isLoading, isVerified } = useAuthorize();
+  const { isAuthenticated, isAuthorized, isLoading, isError, isVerified } =
+    useAuthorize();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading || isError) return;
 
     if (!isAuthenticated) {
       navigate('/auth', { replace: true });
@@ -27,12 +28,30 @@ function ProtectedRoute({ children }) {
     if (!isAuthorized) {
       navigate('/', { replace: true });
     }
-  }, [isAuthenticated, isAuthorized, isLoading, navigate, isVerified]);
+  }, [
+    isAuthenticated,
+    isAuthorized,
+    isLoading,
+    isError,
+    navigate,
+    isVerified,
+  ]);
 
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center h-screen bg-secondary-100'>
+      <div className="flex h-screen items-center justify-center bg-karava-bg-subtle">
         <Loading />
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-karava-bg-subtle px-4">
+        <QueryErrorState
+          message="بارگذاری اطلاعات حساب کاربری انجام نشد."
+          onRetry={() => window.location.reload()}
+        />
       </div>
     );
   }
@@ -46,5 +65,4 @@ function ProtectedRoute({ children }) {
   );
 }
 
-
-export default ProtectedRoute
+export default ProtectedRoute;

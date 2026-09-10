@@ -1,13 +1,21 @@
 import useProjects from '../hooks/useProjects';
 import Loading from '../ui/Loading';
 import Empty from '../ui/Empty';
+import QueryErrorState from '../ui/QueryErrorState';
 import HomeHeader from '../features/home/HomeHeader';
 import HomeHero from '../features/home/HomeHero';
 import HomeFilters from '../features/home/HomeFilters';
 import ProjectCard from '../features/home/ProjectCard';
+import { HiOutlineBriefcase } from 'react-icons/hi2';
 
 function Home() {
-  const { isLoading: projectsLoading, isError, projects } = useProjects();
+  const {
+    isLoading: projectsLoading,
+    isError,
+    error,
+    refetch,
+    projects,
+  } = useProjects();
 
   return (
     <div className="min-h-screen bg-karava-bg-subtle">
@@ -21,11 +29,14 @@ function Home() {
             <Loading />
           </div>
         ) : isError ? (
-          <p className="py-10 text-center font-bold text-red-500">
-            خطا در دریافت پروژه‌ها
-          </p>
+          <QueryErrorState error={error} onRetry={refetch} />
         ) : !projects.length ? (
-          <Empty resourceName="پروژه‌ای" />
+          <Empty
+            resourceName="پروژه‌ای"
+            title="پروژه‌ای یافت نشد"
+            description="با تغییر فیلترها یا کمی بعد دوباره امتحان کنید."
+            icon={HiOutlineBriefcase}
+          />
         ) : (
           <div className="grid grid-cols-1 justify-items-center gap-4 md:grid-cols-2 xl:grid-cols-3">
             {projects.map((project) => (
