@@ -39,7 +39,7 @@ function ProtectedRoute({ children }) {
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-karava-bg-subtle">
+      <div className="flex h-screen items-center justify-center bg-ink-paper">
         <Loading />
       </div>
     );
@@ -47,7 +47,7 @@ function ProtectedRoute({ children }) {
 
   if (isError) {
     return (
-      <div className="flex h-screen items-center justify-center bg-karava-bg-subtle px-4">
+      <div className="flex h-screen items-center justify-center bg-ink-paper px-4">
         <QueryErrorState
           message="بارگذاری اطلاعات حساب کاربری انجام نشد."
           onRetry={() => window.location.reload()}
@@ -59,7 +59,7 @@ function ProtectedRoute({ children }) {
   if (isAuthenticated && isAuthorized && isVerified) return children;
 
   return (
-    <div className="flex h-screen items-center justify-center bg-karava-bg-subtle">
+    <div className="flex h-screen items-center justify-center bg-ink-paper">
       <Loading />
     </div>
   );

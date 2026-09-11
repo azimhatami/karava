@@ -41,10 +41,10 @@ function DashboardLayout() {
   return (
     <div className="flex w-full flex-col gap-8">
       <div className="flex min-h-[77px] w-full shrink-0 flex-col gap-2.5 p-2.5">
-        <h2 className="w-full text-right text-base font-bold leading-none text-[#222020]">
+        <h2 className="w-full text-right text-base font-bold leading-none text-[#0E1F1A]">
           داشبورد فریلنسر
         </h2>
-        <p className="w-full text-right text-sm font-bold leading-6 text-[#222020] md:text-base md:leading-none">
+        <p className="w-full text-right text-sm font-bold leading-6 text-[#0E1F1A] md:text-base md:leading-none">
           خوش آمدید {user?.name || 'کاربر'}! وضعیت درخواست ها، درآمد و پروژه
           های مناسب
         </p>

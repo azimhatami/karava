@@ -34,7 +34,7 @@ function DashboardLayout() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-[6px] bg-karava-green px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+          className="inline-flex shrink-0 items-center gap-2 rounded-[6px] bg-ink-mint-mid px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-ink-mint-deep"
         >
           <span>اضافه کردن پروژه</span>
           <HiPlus className="h-4 w-4" />

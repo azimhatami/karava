@@ -17,7 +17,7 @@ function ReviewsList({ reviews = [] }) {
   }
 
   return (
-    <ul className="divide-y divide-[#E5E7EB]">
+    <ul className="divide-y divide-[#EEEBE3]">
       {reviews.map((review) => {
         const reviewerId = review.reviewer?._id;
         const reviewerName = review.reviewer?.name || 'کاربر';
@@ -29,12 +29,12 @@ function ReviewsList({ reviews = [] }) {
               {reviewerId ? (
                 <Link
                   to={`/users/${reviewerId}`}
-                  className="text-sm font-bold text-[#006045] hover:underline"
+                  className="text-sm font-bold text-[#1E7C50] hover:underline"
                 >
                   {reviewerName}
                 </Link>
               ) : (
-                <span className="text-sm font-bold text-[#222020]">
+                <span className="text-sm font-bold text-[#0E1F1A]">
                   {reviewerName}
                 </span>
               )}
@@ -45,9 +45,9 @@ function ReviewsList({ reviews = [] }) {
                 {review.comment}
               </p>
             ) : (
-              <p className="mt-2 text-xs text-[#9CA3AF]">بدون متن نظر</p>
+              <p className="mt-2 text-xs text-[#8CA69B]">بدون متن نظر</p>
             )}
-            <p className="mt-2 text-xs text-[#9CA3AF]">
+            <p className="mt-2 text-xs text-[#8CA69B]">
               {projectTitle ? `پروژه «${projectTitle}» · ` : ''}
               {review.createdAt ? shortDate(review.createdAt) : '—'}
             </p>

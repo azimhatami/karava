@@ -94,16 +94,15 @@
   }
 
   .karava-form-label {
-    @apply block text-sm font-bold leading-[19px] text-karava-text;
+    @apply block text-[13px] font-medium text-ink-body;
   }
 
   .karava-form-input {
-    @apply w-full rounded-[6px] bg-karava-bg-subtle px-4 py-3 text-right text-sm leading-[19px] text-karava-text outline-none transition-colors placeholder:text-karava-gray focus:bg-karava-white;
-    border: none;
+    @apply w-full rounded-[10px] border border-ink-line bg-ink-card px-3.5 py-3 text-right text-sm text-ink-text outline-none transition-colors placeholder:text-ink-dim focus:border-ink-mint-mid focus:ring-1 focus:ring-ink-mint-mid;
   }
 
   .karava-form-submit {
-    @apply flex h-[46px] w-full items-center justify-center rounded-[6px] bg-karava-green text-sm font-bold text-white transition-colors hover:bg-karava-green-dark disabled:cursor-not-allowed disabled:opacity-60;
+    @apply flex h-12 w-full items-center justify-center rounded-[10px] bg-ink-mint text-sm font-bold text-ink transition-[filter] hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .textField_input {
@@ -145,13 +144,13 @@
     @apply karava-form-submit h-auto py-3 shadow-none hover:shadow-none;
   }
   .btn-secondary {
-    @apply bg-secondary-600 text-secondary-100 
+    @apply border border-ink-line bg-ink-card text-ink-muted hover:bg-ink-well hover:text-ink-text;
   }
   .btn-danger {
-    @apply bg-secondary-0 text-red-500 border-red-500 border hover:bg-red-500 hover:text-secondary-100 shadow-md shadow-red-300;
+    @apply border border-[#F0C2CE] bg-ink-card text-[#C9093D] hover:bg-[#FDF2F5];
   }
   .btn-outline {
-    @apply border border-[#D1D5DB] bg-white text-karava-text hover:bg-karava-bg-subtle shadow-none;
+    @apply border border-ink-line bg-ink-card text-ink-muted hover:bg-ink-well hover:text-ink-text shadow-none;
   }
   .btn-success {
     @apply bg-success text-secondary-0 shadow-md shadow-secondary-300 font-semibold;

@@ -36,7 +36,7 @@ function KaravaTagsInput({ tags, onChange, label = 'تگ ها', placeholder = '�
         <button
           type="button"
           onClick={addTag}
-          className="inline-flex shrink-0 items-center gap-1 rounded-[6px] bg-karava-bg-subtle px-3 py-3 text-sm font-medium text-karava-green transition-colors hover:bg-[#E5E7EB]"
+          className="inline-flex shrink-0 items-center gap-1 rounded-[6px] bg-ink-paper px-3 py-3 text-sm font-medium text-ink-mint-mid transition-colors hover:bg-[#EEEBE3]"
         >
           <span>افزودن</span>
           <HiPlus className="h-4 w-4" />
@@ -48,7 +48,7 @@ function KaravaTagsInput({ tags, onChange, label = 'تگ ها', placeholder = '�
           {tags.map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 rounded-full bg-karava-green px-2.5 py-1 text-xs text-white"
+              className="inline-flex items-center gap-1 rounded-full bg-ink-mint-mid px-2.5 py-1 text-xs text-white"
             >
               <HiTag className="h-3 w-3" />
               {tag}

@@ -34,7 +34,7 @@ function KaravaToast({ t, variant = 'success', title, subtitle }) {
         type="button"
         aria-label="بستن"
         onClick={() => hotToast.dismiss(t.id)}
-        className="absolute left-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border border-karava-green-dark text-karava-green-dark transition-colors hover:bg-karava-bg-subtle"
+        className="absolute left-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border border-ink-line text-ink-mint-deep transition-colors hover:bg-ink-paper"
       >
         <HiXMark className="h-3 w-3" />
       </button>
@@ -47,11 +47,11 @@ function KaravaToast({ t, variant = 'success', title, subtitle }) {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-1 text-center">
-        <p className="text-sm font-bold leading-[19px] text-karava-text">
+        <p className="text-sm font-bold leading-[19px] text-ink-text">
           {title || 'خطایی رخ داد'}
         </p>
         {subtitle ? (
-          <p className="text-xs font-normal leading-[15px] text-karava-gray">{subtitle}</p>
+          <p className="text-xs font-normal leading-[15px] text-ink-muted">{subtitle}</p>
         ) : null}
       </div>
 

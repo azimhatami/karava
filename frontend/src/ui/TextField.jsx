@@ -36,7 +36,7 @@ function TextField({
     <div className="karava-form-field">
       <label htmlFor={name} className="karava-form-label">
         {label}
-        {required ? <span className="text-karava-red"> *</span> : null}
+        {required ? <span className="text-[#C9093D]"> *</span> : null}
       </label>
 
       {multiline ? (
@@ -62,7 +62,7 @@ function TextField({
       )}
 
       {errorMessage ? (
-        <span className="mt-1 block text-right text-xs text-karava-red">
+        <span className="mt-1 block text-right text-xs text-[#C9093D]">
           {errorMessage}
         </span>
       ) : null}

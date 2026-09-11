@@ -14,7 +14,7 @@ function FreelancerDashboardProjects({ projects = [] }) {
         </h3>
         <Link
           to="/freelancer/projects"
-          className="text-sm font-medium text-karava-green hover:text-karava-green-dark"
+          className="text-sm font-medium text-ink-mint-mid hover:text-ink-mint-deep"
         >
           مشاهده همه
         </Link>

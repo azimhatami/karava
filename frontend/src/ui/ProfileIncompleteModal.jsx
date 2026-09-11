@@ -38,14 +38,14 @@ function ProfileIncompleteModal({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-[42px] items-center justify-center rounded-[6px] border border-[#6E6E6E] bg-white px-4 text-sm text-[#222020] transition-colors hover:bg-[#F9FAFB]"
+            className="inline-flex h-[42px] items-center justify-center rounded-[6px] border border-[#5C6E66] bg-white px-4 text-sm text-[#0E1F1A] transition-colors hover:bg-[#F7F5EF]"
           >
             بعداً
           </button>
           <Link
             to={profilePath}
             onClick={onClose}
-            className="inline-flex h-[42px] items-center justify-center rounded-[6px] bg-[#006045] px-4 text-sm font-bold text-white transition-colors hover:bg-[#004d37]"
+            className="inline-flex h-[42px] items-center justify-center rounded-[6px] bg-[#1E7C50] px-4 text-sm font-bold text-white transition-colors hover:bg-[#004d37]"
           >
             تکمیل پروفایل
           </Link>

@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import { HiOutlineEye } from 'react-icons/hi2';
 import shortDate from '../../../utils/shortDate';
-import { toPersianNumbersWithComma } from '../../../utils/toPersianNumbers';
+import {
+  toPersianNumbers,
+  toPersianNumbersWithComma,
+} from '../../../utils/toPersianNumbers';
 import {
   DataCard,
   GridRow,
@@ -26,7 +29,9 @@ function FreelancerProjectRow({ project, variant = 'desktop' }) {
     project.category?.title,
     project.owner?.name ? `کارفرما: ${project.owner.name}` : null,
     project.owner?.totalReviews
-      ? `${project.owner.averageRating} از ${project.owner.totalReviews} نظر`
+      ? `${toPersianNumbers(project.owner.averageRating)} از ${toPersianNumbers(
+          project.owner.totalReviews
+        )} نظر`
       : null,
   ].filter(Boolean);
 

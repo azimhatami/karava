@@ -10,7 +10,7 @@ function HeaderMenu() {
       <ul className='flex gap-x-4 items-center'>
         <li>
           <Link to='/'>
-            <HiOutlineHome className='w-5 h-5 text-primary-900'/>
+            <HiOutlineHome className='w-5 h-5 text-ink-mint-mid'/>
           </Link>
         </li>
         <li>
