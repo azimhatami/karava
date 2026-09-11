@@ -61,21 +61,21 @@ function ChatThread({ conversationId, backPath }) {
 
   if (isError || !conversation) {
     return (
-      <div className="rounded-[12px] border border-[#FECACA] bg-[#FEF2F2] p-6 text-center">
-        <p className="text-sm font-bold text-[#9F1239]">
+      <div className="rounded-2xl border border-[#F0C2CE] bg-[#FDF2F5] p-6 text-center">
+        <p className="text-sm font-bold text-[#C9093D]">
           دسترسی به این گفتگو ممکن نیست یا گفتگو یافت نشد.
         </p>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <button
             type="button"
             onClick={() => refetch()}
-            className="inline-flex h-10 items-center justify-center rounded-[6px] border border-karava-green bg-white px-4 text-sm font-bold text-karava-green hover:bg-[#F2FFF8]"
+            className="ink-btn-ghost"
           >
             تلاش مجدد
           </button>
           <Link
             to={backPath}
-            className="inline-flex h-10 items-center justify-center rounded-[6px] bg-karava-green px-4 text-sm font-bold text-white hover:bg-karava-green-dark"
+            className="ink-btn-primary"
           >
             بازگشت به لیست گفتگوها
           </Link>
@@ -97,26 +97,26 @@ function ChatThread({ conversationId, backPath }) {
   };
 
   return (
-    <div className="flex h-[min(640px,calc(100dvh-12rem))] w-full flex-col overflow-hidden rounded-[12px] border border-[#245A49] bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-[#E5E7EB] px-4 py-3">
+    <div className="ink-card flex h-[min(640px,calc(100dvh-12rem))] w-full flex-col overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-ink-hair px-5 py-4">
         <div className="min-w-0 text-right">
-          <p className="truncate text-sm font-bold text-[#222020]">
+          <p className="truncate text-[15px] font-bold text-ink-text">
             {counterpart?.name || 'کاربر'}
           </p>
-          <p className="mt-1 truncate text-xs text-[#6E6E6E]">
+          <p className="mt-1 truncate text-[12.5px] text-ink-muted">
             پروژه: {conversation.project?.title || '—'}
           </p>
         </div>
         <Link
           to={backPath}
-          className="inline-flex items-center gap-1 text-xs font-bold text-[#006045]"
+          className="inline-flex items-center gap-1.5 text-[13px] font-bold text-ink-mint-mid transition-colors hover:text-ink-mint-deep"
         >
           <HiOutlineArrowRight className="h-4 w-4" />
           بازگشت
         </Link>
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto bg-[#F8FFFC] p-4">
+      <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto bg-ink-paper p-5">
         {messages.length ? (
           messages.map((message) => {
             const mine = String(message.sender?._id || message.sender) === String(user?._id);
@@ -126,16 +126,16 @@ function ChatThread({ conversationId, backPath }) {
                 className={`flex ${mine ? 'justify-start' : 'justify-end'}`}
               >
                 <div
-                  className={`max-w-[75%] rounded-[12px] px-3 py-2 text-sm leading-6 ${
+                  className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-[13.5px] leading-7 ${
                     mine
-                      ? 'bg-[#006045] text-white'
-                      : 'border border-[#D1D5DB] bg-white text-[#222020]'
+                      ? 'bg-ink-raised text-[#F2F6F4]'
+                      : 'border border-ink-line bg-ink-card text-ink-text'
                   }`}
                 >
                   <p className="whitespace-pre-wrap break-words">{message.text}</p>
                   <p
                     className={`mt-1 text-[10px] ${
-                      mine ? 'text-white/80' : 'text-[#9CA3AF]'
+                      mine ? 'text-ink-mint/80' : 'text-ink-dim'
                     }`}
                   >
                     {message.createdAt ? shortDate(message.createdAt) : ''}
@@ -146,10 +146,10 @@ function ChatThread({ conversationId, backPath }) {
           })
         ) : (
           <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
-            <p className="text-sm font-bold text-[#374151]">
+            <p className="text-[15px] font-bold text-ink-text">
               هنوز پیامی رد و بدل نشده
             </p>
-            <p className="text-xs text-[#6E6E6E]">
+            <p className="text-[13px] text-ink-muted">
               اولین پیام را ارسال کنید تا گفتگو شروع شود.
             </p>
           </div>
@@ -159,12 +159,12 @@ function ChatThread({ conversationId, backPath }) {
 
       <form
         onSubmit={onSubmit}
-        className="flex items-center gap-2 border-t border-[#E5E7EB] bg-white p-3"
+        className="flex items-center gap-2.5 border-t border-ink-hair bg-ink-card p-3.5"
       >
         <button
           type="submit"
           disabled={isPending || !text.trim()}
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-[#006045] text-white transition-colors hover:bg-[#004d37] disabled:opacity-50"
+          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-ink-mint text-ink transition-[filter] hover:brightness-105 disabled:opacity-40"
           aria-label="ارسال"
         >
           <HiOutlinePaperAirplane className="h-5 w-5 -rotate-90" />
@@ -174,7 +174,7 @@ function ChatThread({ conversationId, backPath }) {
           value={text}
           onChange={(event) => setText(event.target.value.slice(0, 2000))}
           placeholder="پیام خود را بنویسید..."
-          className="h-11 w-full rounded-[10px] border border-[#D1D5DB] bg-[#F9FAFB] px-3 text-sm text-[#222020] outline-none focus:border-[#006045]"
+          className="ink-input"
           maxLength={2000}
         />
       </form>

@@ -7,6 +7,7 @@ import Empty from '../../ui/Empty';
 import QueryErrorState from '../../ui/QueryErrorState';
 import ResponsiveTable, { MobileDataCard } from '../../ui/ResponsiveTable';
 import Modal from '../../ui/Modal';
+import Pagination from '../../ui/Pagination';
 import PriceField, { getPriceNumber } from '../../ui/PriceField';
 import shortDate from '../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
@@ -19,10 +20,10 @@ const TX_LABELS = {
 };
 
 const TX_AMOUNT_CLASS = {
-  deposit: 'text-[#006045]',
-  hold: 'text-[#CA8A04]',
-  release: 'text-[#006045]',
-  refund: 'text-[#006045]',
+  deposit: 'text-ink-mint-deep',
+  hold: 'text-ink-amber-deep',
+  release: 'text-ink-mint-deep',
+  refund: 'text-ink-mint-deep',
 };
 
 function formatSignedAmount(type, amount) {
@@ -80,46 +81,46 @@ function WalletPanel() {
           </p>
         </div>
         {isMock ? (
-          <span className="inline-flex items-center rounded-[6px] border border-[#FACC15] bg-[#FEF9C3] px-3 py-1 text-xs font-bold text-[#854D0E]">
+          <span className="ink-chip bg-ink-amber-tint text-ink-amber-deep">
             حالت آزمایشی — بدون درگاه واقعی
           </span>
         ) : null}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-[12px] border border-[#006045] bg-white p-4">
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="ink-card p-5">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm text-[#6E6E6E]">موجودی قابل‌استفاده</p>
-            <HiOutlineWallet className="h-5 w-5 text-[#006045]" />
+            <p className="text-[13px] text-ink-muted">موجودی قابل‌استفاده</p>
+            <HiOutlineWallet className="h-5 w-5 text-ink-mint-mid" />
           </div>
-          <p className="mt-3 text-2xl font-black text-[#006045]">
+          <p className="mt-3 text-[30px] font-black tracking-[-0.015em] text-ink-text">
             {toPersianNumbersWithComma(wallet.balance || 0)}{' '}
             <span className="text-sm font-bold">تومان</span>
           </p>
           <button
             type="button"
             onClick={() => setDepositOpen(true)}
-            className="btn btn-primary mt-4 inline-flex h-10 w-auto px-4"
+            className="ink-btn-accent mt-5"
           >
             شارژ کیف پول
           </button>
         </div>
 
-        <div className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
-          <p className="text-sm text-[#6E6E6E]">موجودی در انتظار (escrow)</p>
-          <p className="mt-3 text-2xl font-black text-[#CA8A04]">
+        <div className="rounded-2xl border border-[#F3D9A8] bg-ink-amber-tint p-5">
+          <p className="text-[13px] text-ink-amber-deep">موجودی در انتظار (امانت)</p>
+          <p className="mt-3 text-[30px] font-black tracking-[-0.015em] text-ink-amber-deep">
             {toPersianNumbersWithComma(wallet.heldBalance || 0)}{' '}
             <span className="text-sm font-bold">تومان</span>
           </p>
-          <p className="mt-3 text-xs leading-5 text-[#6E6E6E]">
+          <p className="mt-3 text-[12.5px] leading-6 text-ink-amber-deep/80">
             مبلغ پیشنهادهای پذیرفته‌شده تا تکمیل پروژه نزد پلتفرم می‌ماند.
           </p>
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-[12px] border border-[#245A49] bg-white">
-        <div className="border-b border-[#E5E7EB] px-4 py-3">
-          <h3 className="text-sm font-bold text-[#222020]">تاریخچه تراکنش‌ها</h3>
+      <div className="ink-card overflow-hidden">
+        <div className="border-b border-ink-hair px-5 py-4">
+          <h3 className="text-[15px] font-bold text-ink-text">تاریخچه تراکنش‌ها</h3>
         </div>
         {!transactions.length ? (
           <Empty
@@ -140,17 +141,17 @@ function WalletPanel() {
             ]}
             data={transactions}
             desktop={
-              <ul className="divide-y divide-[#E5E7EB]">
+              <ul className="divide-y divide-ink-hair">
                 {transactions.map((tx) => (
                   <li
                     key={tx._id}
-                    className="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+                    className="flex flex-wrap items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-[#FBFAF6]"
                   >
                     <div className="min-w-0 text-right">
-                      <p className="text-sm font-bold text-[#222020]">
+                      <p className="text-[14px] font-bold text-ink-text">
                         {TX_LABELS[tx.type] || tx.type}
                       </p>
-                      <p className="mt-1 truncate text-xs text-[#6E6E6E]">
+                      <p className="mt-1 truncate text-[12.5px] text-ink-muted">
                         {tx.description ||
                           tx.relatedProject?.title ||
                           'بدون توضیح'}
@@ -158,13 +159,13 @@ function WalletPanel() {
                     </div>
                     <div className="text-left">
                       <p
-                        className={`text-sm font-bold ${
-                          TX_AMOUNT_CLASS[tx.type] || 'text-[#222020]'
+                        className={`text-[14px] font-black ${
+                          TX_AMOUNT_CLASS[tx.type] || 'text-ink-text'
                         }`}
                       >
                         {formatSignedAmount(tx.type, tx.amount)} تومان
                       </p>
-                      <p className="mt-1 text-xs text-[#9CA3AF]">
+                      <p className="mt-1 text-[12px] text-ink-dim">
                         {tx.createdAt ? shortDate(tx.createdAt) : '—'}
                       </p>
                     </div>
@@ -174,7 +175,7 @@ function WalletPanel() {
             }
             renderCard={(tx) => (
               <MobileDataCard
-                className="m-3 border-[#D1D5DB]"
+                className="m-3"
                 title={TX_LABELS[tx.type] || tx.type}
                 fields={[
                   {
@@ -190,8 +191,8 @@ function WalletPanel() {
                     label: 'مبلغ',
                     value: (
                       <span
-                        className={`font-bold ${
-                          TX_AMOUNT_CLASS[tx.type] || 'text-[#222020]'
+                        className={`font-black ${
+                          TX_AMOUNT_CLASS[tx.type] || 'text-ink-text'
                         }`}
                       >
                         {formatSignedAmount(tx.type, tx.amount)} تومان
@@ -211,27 +212,11 @@ function WalletPanel() {
       </div>
 
       {pagination.totalPages > 1 ? (
-        <div className="flex items-center justify-center gap-4">
-          <button
-            type="button"
-            disabled={page <= 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            className="rounded-[6px] border border-[#D1D5DB] bg-white px-3 py-1.5 text-sm disabled:opacity-40"
-          >
-            قبلی
-          </button>
-          <span className="text-sm text-[#6E6E6E]">
-            صفحه {pagination.page} از {pagination.totalPages}
-          </span>
-          <button
-            type="button"
-            disabled={page >= pagination.totalPages}
-            onClick={() => setPage((p) => p + 1)}
-            className="rounded-[6px] border border-[#D1D5DB] bg-white px-3 py-1.5 text-sm disabled:opacity-40"
-          >
-            بعدی
-          </button>
-        </div>
+        <Pagination
+          currentPage={pagination.page}
+          totalPages={pagination.totalPages}
+          setCurrentPage={setPage}
+        />
       ) : null}
 
       <Modal
@@ -240,7 +225,7 @@ function WalletPanel() {
         title="شارژ آزمایشی کیف پول"
       >
         <form className="space-y-4" onSubmit={onDeposit}>
-          <p className="rounded-[8px] bg-[#FEF9C3] px-3 py-2 text-xs leading-5 text-[#854D0E]">
+          <p className="rounded-xl bg-ink-amber-tint px-4 py-3 text-[12.5px] leading-6 text-ink-amber-deep">
             این شارژ شبیه‌سازی‌شده است و به درگاه پرداخت واقعی متصل نیست.
           </p>
           <PriceField
@@ -255,7 +240,7 @@ function WalletPanel() {
           <button
             type="submit"
             disabled={isDepositing}
-            className="karava-form-submit"
+            className="ink-btn-accent w-full"
           >
             {isDepositing ? 'در حال شارژ...' : 'تایید شارژ آزمایشی'}
           </button>
