@@ -22,7 +22,7 @@ function DashboardLayout() {
   }
 
   return (
-    <div className="flex min-h-[1103px] w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <div className="flex w-full flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1 text-right">
           <h2 className="owner-panel-title">داشبورد کارفرما</h2>

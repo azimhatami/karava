@@ -44,15 +44,15 @@ function ProposalTable() {
   const currentData = proposals.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full max-w-[912px] flex-col gap-[7px]">
+    <section className="flex w-full flex-col gap-3">
       <h3 className="owner-panel-title">درخواست ها</h3>
 
       <ResponsiveTable
         columns={columns}
         data={currentData}
         desktop={
-          <div className="flex h-[494px] w-full max-w-[912px] flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
-            <div className="min-h-0 w-full max-w-[886px] flex-1 overflow-x-auto">
+          <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card">
+            <div className="min-h-0 w-full flex-1 overflow-x-auto">
               <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
                 <div
                   className={`grid h-[19px] w-full shrink-0 items-center ${PROPOSALS_GRID_COLS}`}

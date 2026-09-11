@@ -49,7 +49,7 @@ function ProjectsTable() {
         columns={columns}
         data={currentData}
         desktop={
-          <div className="flex h-[494px] w-full flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
+          <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card">
             <div className="min-h-0 w-full flex-1 overflow-x-auto">
               <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
                 <div

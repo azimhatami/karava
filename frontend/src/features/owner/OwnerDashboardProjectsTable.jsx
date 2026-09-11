@@ -38,16 +38,16 @@ function OwnerDashboardProjectsTable() {
   }
 
   return (
-    <section className="flex w-full max-w-[912px] flex-col gap-[7px]">
+    <section className="flex w-full flex-col gap-3">
       <h3 className="owner-panel-title">پروژه های شما</h3>
 
       <ResponsiveTable
         columns={columns}
         data={projects}
         desktop={
-          <div className="flex h-[494px] w-full flex-col overflow-hidden rounded-[6px] border border-karava-green-dark bg-white p-3 [color-scheme:light]">
-            <div className="min-h-0 flex-1 overflow-x-auto overflow-y-auto">
-              <table className="owner-projects-table min-w-[720px] w-full max-w-[886px] border-collapse bg-white">
+          <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card [color-scheme:light]">
+            <div className="min-h-0 flex-1 overflow-x-auto">
+              <table className="owner-projects-table w-full min-w-[880px] border-collapse bg-ink-card">
                 <thead>
                   <tr className="owner-projects-table__head-row">
                     {columns.map((column) => (

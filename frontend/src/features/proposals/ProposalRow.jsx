@@ -83,7 +83,7 @@ function ProposalRow({ proposal, variant = 'desktop' }) {
 
   return (
     <div
-      className={`box-border grid min-h-[68px] w-full max-w-[886px] shrink-0 items-center border-b border-[#000000] px-1 py-[19px] transition-colors hover:bg-[#F2FFF8] ${PROPOSALS_GRID_COLS}`}
+      className={`box-border grid min-h-[68px] w-full shrink-0 items-center border-b border-ink-hair px-4 py-4 transition-colors hover:bg-[#FBFAF6] ${PROPOSALS_GRID_COLS}`}
     >
       <span className="min-w-0 truncate text-center text-sm text-[#374151]">
         {truncateText(description || '', 30)}
