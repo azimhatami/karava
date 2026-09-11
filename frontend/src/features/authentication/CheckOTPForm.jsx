@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { checkOtp } from '../../services/authService';
 import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
@@ -33,19 +33,31 @@ const SUCCESS_BORDER_DELAY_MS = 700;
 function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
   const [otp, setOtp] = useState('');
   const [otpState, setOtpState] = useState('empty');
+  const [errorMessage, setErrorMessage] = useState('');
   const [time, setTime] = useState(RESEND_TIME);
+  const attemptedRef = useRef('');
   const navigate = useNavigate();
 
   const { isPending, mutateAsync } = useMutation({
     mutationFn: checkOtp,
   });
 
-  const inputBorderColor =
-    otpState === 'error'
-      ? '#C9093D'
-      : otpState === 'success'
-        ? '#1E7C50'
-        : '#E4E1D6';
+  // The boxes themselves report the result: mint on a correct code,
+  // red on a rejected one.
+  const FIELD_STATES = {
+    empty: { border: '#E4E1D6', bg: '#F1EFE8', ring: 'none' },
+    error: {
+      border: '#C9093D',
+      bg: '#FDF2F5',
+      ring: '0 0 0 3px rgba(201, 9, 61, 0.12)',
+    },
+    success: {
+      border: '#1E7C50',
+      bg: '#D4F9E2',
+      ring: '0 0 0 3px rgba(30, 124, 80, 0.15)',
+    },
+  };
+  const field = FIELD_STATES[otpState] || FIELD_STATES.empty;
 
   const continueAfterVerifiedOtp = (user) => {
     resetAuthRefreshState();
@@ -72,14 +84,16 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
     if (user.role === 'ADMIN') return navigate('/admin');
   };
 
-  const checkOtpHandler = async (e) => {
-    e.preventDefault();
-    const normalizedOtp = digitsOnly(otp);
+  const verifyOtp = async (code) => {
+    const normalizedOtp = digitsOnly(code);
     if (normalizedOtp.length !== 6) {
       setOtpState('error');
+      setErrorMessage('کد تایید باید ۶ رقم باشد');
       toast.error('کد تایید باید ۶ رقم باشد');
       return;
     }
+    // remember what we tried so a failed code is not retried on every render
+    attemptedRef.current = normalizedOtp;
     try {
       const { user } = await mutateAsync({
         phoneNumber: digitsOnly(phoneNumber).slice(0, 11),
@@ -94,18 +108,37 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
         }
         resetAuthRefreshState();
         setOtpState('error');
+        setErrorMessage(ROLE_MISMATCH_MESSAGE);
         toast.error(ROLE_MISMATCH_MESSAGE);
         return;
       }
 
       setOtpState('success');
+      setErrorMessage('');
       await new Promise((resolve) => setTimeout(resolve, SUCCESS_BORDER_DELAY_MS));
       continueAfterVerifiedOtp(user);
     } catch (error) {
+      const message = getApiErrorMessage(error, 'کد وارد شده صحیح نیست.');
       setOtpState('error');
-      toast.error(getApiErrorMessage(error, 'تایید کد انجام نشد.'));
+      setErrorMessage(message);
+      toast.error(message);
     }
   };
+
+  const checkOtpHandler = (e) => {
+    e.preventDefault();
+    verifyOtp(otp);
+  };
+
+  // Auto-submit: the sixth digit is the action, no button press needed.
+  // Guarded so the same code is never sent twice and a success is final.
+  useEffect(() => {
+    const code = digitsOnly(otp);
+    if (code.length !== 6) return;
+    if (isPending || otpState === 'success') return;
+    if (attemptedRef.current === code) return;
+    verifyOtp(code);
+  }, [otp, isPending, otpState]);
 
   useEffect(() => {
     const timer = time > 0 && setInterval(() => setTime((t) => t - 1), 1000);
@@ -117,13 +150,18 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
   const handleOtpChange = (value) => {
     if (otpState === 'success') return;
     setOtp(digitsOnly(value).slice(0, 6));
-    if (otpState === 'error') setOtpState('empty');
+    if (otpState === 'error') {
+      setOtpState('empty');
+      setErrorMessage('');
+    }
   };
 
   const handleResendOtp = () => {
     setTime(RESEND_TIME);
     setOtp('');
     setOtpState('empty');
+    setErrorMessage('');
+    attemptedRef.current = '';
     onResendOtp();
   };
 
@@ -188,22 +226,33 @@ function CheckOTPForm({ phoneNumber, selectedRole, onBack, onResendOtp }) {
             width: '52px',
             height: '56px',
             borderRadius: 10,
-            border: `1px solid ${inputBorderColor}`,
-            backgroundColor: '#F1EFE8',
+            border: `1.5px solid ${field.border}`,
+            backgroundColor: field.bg,
+            boxShadow: field.ring,
             color: '#0E1F1A',
             fontSize: '1.125rem',
             fontWeight: 700,
             outline: 'none',
-            transition: 'border-color 200ms ease',
+            opacity: isPending ? 0.65 : 1,
+            transition:
+              'border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease, opacity 180ms ease',
           }}
         />
       </div>
 
-      {otpState === 'error' && otp.length !== 6 ? (
-        <p className="mb-4 text-center text-xs text-[#C9093D]">
-          کد تایید باید ۶ رقم باشد
-        </p>
-      ) : null}
+      <div className="mb-4 min-h-[20px] text-center">
+        {isPending ? (
+          <p className="text-[12.5px] text-ink-muted">در حال بررسی کد…</p>
+        ) : otpState === 'error' && errorMessage ? (
+          <p className="text-[12.5px] font-medium text-[#C9093D]">
+            {errorMessage}
+          </p>
+        ) : otpState === 'success' ? (
+          <p className="text-[12.5px] font-medium text-ink-mint-deep">
+            کد تایید شد، در حال ورود…
+          </p>
+        ) : null}
+      </div>
 
       <div className="mb-6 text-center">
         {time > 0 ? (
