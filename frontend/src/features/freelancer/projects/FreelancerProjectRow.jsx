@@ -1,60 +1,39 @@
 import { Link } from 'react-router-dom';
 import { HiOutlineEye } from 'react-icons/hi2';
-import truncateText from '../../../utils/truncateText';
 import shortDate from '../../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../../utils/toPersianNumbers';
-import RatingBadge from '../../review/RatingBadge';
-import { MobileDataCard } from '../../../ui/ResponsiveTable';
+import {
+  DataCard,
+  GridRow,
+  Money,
+  PrimaryCell,
+} from '../../../ui/DataTable';
 
-const PROJECTS_GRID_COLS =
-  'grid-cols-[minmax(0,2.4fr)_1.2fr_1.1fr_1fr_0.8fr]';
+export const FREELANCER_PROJECT_COLUMNS = [
+  { key: 'project', label: 'پروژه', width: 'minmax(0, 2.6fr)' },
+  { key: 'budget', label: 'بودجه', width: '1.1fr' },
+  { key: 'deadline', label: 'ددلاین', width: '1fr' },
+  { key: 'actions', label: '', width: '130px', align: 'end' },
+];
 
-const projectStatus = {
-  OPEN: {
-    label: 'باز',
-    className: 'bg-karava-green text-white',
-  },
-  CLOSED: {
-    label: 'بسته',
-    className: 'border border-[#F9A8D4] bg-[#FDF2F8] text-[#BE185D]',
-  },
-  COMPLETED: {
-    label: 'تکمیل‌شده',
-    className: 'bg-[#E0F2FE] text-[#075985]',
-  },
-};
+const STATUS_KEY = { OPEN: 'open', CLOSED: 'closed', COMPLETED: 'completed' };
 
 function FreelancerProjectRow({ project, variant = 'desktop' }) {
   const { status, title, budget, deadline } = project;
-  const statusMeta = projectStatus[status] || projectStatus.CLOSED;
+  const statusKey = STATUS_KEY[status] || 'closed';
 
-  const statusBadge = (
-    <span
-      className={`inline-flex min-w-[4.5rem] items-center justify-center rounded-[4px] px-2 py-0.5 text-center text-xs font-medium ${statusMeta.className}`}
-    >
-      {statusMeta.label}
-    </span>
-  );
-
-  const ownerCell = project.owner?._id ? (
-    <Link
-      to={`/users/${project.owner._id}`}
-      className="inline-flex items-center gap-1 text-xs text-[#006045] hover:underline"
-    >
-      {project.owner.name}
-      <RatingBadge
-        averageRating={project.owner.averageRating}
-        totalReviews={project.owner.totalReviews}
-        emptyLabel=""
-      />
-    </Link>
-  ) : null;
+  const meta = [
+    project.category?.title,
+    project.owner?.name ? `کارفرما: ${project.owner.name}` : null,
+    project.owner?.totalReviews
+      ? `${project.owner.averageRating} از ${project.owner.totalReviews} نظر`
+      : null,
+  ].filter(Boolean);
 
   const actions = (
     <Link
       to={`/projects/${project._id}`}
-      aria-label="مشاهده جزئیات"
-      className="inline-flex h-8 items-center gap-2 rounded-[6px] border border-[#006045] bg-white px-3 text-xs font-bold text-[#006045] hover:bg-[#006045] hover:text-white"
+      className="inline-flex h-9 items-center gap-2 rounded-[9px] border border-ink-line px-3.5 text-[12.5px] font-bold text-ink-muted transition-colors hover:bg-ink-well hover:text-ink-text"
     >
       <HiOutlineEye className="h-4 w-4" />
       مشاهده
@@ -63,25 +42,19 @@ function FreelancerProjectRow({ project, variant = 'desktop' }) {
 
   if (variant === 'card') {
     return (
-      <MobileDataCard
+      <DataCard
         title={title}
-        fields={[
+        status={statusKey}
+        meta={meta}
+        stats={[
           {
-            key: 'owner',
-            label: 'کارفرما',
-            value: ownerCell || '—',
-          },
-          {
-            key: 'budget',
             label: 'بودجه (تومان)',
-            value: `${toPersianNumbersWithComma(budget || 0)} تومان`,
+            value: toPersianNumbersWithComma(budget || 0),
           },
           {
-            key: 'deadline',
             label: 'ددلاین',
             value: deadline ? shortDate(deadline) : '—',
           },
-          { key: 'status', label: 'وضعیت', value: statusBadge },
         ]}
         actions={actions}
       />
@@ -89,32 +62,15 @@ function FreelancerProjectRow({ project, variant = 'desktop' }) {
   }
 
   return (
-    <div
-      className={`box-border grid min-h-[68px] w-full shrink-0 items-center border-b border-[#000000] px-1 py-[19px] transition-colors hover:bg-[#F2FFF8] ${PROJECTS_GRID_COLS}`}
-    >
-      <span className="min-w-0 truncate text-center text-sm text-[#374151]">
-        <span className="block truncate">{truncateText(title || '', 30)}</span>
-        {ownerCell}
+    <GridRow columns={FREELANCER_PROJECT_COLUMNS}>
+      <PrimaryCell title={title} status={statusKey} meta={meta} />
+      <Money amount={budget} />
+      <span className="text-[13px] text-ink-body">
+        {deadline ? shortDate(deadline) : '—'}
       </span>
-      <span className="text-center text-sm text-[#374151]">
-        {toPersianNumbersWithComma(budget || 0)} تومان
-      </span>
-      <span className="text-center text-sm text-[#374151]">
-        {deadline ? shortDate(deadline) : '-'}
-      </span>
-      <div className="flex items-center justify-center">{statusBadge}</div>
-      <div className="flex items-center justify-center">
-        <Link
-          to={`/projects/${project._id}`}
-          aria-label="مشاهده جزئیات"
-          className="text-[#006045] hover:text-[#004d37]"
-        >
-          <HiOutlineEye className="h-5 w-5" />
-        </Link>
-      </div>
-    </div>
+      <div className="flex items-center justify-end">{actions}</div>
+    </GridRow>
   );
 }
 
 export default FreelancerProjectRow;
-export { PROJECTS_GRID_COLS };

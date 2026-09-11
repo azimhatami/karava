@@ -2,25 +2,12 @@ import useOwnerProjects from './useOwnerProjects';
 import Loading from '../../ui/Loading';
 import Empty from '../../ui/Empty';
 import QueryErrorState from '../../ui/QueryErrorState';
-import Table from '../../ui/Table';
 import ResponsiveTable from '../../ui/ResponsiveTable';
 import Pagination from '../../ui/Pagination';
-import ProjectTableRow from './ProjectTableRow';
+import ProjectTableRow, { OWNER_PROJECTS_COLUMNS } from './ProjectTableRow';
+import { GridTable } from '../../ui/DataTable';
 import { HiOutlineRectangleStack } from 'react-icons/hi2';
 import { useState } from 'react';
-
-const COLUMNS = [
-  { key: 'index', label: '#' },
-  { key: 'title', label: 'عنوان پروژه' },
-  { key: 'category', label: 'دسته بندی' },
-  { key: 'budget', label: 'بودجه' },
-  { key: 'deadline', label: 'ددلاین' },
-  { key: 'tags', label: 'تگ ها' },
-  { key: 'freelancer', label: 'فریلنسر' },
-  { key: 'status', label: 'وضعیت' },
-  { key: 'actions', label: 'عملیات' },
-  { key: 'proposals', label: 'درخواست ها' },
-];
 
 function ProjectTable() {
   const { isLoading, isError, error, refetch, projects } = useOwnerProjects();
@@ -48,34 +35,19 @@ function ProjectTable() {
   const currentData = projects.slice(startIndex, endIndex);
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       <ResponsiveTable
-        columns={COLUMNS}
+        columns={OWNER_PROJECTS_COLUMNS}
         data={currentData}
         desktop={
-          <Table>
-            <Table.Header>
-              {COLUMNS.map((column) => (
-                <th key={column.key}>{column.label}</th>
-              ))}
-            </Table.Header>
-            <Table.Body>
-              {currentData.map((project, index) => (
-                <ProjectTableRow
-                  key={project._id}
-                  project={project}
-                  index={index}
-                />
-              ))}
-            </Table.Body>
-          </Table>
+          <GridTable columns={OWNER_PROJECTS_COLUMNS} minWidth={940}>
+            {currentData.map((project) => (
+              <ProjectTableRow key={project._id} project={project} />
+            ))}
+          </GridTable>
         }
-        renderCard={(project, index) => (
-          <ProjectTableRow
-            project={project}
-            index={index}
-            variant="card"
-          />
+        renderCard={(project) => (
+          <ProjectTableRow project={project} variant="card" />
         )}
       />
       <Pagination
@@ -84,7 +56,7 @@ function ProjectTable() {
         setCurrentPage={setCurrentPage}
         totalPages={totalPages}
       />
-    </>
+    </div>
   );
 }
 

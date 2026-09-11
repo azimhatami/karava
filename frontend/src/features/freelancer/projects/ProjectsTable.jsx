@@ -4,19 +4,12 @@ import Empty from '../../../ui/Empty';
 import QueryErrorState from '../../../ui/QueryErrorState';
 import Pagination from '../../../ui/Pagination';
 import FreelancerProjectRow, {
-  PROJECTS_GRID_COLS,
+  FREELANCER_PROJECT_COLUMNS,
 } from './FreelancerProjectRow';
+import { GridTable } from '../../../ui/DataTable';
 import useProjects from '../../../hooks/useProjects';
 import ResponsiveTable from '../../../ui/ResponsiveTable';
 import { HiOutlineBriefcase } from 'react-icons/hi2';
-
-const columns = [
-  { key: 'title', label: 'عنوان پروژه' },
-  { key: 'budget', label: 'بودجه (تومان)' },
-  { key: 'deadline', label: 'ددلاین' },
-  { key: 'status', label: 'وضعیت' },
-  { key: 'actions', label: 'عملیات' },
-];
 
 function ProjectsTable() {
   const { isLoading, isError, error, refetch, projects } = useProjects();
@@ -44,35 +37,16 @@ function ProjectsTable() {
   const currentData = projects.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full flex-col gap-[7px]">
+    <section className="flex w-full flex-col gap-4">
       <ResponsiveTable
-        columns={columns}
+        columns={FREELANCER_PROJECT_COLUMNS}
         data={currentData}
         desktop={
-          <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card">
-            <div className="min-h-0 w-full flex-1 overflow-x-auto">
-              <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
-                <div
-                  className={`grid h-[19px] w-full shrink-0 items-center ${PROJECTS_GRID_COLS}`}
-                >
-                  {columns.map((column) => (
-                    <span
-                      key={column.key}
-                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
-                    >
-                      {column.label}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-                  {currentData.map((project) => (
-                    <FreelancerProjectRow key={project._id} project={project} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <GridTable columns={FREELANCER_PROJECT_COLUMNS} minWidth={820}>
+            {currentData.map((project) => (
+              <FreelancerProjectRow key={project._id} project={project} />
+            ))}
+          </GridTable>
         }
         renderCard={(project) => (
           <FreelancerProjectRow project={project} variant="card" />

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import useToggleProjectStatus from './useToggleProjectStatus';
 import Loading from '../../ui/Loading';
 import Toggle from '../../ui/Toggle';
+import { StatusChip } from '../../ui/DataTable';
 
 
 function ToggleProjectStatus({ project }) {
@@ -22,7 +23,7 @@ function ToggleProjectStatus({ project }) {
   return(
     <div>
       {project.status === 'COMPLETED' ? (
-        <span className="badge bg-[#E0F2FE] text-[#075985]">تکمیل‌شده</span>
+        <StatusChip status="completed" />
       ) : isToggling ? <div className='w-[3rem]'><Loading /></div> : (
         <Toggle 
           label={project.status === 'OPEN' ? 'باز' : 'بسته'}

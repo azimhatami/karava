@@ -4,18 +4,9 @@ import Loading from '../../../ui/Loading';
 import Empty from '../../../ui/Empty';
 import QueryErrorState from '../../../ui/QueryErrorState';
 import Pagination from '../../../ui/Pagination';
-import UserRow, { USERS_GRID_COLS } from './UserRow';
+import UserRow, { USER_COLUMNS } from './UserRow';
 import ResponsiveTable from '../../../ui/ResponsiveTable';
 import { HiOutlineUsers } from 'react-icons/hi2';
-
-const columns = [
-  { key: 'name', label: 'نام' },
-  { key: 'email', label: 'ایمیل' },
-  { key: 'phone', label: 'شماره موبایل' },
-  { key: 'role', label: 'نقش' },
-  { key: 'status', label: 'وضعیت' },
-  { key: 'actions', label: 'عملیات' },
-];
 
 function UsersTable() {
   const { isLoading, isError, error, refetch, users } = useUsers();
@@ -43,34 +34,31 @@ function UsersTable() {
   const currentData = users.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full flex-col gap-[7px]">
+    <section className="flex w-full flex-col gap-4">
       <ResponsiveTable
-        columns={columns}
+        columns={USER_COLUMNS}
         data={currentData}
         desktop={
-          <div className="flex w-full flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card">
-            <div className="min-h-0 w-full flex-1 overflow-x-auto">
-              <div className="flex min-h-0 min-w-[720px] flex-1 flex-col">
-                <div
-                  className={`grid h-[19px] w-full shrink-0 items-center ${USERS_GRID_COLS}`}
-                >
-                  {columns.map((column) => (
-                    <span
+          <div className="w-full overflow-x-auto rounded-2xl border border-ink-line bg-ink-card">
+            <table className="w-full min-w-[760px] border-collapse">
+              <thead>
+                <tr className="border-b border-ink-hair bg-[#FBFAF6]">
+                  {USER_COLUMNS.map((column) => (
+                    <th
                       key={column.key}
-                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
+                      className="whitespace-nowrap px-4 py-3 text-right text-[12.5px] font-normal text-ink-dim"
                     >
                       {column.label}
-                    </span>
+                    </th>
                   ))}
-                </div>
-
-                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-                  {currentData.map((user) => (
-                    <UserRow key={user._id} user={user} />
-                  ))}
-                </div>
-              </div>
-            </div>
+                </tr>
+              </thead>
+              <tbody>
+                {currentData.map((user) => (
+                  <UserRow key={user._id} user={user} />
+                ))}
+              </tbody>
+            </table>
           </div>
         }
         renderCard={(user) => <UserRow user={user} variant="card" />}
