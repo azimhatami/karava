@@ -109,6 +109,35 @@
   .textField_input {
     @apply karava-form-input;
   }
+
+  /* ── ink identity primitives ── */
+  .ink-card {
+    @apply rounded-2xl border border-ink-line bg-ink-card;
+  }
+  .ink-label {
+    @apply block text-[13px] font-medium text-ink-body;
+  }
+  .ink-input {
+    @apply h-11 w-full rounded-[10px] border border-ink-line bg-ink-card px-3.5 text-sm text-ink-text outline-none transition-colors placeholder:text-ink-dim focus:border-ink-mint-mid focus:ring-1 focus:ring-ink-mint-mid;
+  }
+  .ink-btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-[10px] px-5 text-sm font-bold transition-[filter,background-color,color] disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .ink-btn-primary {
+    @apply ink-btn bg-ink-raised text-[#F2F6F4] hover:brightness-125;
+  }
+  .ink-btn-accent {
+    @apply ink-btn bg-ink-mint text-ink hover:brightness-105;
+  }
+  .ink-btn-ghost {
+    @apply ink-btn border border-ink-line bg-ink-card text-ink-muted hover:bg-ink-well hover:text-ink-text;
+  }
+  .ink-btn-danger {
+    @apply ink-btn border border-[#F0C2CE] bg-ink-card text-[#C9093D] hover:bg-[#FDF2F5];
+  }
+  .ink-chip {
+    @apply inline-flex h-7 items-center gap-1.5 whitespace-nowrap rounded-full px-3 text-[12.5px] font-bold;
+  }
   .btn {
     @apply px-3 py-1.5 font-bold rounded-[6px] transition-all duration-300
   }
@@ -188,26 +217,35 @@ table {
 }
 
 table .title-row {
-  background-color: rgb(var(--color-secondary-100));
+  background-color: #FBFAF6;
 }
 
 table td,
 table th {
-  border-bottom: 1px solid rgb(var(--color-secondary-200));
+  border-bottom: 1px solid #F3F1EA;
   text-align: right;
   white-space: nowrap;
 }
 
 table th {
-  padding: 0.6rem 1rem;
-  color: rgb(var(--color-secondary-600));
-  font-size: 0.9rem;
+  padding: 0.8rem 1.25rem;
+  color: #8CA69B;
+  font-size: 0.8rem;
+  font-weight: 400;
 }
 
 table td {
-  font-size: 0.85rem;
-  padding: 1rem 1rem;
-  color: rgb(var(--color-secondary-600));
+  font-size: 0.875rem;
+  padding: 1.05rem 1.25rem;
+  color: #3C4C46;
+}
+
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+table tbody tr:hover {
+  background-color: #FBFAF6;
 }
 
 .owner-panel-header {

@@ -7,10 +7,10 @@ import { Fragment } from 'react';
 export function MobileDataCard({ title, fields = [], actions, children, className = '' }) {
   return (
     <article
-      className={`rounded-[10px] border border-[#245A49] bg-white p-4 text-right ${className}`}
+      className={`rounded-2xl border border-ink-line bg-ink-card p-4 text-right ${className}`}
     >
       {title ? (
-        <h4 className="mb-3 text-sm font-bold leading-6 text-[#222020]">{title}</h4>
+        <h4 className="mb-3 text-[15px] font-bold leading-6 text-ink-text">{title}</h4>
       ) : null}
 
       {fields.length ? (
@@ -18,10 +18,10 @@ export function MobileDataCard({ title, fields = [], actions, children, classNam
           {fields.map((field) => (
             <div
               key={field.key || field.label}
-              className="flex flex-col gap-1 border-b border-[#F3F4F6] pb-2.5 last:border-b-0 last:pb-0"
+              className="flex flex-col gap-1 border-b border-ink-hair pb-2.5 last:border-b-0 last:pb-0"
             >
-              <dt className="text-xs font-bold text-[#6E6E6E]">{field.label}</dt>
-              <dd className="min-w-0 text-sm text-[#222020]">
+              <dt className="text-xs text-ink-dim">{field.label}</dt>
+              <dd className="min-w-0 text-sm text-ink-body">
                 {field.value ?? '—'}
               </dd>
             </div>
@@ -30,7 +30,7 @@ export function MobileDataCard({ title, fields = [], actions, children, classNam
       ) : null}
 
       {actions ? (
-        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-[#E5E7EB] pt-3">
+        <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-ink-hair pt-3">
           {actions}
         </div>
       ) : null}

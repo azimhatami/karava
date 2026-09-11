@@ -9,13 +9,13 @@ function WalletBalanceChip({ to }) {
   return (
     <Link
       to={to}
-      className="inline-flex h-[42px] max-w-[220px] items-center gap-2 rounded-[12px] border border-[#006045] bg-white px-3 text-sm text-[#00362E]"
+      className="hidden h-10 max-w-[220px] items-center gap-2 rounded-[10px] border border-ink-line px-3 text-[13px] text-ink-text transition-colors hover:bg-ink-well sm:inline-flex"
       title="کیف پول"
     >
-      <HiOutlineWallet className="h-5 w-5 shrink-0 text-[#006045]" />
+      <HiOutlineWallet className="h-[18px] w-[18px] shrink-0 text-ink-mint-mid" />
       <span className="truncate font-bold">
         {isLoading
-          ? '...'
+          ? '…'
           : `${toPersianNumbersWithComma(wallet.balance || 0)} تومان`}
       </span>
     </Link>

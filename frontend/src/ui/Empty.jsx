@@ -13,20 +13,20 @@ function Empty({
   const heading = title || `هنوز ${resourceName} ثبت نشده است`;
 
   return (
-    <div className="flex flex-col items-center justify-center gap-3 px-4 py-10 text-center">
-      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8F3EE] text-karava-green">
+    <div className="flex flex-col items-center justify-center gap-3.5 rounded-2xl border border-dashed border-ink-line bg-ink-card px-4 py-14 text-center">
+      <span className="flex h-14 w-14 items-center justify-center rounded-full bg-ink-mint-tint text-ink-mint-deep">
         <Icon className="h-7 w-7" />
       </span>
       <div className="space-y-1.5">
-        <p className="text-sm font-bold text-karava-text">{heading}</p>
+        <p className="text-[15px] font-bold text-ink-text">{heading}</p>
         {description ? (
-          <p className="max-w-sm text-xs leading-5 text-karava-gray">{description}</p>
+          <p className="max-w-sm text-[13px] leading-6 text-ink-muted">{description}</p>
         ) : null}
       </div>
       {actionLabel && actionTo ? (
         <Link
           to={actionTo}
-          className="mt-1 inline-flex h-10 items-center justify-center rounded-[6px] bg-karava-green px-4 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+          className="ink-btn-primary mt-1"
         >
           {actionLabel}
         </Link>
@@ -35,7 +35,7 @@ function Empty({
         <button
           type="button"
           onClick={onAction}
-          className="mt-1 inline-flex h-10 items-center justify-center rounded-[6px] bg-karava-green px-4 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+          className="ink-btn-primary mt-1"
         >
           {actionLabel}
         </button>
