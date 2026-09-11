@@ -22,7 +22,7 @@ function DashboardLayout() {
   }
 
   return (
-    <div className="flex min-h-[1103px] w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <div className="flex w-full flex-wrap items-start justify-between gap-4">
         <div className="min-w-0 flex-1 text-right">
           <h2 className="owner-panel-title">داشبورد کارفرما</h2>
@@ -34,7 +34,7 @@ function DashboardLayout() {
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex shrink-0 items-center gap-2 rounded-[6px] bg-karava-green px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-karava-green-dark"
+          className="inline-flex shrink-0 items-center gap-2 rounded-[6px] bg-ink-mint-mid px-4 py-2.5 text-sm font-bold text-white transition-colors hover:bg-ink-mint-deep"
         >
           <span>اضافه کردن پروژه</span>
           <HiPlus className="h-4 w-4" />

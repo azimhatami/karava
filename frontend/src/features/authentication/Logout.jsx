@@ -13,7 +13,7 @@ function Logout() {
         <div className='flex items-center'>
           <button onClick={logout}>
             <HiArrowRightOnRectangle 
-              className='w-5 h-5 text-secondary-500 hover:text-error' 
+              className='w-5 h-5 text-ink-muted hover:text-error' 
             />
           </button>
         </div>

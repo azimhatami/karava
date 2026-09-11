@@ -18,6 +18,7 @@ import KaravaTagsInput from '../../ui/KaravaTagsInput';
 import FileUploadField, { FileList } from '../../ui/FileUploadField';
 import Loading from '../../ui/Loading';
 import QueryErrorState from '../../ui/QueryErrorState';
+import { StatusChip } from '../../ui/DataTable';
 import toast from '../../ui/toast';
 import getApiErrorMessage from '../../utils/getApiErrorMessage';
 import { getProfileCompletion } from '../../utils/profileCompleteness';
@@ -34,9 +35,9 @@ const ROLE_LABELS = {
 };
 
 const STATUS_META = {
-  0: { label: 'رد شده', className: 'border-[#C9093D] bg-[#FFF1F2] text-[#BE185D]' },
-  1: { label: 'در انتظار تایید', className: 'border-[#F59E0B] bg-[#FFFBEB] text-[#B45309]' },
-  2: { label: 'تایید شده', className: 'border-[#00D281] bg-[#ECFDF5] text-[#006045]' },
+  0: { label: 'رد شده', status: 'rejected' },
+  1: { label: 'در انتظار تایید', status: 'pending' },
+  2: { label: 'تایید شده', status: 'accepted' },
 };
 
 function getInitials(name = '') {
@@ -133,18 +134,18 @@ function ProfilePage() {
   return (
     <div className="flex w-full flex-col gap-6">
       <div className="flex w-full flex-col gap-2.5 p-2.5 text-right">
-        <h2 className="text-base font-bold leading-none text-[#222020]">
+        <h2 className="text-[15px] font-bold text-ink-text">
           پروفایل من
         </h2>
-        <p className="text-base font-bold leading-none text-[#222020]">
+        <p className="text-[15px] font-bold text-ink-text">
           مشاهده و ویرایش اطلاعات حساب کاربری
         </p>
       </div>
 
-      <section className="flex w-full flex-col gap-6 rounded-[12px] border border-[#222020] bg-white p-6">
-        <div className="flex flex-col gap-4 rounded-[10px] border border-[#0E6A50] bg-[#F8FFFC] p-4 md:flex-row md:items-center md:justify-between">
+      <section className="flex w-full flex-col gap-6 ink-card p-6 md:p-8">
+        <div className="flex flex-col gap-4 rounded-xl border border-ink-hair bg-ink-well p-5 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-[#E6F4EC] text-lg font-bold text-[#006045]">
+            <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-ink-raised text-lg font-bold text-ink-mint">
               {user.avatarUrl ? (
                 <img
                   src={user.avatarUrl}
@@ -156,75 +157,71 @@ function ProfilePage() {
               )}
             </div>
             <div className="min-w-0 text-right">
-              <h3 className="truncate text-base font-bold text-[#222020]">
+              <h3 className="truncate text-[15px] font-bold text-ink-text">
                 {user.name || 'کاربر بدون نام'}
               </h3>
-              <p className="mt-1 truncate text-sm text-[#6E6E6E]">
+              <p className="mt-1 truncate text-[13px] text-ink-muted">
                 {user.email || 'ایمیل ثبت نشده'}
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-[6px] border border-[#006045] bg-white px-2.5 py-1.5 text-xs font-medium text-[#006045]">
+            <span className="inline-flex items-center gap-1.5 rounded-lg border border-ink-line px-3 py-1.5 text-[12.5px] font-medium text-ink-muted transition-colors hover:bg-ink-well">
               <HiOutlineBriefcase className="h-4 w-4" />
               {roleLabel}
             </span>
-            <span
-              className={`inline-flex items-center rounded-[6px] border px-2.5 py-1.5 text-xs font-medium ${statusMeta.className}`}
-            >
-              {statusMeta.label}
-            </span>
+            <StatusChip status={statusMeta.status} label={statusMeta.label} />
             <RatingBadge
               averageRating={user.averageRating ?? averageRating}
               totalReviews={user.totalReviews ?? totalReviews}
             />
             <Link
               to={`/users/${user._id}`}
-              className="text-xs font-bold text-[#006045] underline"
+              className="text-[12.5px] font-bold text-ink-mint-mid underline"
             >
               پروفایل عمومی
             </Link>
           </div>
         </div>
 
-        <div className="rounded-[10px] border border-[#D1D5DB] p-4">
+        <div className="rounded-xl border border-ink-line p-4">
           <div className="mb-3 flex items-center justify-between gap-3">
-            <h4 className="text-sm font-bold text-[#222020]">درصد تکمیل پروفایل</h4>
-            <span className="text-sm font-bold text-[#006045]">
+            <h4 className="text-[14.5px] font-bold text-ink-text">درصد تکمیل پروفایل</h4>
+            <span className="text-[13px] font-bold text-ink-mint-mid">
               {completion.percent}٪
             </span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-[#E5E7EB]">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-ink-well">
             <div
-              className="h-full rounded-full bg-[#006045] transition-all"
+              className="h-full rounded-full bg-ink-mint-mid transition-all"
               style={{ width: `${completion.percent}%` }}
             />
           </div>
-          <p className="mt-2 text-xs text-[#6E6E6E]">
+          <p className="mt-2 text-[12.5px] text-ink-muted">
             {completion.filled} از {completion.total} فیلد مهم تکمیل شده است
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div className="flex items-center gap-3 rounded-[8px] border border-[#D1D5DB] bg-[#F9FAFB] p-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#E8F3EE] text-[#006045]">
+          <div className="flex items-center gap-3 rounded-xl border border-ink-hair bg-ink-card p-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink-well text-ink-mint-deep">
               <HiOutlinePhone className="h-5 w-5" />
             </span>
             <div className="min-w-0 text-right">
-              <p className="text-xs text-[#6E6E6E]">شماره موبایل</p>
-              <p className="mt-1 truncate text-sm font-bold text-[#222020]" dir="ltr">
+              <p className="text-[12.5px] text-ink-muted">شماره موبایل</p>
+              <p className="mt-1 truncate text-[14.5px] font-bold text-ink-text" dir="ltr">
                 {user.phoneNumber || '—'}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-3 rounded-[8px] border border-[#D1D5DB] bg-[#F9FAFB] p-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#E8F3EE] text-[#006045]">
+          <div className="flex items-center gap-3 rounded-xl border border-ink-hair bg-ink-card p-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-ink-well text-ink-mint-deep">
               <HiOutlineEnvelope className="h-5 w-5" />
             </span>
             <div className="min-w-0 text-right">
-              <p className="text-xs text-[#6E6E6E]">ایمیل</p>
-              <p className="mt-1 truncate text-sm font-bold text-[#222020]">
+              <p className="text-[12.5px] text-ink-muted">ایمیل</p>
+              <p className="mt-1 truncate text-[14.5px] font-bold text-ink-text">
                 {user.email || '—'}
               </p>
             </div>
@@ -233,11 +230,11 @@ function ProfilePage() {
 
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-5 rounded-[10px] border border-[#D1D5DB] p-4"
+          className="flex flex-col gap-5 rounded-xl border border-ink-line p-4"
         >
-          <div className="flex items-center gap-2 border-b border-[#E5E7EB] pb-3">
-            <HiOutlineUser className="h-5 w-5 text-[#006045]" />
-            <h4 className="text-sm font-bold text-[#222020]">ویرایش اطلاعات</h4>
+          <div className="flex items-center gap-2 border-b border-[#EEEBE3] pb-3">
+            <HiOutlineUser className="h-5 w-5 text-ink-mint-mid" />
+            <h4 className="text-[14.5px] font-bold text-ink-text">ویرایش اطلاعات</h4>
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -352,13 +349,13 @@ function ProfilePage() {
           ) : null}
 
           {isFreelancer ? (
-            <p className="text-xs text-[#6E6E6E]">
+            <p className="text-[12.5px] text-ink-muted">
               برای ارسال پیشنهاد، بیوگرافی (حداقل ۲۰ کاراکتر) و حداقل یک مهارت لازم است.
             </p>
           ) : null}
 
           {isOwner ? (
-            <p className="text-xs text-[#6E6E6E]">
+            <p className="text-[12.5px] text-ink-muted">
               برای ثبت پروژه، نام شرکت و معرفی کسب‌وکار (حداقل ۲۰ کاراکتر) لازم است.
             </p>
           ) : null}
@@ -372,7 +369,7 @@ function ProfilePage() {
               <button
                 type="submit"
                 disabled={!canSubmit}
-                className="karava-form-submit w-full max-w-[220px]"
+                className="ink-btn-accent w-full max-w-[220px]"
               >
                 ذخیره تغییرات
               </button>
@@ -381,10 +378,10 @@ function ProfilePage() {
         </form>
 
         {isFreelancer ? (
-          <div className="flex flex-col gap-4 rounded-[10px] border border-[#D1D5DB] p-4">
-            <div className="border-b border-[#E5E7EB] pb-3 text-right">
-              <h4 className="text-sm font-bold text-[#222020]">نمونه‌کارها</h4>
-              <p className="mt-1 text-xs text-[#6E6E6E]">
+          <div className="flex flex-col gap-4 rounded-xl border border-ink-line p-4">
+            <div className="border-b border-[#EEEBE3] pb-3 text-right">
+              <h4 className="text-[14.5px] font-bold text-ink-text">نمونه‌کارها</h4>
+              <p className="mt-1 text-[12.5px] text-ink-muted">
                 تصاویر پروژه‌های قبلی خود را آپلود کنید (jpg، png، webp — حداکثر ۵ مگابایت)
               </p>
             </div>
@@ -423,9 +420,9 @@ function ProfilePage() {
         ) : null}
       </section>
 
-      <section className="overflow-hidden rounded-[12px] border border-[#D1D5DB] bg-white">
-        <div className="border-b border-[#E5E7EB] px-4 py-3">
-          <h3 className="text-sm font-bold text-[#222020]">نظرات دریافتی</h3>
+      <section className="overflow-hidden ink-card">
+        <div className="border-b border-[#EEEBE3] px-4 py-3">
+          <h3 className="text-[14.5px] font-bold text-ink-text">نظرات دریافتی</h3>
         </div>
         {reviewsLoading ? (
           <div className="flex justify-center py-8">

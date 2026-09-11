@@ -15,7 +15,7 @@ function ReviewSection({ project, canParticipate = false }) {
 
   if (isLoading) {
     return (
-      <section className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
+      <section className="rounded-[12px] border border-[#E4E1D6] bg-white p-4">
         <Loading />
       </section>
     );
@@ -23,18 +23,18 @@ function ReviewSection({ project, canParticipate = false }) {
 
   if (isError) {
     return (
-      <section className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
+      <section className="rounded-[12px] border border-[#E4E1D6] bg-white p-4">
         <QueryErrorState error={error} onRetry={refetch} />
       </section>
     );
   }
 
   return (
-    <section className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
-      <h3 className="text-sm font-bold text-[#222020]">نظرات این پروژه</h3>
+    <section className="rounded-[12px] border border-[#E4E1D6] bg-white p-4">
+      <h3 className="text-sm font-bold text-[#0E1F1A]">نظرات این پروژه</h3>
 
       {canParticipate && isCompleted && canReview && !myReview ? (
-        <div className="mt-4 rounded-[8px] border border-[#006045] bg-[#F8FFFC] p-4">
+        <div className="mt-4 rounded-[8px] border border-[#1E7C50] bg-[#FBFAF6] p-4">
           <p className="mb-3 text-sm text-[#374151]">
             پروژه تکمیل شده است. امتیاز و نظر خود را ثبت کنید. پس از ثبت قابل
             ویرایش نیست.
@@ -44,21 +44,21 @@ function ReviewSection({ project, canParticipate = false }) {
       ) : null}
 
       {canParticipate && isCompleted && myReview ? (
-        <div className="mt-4 rounded-[8px] border border-[#E5E7EB] bg-[#F9FAFB] p-4">
-          <p className="mb-2 text-sm font-bold text-[#006045]">نظر ثبت‌شده شما</p>
+        <div className="mt-4 rounded-[8px] border border-[#EEEBE3] bg-[#F7F5EF] p-4">
+          <p className="mb-2 text-sm font-bold text-[#1E7C50]">نظر ثبت‌شده شما</p>
           <StarRating value={myReview.rating} readOnly />
           {myReview.comment ? (
             <p className="mt-2 text-sm leading-6 text-[#4B5563]">
               {myReview.comment}
             </p>
           ) : (
-            <p className="mt-2 text-xs text-[#9CA3AF]">بدون متن نظر</p>
+            <p className="mt-2 text-xs text-[#8CA69B]">بدون متن نظر</p>
           )}
         </div>
       ) : null}
 
       {canParticipate && !isCompleted ? (
-        <p className="mt-3 text-sm text-[#6E6E6E]">
+        <p className="mt-3 text-sm text-[#5C6E66]">
           ثبت نظر پس از تکمیل پروژه امکان‌پذیر است.
         </p>
       ) : null}

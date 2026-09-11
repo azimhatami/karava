@@ -7,7 +7,7 @@ function UserAvatar() {
 
   return(
     <>
-      <div className='flex items-center gap-x-2 text-secondary-600'>
+      <div className='flex items-center gap-x-2 text-ink-muted'>
         <img 
           src='/user.jpg' 
           alt='user avatar'

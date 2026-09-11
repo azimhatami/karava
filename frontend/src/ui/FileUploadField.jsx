@@ -72,8 +72,8 @@ function FileUploadField({
         }}
         className={`flex min-h-[120px] flex-col items-center justify-center gap-2 rounded-[12px] border border-dashed p-4 text-center transition-colors ${
           isDragging
-            ? 'border-[#006045] bg-[#F2FFF8]'
-            : 'border-[#9CA3AF] bg-[#F9FAFB]'
+            ? 'border-[#1E7C50] bg-[#FBFAF6]'
+            : 'border-[#8CA69B] bg-[#F7F5EF]'
         } ${disabled || isUploading ? 'opacity-60' : 'cursor-pointer'}`}
         onClick={() => {
           if (!disabled && !isUploading) inputRef.current?.click();
@@ -91,11 +91,11 @@ function FileUploadField({
           <Loading />
         ) : (
           <>
-            <HiOutlineCloudArrowUp className="h-8 w-8 text-[#006045]" />
-            <p className="text-sm font-bold text-[#222020]">
+            <HiOutlineCloudArrowUp className="h-8 w-8 text-[#1E7C50]" />
+            <p className="text-[14.5px] font-bold text-ink-text">
               فایل را بکشید و رها کنید یا کلیک کنید
             </p>
-            {hint ? <p className="text-xs text-[#6E6E6E]">{hint}</p> : null}
+            {hint ? <p className="text-[12.5px] text-ink-muted">{hint}</p> : null}
           </>
         )}
         <input
@@ -111,7 +111,7 @@ function FileUploadField({
         />
       </div>
       {localError ? (
-        <span className="mt-1 block text-right text-xs text-karava-red">
+        <span className="mt-1 block text-right text-xs text-[#C9093D]">
           {localError}
         </span>
       ) : null}
@@ -127,7 +127,7 @@ export function FileList({
   showThumbnails = true,
 }) {
   if (!files.length) {
-    return <p className="text-sm text-[#6E6E6E]">{emptyText}</p>;
+    return <p className="text-sm text-[#5C6E66]">{emptyText}</p>;
   }
 
   return (
@@ -139,7 +139,7 @@ export function FileList({
         return (
           <li
             key={file._id || file.storageKey || file.url}
-            className="overflow-hidden rounded-[10px] border border-[#D1D5DB] bg-white"
+            className="overflow-hidden rounded-xl border border-ink-line bg-white"
           >
             {image ? (
               <a href={url} target="_blank" rel="noreferrer" className="block">
@@ -150,7 +150,7 @@ export function FileList({
                 />
               </a>
             ) : (
-              <div className="flex h-28 items-center justify-center bg-[#F3F4F6] text-[#006045]">
+              <div className="flex h-28 items-center justify-center bg-[#F3F4F6] text-[#1E7C50]">
                 <HiOutlineDocument className="h-10 w-10" />
               </div>
             )}
@@ -160,12 +160,12 @@ export function FileList({
                   href={url}
                   target="_blank"
                   rel="noreferrer"
-                  className="block truncate text-sm font-bold text-[#006045] hover:underline"
+                  className="block truncate text-[13px] font-bold text-ink-mint-mid hover:underline"
                   title={file.originalName}
                 >
                   {file.originalName || 'فایل'}
                 </a>
-                <p className="mt-1 text-xs text-[#6E6E6E]">
+                <p className="mt-1 text-[12.5px] text-ink-muted">
                   {formatFileSize(file.size)}
                 </p>
               </div>

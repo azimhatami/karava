@@ -1,47 +1,42 @@
 import { NavLink } from 'react-router-dom';
-import { HiOutlineCheckBadge, HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
+import { HiOutlineArrowRightOnRectangle } from 'react-icons/hi2';
 import useLogout from '../authentication/useLogout';
 import { usePanelNav } from './PanelNavContext';
+import { toPersianNumbers } from '../../utils/toPersianNumbers';
 
-function SidebarNavItem({ to, label, icon: Icon, badge, end }) {
+export function PanelNavItem({ to, label, icon: Icon, badge, end, onNavigate }) {
   return (
-    <NavLink to={to} end={end} className="block w-full">
+    <NavLink to={to} end={end} onClick={onNavigate} className="block w-full">
       {({ isActive }) => (
         <div
-          className={`group flex h-[31px] w-full max-w-[238px] items-center justify-between gap-2.5 rounded-[6px] p-1.5 ${
-            isActive ? 'bg-[#245A49]' : 'hover:bg-[#245A49]'
+          className={`group flex h-11 w-full items-center justify-between gap-2.5 rounded-[10px] px-3.5 transition-colors ${
+            isActive
+              ? 'bg-ink-raised text-[#F2F6F4]'
+              : 'text-ink-dim hover:bg-ink-raised/60 hover:text-[#F2F6F4]'
           }`}
         >
-          <div className="flex min-w-0 items-center gap-1">
+          <span className="flex min-w-0 items-center gap-2.5">
             <Icon
-              className={`h-[19px] w-[19px] shrink-0 ${
-                isActive
-                  ? 'text-[#F8F9FD]'
-                  : 'text-karava-text group-hover:text-[#F8F9FD]'
+              className={`h-[18px] w-[18px] shrink-0 ${
+                isActive ? 'text-ink-mint' : 'text-ink-dim group-hover:text-ink-mint'
               }`}
             />
             <span
-              className={`truncate text-right text-base font-normal leading-none tracking-normal ${
-                isActive
-                  ? 'text-[#F8F9FD]'
-                  : 'text-karava-text group-hover:text-[#F8F9FD]'
-              }`}
+              className={`truncate text-sm ${isActive ? 'font-bold' : 'font-normal'}`}
             >
               {label}
             </span>
-          </div>
+          </span>
 
           {badge != null && badge > 0 ? (
             <span
-              className={`relative flex h-[15.83px] w-[15.83px] shrink-0 items-center justify-center overflow-hidden rounded-full text-[10px] font-bold ${
+              className={`flex h-5 min-w-[20px] shrink-0 items-center justify-center rounded-full px-1.5 text-[11.5px] font-bold ${
                 isActive
-                  ? 'bg-[#008F66] text-[#245A49]'
-                  : 'bg-[#A9A9A9] text-white group-hover:bg-[#008F66] group-hover:text-[#245A49]'
+                  ? 'bg-ink-mint text-ink'
+                  : 'bg-white/10 text-ink-dim group-hover:bg-ink-mint group-hover:text-ink'
               }`}
             >
-              <span className="absolute inset-0 flex items-center justify-center leading-none [transform:translateY(-0.5px)]">
-                {badge}
-              </span>
+              {toPersianNumbers(badge)}
             </span>
           ) : null}
         </div>
@@ -54,28 +49,26 @@ function SidebarNavItem({ to, label, icon: Icon, badge, end }) {
 function PanelSidebar() {
   const { roleLabel, navItems } = usePanelNav();
   const { logout, isPending } = useLogout();
-  const navHeight = navItems.length * 31 + (navItems.length - 1) * 21 + 24;
 
   return (
-    <aside className="hidden h-auto min-h-[640px] w-[288px] shrink-0 flex-col items-center gap-[25px] self-start overflow-hidden rounded-[6px] border border-[#006045] bg-white p-3 lg:flex">
-      <div className="flex h-[61px] w-full max-w-[262px] items-start justify-between gap-4 rounded-[12px] border border-[#0E6A50] bg-white p-2">
-        <div className="flex min-w-0 flex-1 flex-col items-end gap-[5px] text-right">
-          <span className="w-full truncate text-right text-base font-normal leading-none tracking-normal text-[#222020]">
-            {roleLabel.name}
+    <aside className="sticky top-6 hidden w-[248px] shrink-0 flex-col gap-7 self-start rounded-2xl bg-ink p-4 lg:flex">
+      <div className="flex items-center gap-3 px-1 pt-1">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ink-mint text-[15px] font-bold text-ink">
+          {(roleLabel?.name || 'ک').trim().charAt(0)}
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-bold text-[#F2F6F4]">
+            {roleLabel?.name || 'کاربر'}
           </span>
-          <span className="w-full truncate text-right text-base font-normal leading-none tracking-normal text-[#222020]">
-            {roleLabel.title}
+          <span className="mt-0.5 block truncate text-xs text-ink-dim">
+            {roleLabel?.title || ''}
           </span>
-        </div>
-        <HiOutlineCheckBadge className="h-5 w-5 shrink-0 text-karava-green-dark" />
+        </span>
       </div>
 
-      <nav
-        className="flex w-full max-w-[262px] flex-col gap-[21px] bg-white p-3"
-        style={{ height: `${navHeight}px` }}
-      >
+      <nav className="flex flex-col gap-1">
         {navItems.map((item) => (
-          <SidebarNavItem key={item.to} {...item} />
+          <PanelNavItem key={item.to} {...item} />
         ))}
       </nav>
 
@@ -83,12 +76,10 @@ function PanelSidebar() {
         type="button"
         onClick={logout}
         disabled={isPending}
-        className="mt-auto flex h-[46px] w-full max-w-[268px] shrink-0 items-center justify-center gap-2.5 rounded-lg border border-[#FF2020] bg-white p-2.5 text-xs leading-[15px] text-[#FF2020] transition-colors hover:bg-karava-bg-subtle disabled:opacity-60"
+        className="mt-auto flex h-11 w-full items-center justify-center gap-2 rounded-[10px] border border-white/10 text-[13px] text-ink-dim transition-colors hover:border-[#C9093D]/40 hover:bg-[#C9093D]/10 hover:text-[#FF8DA8] disabled:opacity-60"
       >
-        <span className="whitespace-nowrap text-xs font-normal leading-none tracking-normal text-[#FF2020]">
-          خروج از سیستم
-        </span>
-        <HiOutlineArrowRightOnRectangle className="h-6 w-6 shrink-0 text-[#FF2020]" />
+        خروج از سیستم
+        <HiOutlineArrowRightOnRectangle className="h-[18px] w-[18px]" />
       </button>
     </aside>
   );

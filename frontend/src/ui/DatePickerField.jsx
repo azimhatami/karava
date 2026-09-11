@@ -7,7 +7,7 @@ function DatePickerField({ label, date, setDate, required = false }) {
     <div className="karava-form-field">
       <span className="karava-form-label">
         {label}
-        {required ? <span className="text-karava-red"> *</span> : null}
+        {required ? <span className="text-[#C9093D]"> *</span> : null}
       </span>
       <DatePicker
         containerClassName="w-full"

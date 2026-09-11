@@ -35,7 +35,7 @@ function Project() {
   return (
     <div className="space-y-6">
       <ProjectHeader project={project} />
-      <div className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
+      <div className="rounded-[12px] border border-[#E4E1D6] bg-white p-4">
         <ProjectAttachmentsSection files={project.attachments || []} />
       </div>
       <ProposalsTable proposals={project.proposals || []} />

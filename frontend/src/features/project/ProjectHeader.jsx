@@ -18,7 +18,7 @@ function ProjectHeader({ project }) {
     <div className="mb-8 flex flex-wrap items-center justify-between gap-4">
       <div className="flex gap-x-4">
         <button type="button" onClick={moveBack}>
-          <HiArrowRight className="h-5 w-5 text-secondary-600 hover:text-secondary-900" />
+          <HiArrowRight className="h-5 w-5 text-ink-muted hover:text-ink-text" />
         </button>
         <h2 className="text-xl font-black text-secondary-700">
           لیست درخواست های {project.title}
@@ -35,7 +35,7 @@ function ProjectHeader({ project }) {
         <button
           type="button"
           onClick={() => setConfirmOpen(true)}
-          className="inline-flex h-10 items-center justify-center rounded-[6px] bg-[#006045] px-4 text-sm font-bold text-white hover:bg-[#004d37]"
+          className="inline-flex h-10 items-center justify-center rounded-[6px] bg-[#1E7C50] px-4 text-sm font-bold text-white hover:bg-[#004d37]"
         >
           تکمیل پروژه
         </button>
@@ -48,7 +48,7 @@ function ProjectHeader({ project }) {
       >
         <p className="text-sm leading-7 text-[#374151]">
           با تکمیل پروژه، مبلغ{' '}
-          <span className="font-bold text-[#006045]">
+          <span className="font-bold text-[#1E7C50]">
             {toPersianNumbersWithComma(project.escrowAmount || 0)} تومان
           </span>{' '}
           از موجودی در انتظار شما آزاد و به کیف پول فریلنسر واریز می‌شود.
@@ -68,7 +68,7 @@ function ProjectHeader({ project }) {
           </button>
           <button
             type="button"
-            className="btn flex-1 border border-[#D1D5DB] bg-white text-[#222020]"
+            className="btn flex-1 border border-[#E4E1D6] bg-white text-[#0E1F1A]"
             onClick={() => setConfirmOpen(false)}
             disabled={isCompleting}
           >

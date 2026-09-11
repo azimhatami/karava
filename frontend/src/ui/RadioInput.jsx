@@ -12,7 +12,7 @@ function RadioInput({
     <>
       <div className='flex items-center gap-x-2 text-secondary-700'>
         <input 
-          className='w-4 h-4 cursor-pointer form-radio text-primary-900 focus:ring-primary-900'
+          className='w-4 h-4 cursor-pointer form-radio text-ink-mint-mid focus:ring-primary-900'
           type='radio' 
           name={name} 
           id={id} 

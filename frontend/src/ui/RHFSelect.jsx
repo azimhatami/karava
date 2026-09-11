@@ -16,7 +16,7 @@ function RHFSelect({
     <div className="karava-form-field">
       <label htmlFor={name} className="karava-form-label">
         {label}
-        {required ? <span className="text-karava-red"> *</span> : null}
+        {required ? <span className="text-[#C9093D]"> *</span> : null}
       </label>
 
       <div className="relative">
@@ -32,11 +32,11 @@ function RHFSelect({
             </option>
           ))}
         </select>
-        <HiChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-karava-gray-blue" />
+        <HiChevronDown className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-muted" />
       </div>
 
       {errorMessage ? (
-        <span className="mt-1 block text-right text-xs text-karava-red">{errorMessage}</span>
+        <span className="mt-1 block text-right text-xs text-[#C9093D]">{errorMessage}</span>
       ) : null}
     </div>
   );

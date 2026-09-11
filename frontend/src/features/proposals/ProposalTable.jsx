@@ -3,18 +3,11 @@ import useProposals from './useProposals';
 import Loading from '../../ui/Loading';
 import Empty from '../../ui/Empty';
 import QueryErrorState from '../../ui/QueryErrorState';
-import ProposalRow, { PROPOSALS_GRID_COLS } from './ProposalRow';
+import ProposalRow, { PROPOSAL_COLUMNS } from './ProposalRow';
+import { GridTable } from '../../ui/DataTable';
 import Pagination from '../../ui/Pagination';
 import ResponsiveTable from '../../ui/ResponsiveTable';
 import { HiOutlineDocumentText } from 'react-icons/hi2';
-
-const columns = [
-  { key: 'description', label: 'توضیحات' },
-  { key: 'duration', label: 'زمان تحویل' },
-  { key: 'price', label: 'هزینه (تومان)' },
-  { key: 'status', label: 'وضعیت' },
-  { key: 'chat', label: 'گفتگو' },
-];
 
 function ProposalTable() {
   const { isLoading, isError, error, refetch, proposals } = useProposals();
@@ -44,37 +37,18 @@ function ProposalTable() {
   const currentData = proposals.slice(startIndex, endIndex);
 
   return (
-    <section className="flex w-full max-w-[912px] flex-col gap-[7px]">
+    <section className="flex w-full flex-col gap-3">
       <h3 className="owner-panel-title">درخواست ها</h3>
 
       <ResponsiveTable
-        columns={columns}
+        columns={PROPOSAL_COLUMNS}
         data={currentData}
         desktop={
-          <div className="flex h-[494px] w-full max-w-[912px] flex-col overflow-hidden rounded-[6px] border border-[#245A49] bg-white p-3">
-            <div className="min-h-0 w-full max-w-[886px] flex-1 overflow-x-auto">
-              <div className="flex min-h-0 min-w-[640px] flex-1 flex-col">
-                <div
-                  className={`grid h-[19px] w-full shrink-0 items-center ${PROPOSALS_GRID_COLS}`}
-                >
-                  {columns.map((column) => (
-                    <span
-                      key={column.key}
-                      className="h-[19px] whitespace-nowrap text-center text-base font-bold leading-none text-[#222020]"
-                    >
-                      {column.label}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">
-                  {currentData.map((proposal) => (
-                    <ProposalRow key={proposal._id} proposal={proposal} />
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <GridTable columns={PROPOSAL_COLUMNS} minWidth={820}>
+            {currentData.map((proposal) => (
+              <ProposalRow key={proposal._id} proposal={proposal} />
+            ))}
+          </GridTable>
         }
         renderCard={(proposal) => (
           <ProposalRow proposal={proposal} variant="card" />

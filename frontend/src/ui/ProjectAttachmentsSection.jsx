@@ -17,7 +17,7 @@ export function AttachmentChips({ files = [], className = '' }) {
           target="_blank"
           rel="noreferrer"
           title={file.originalName}
-          className="inline-flex max-w-[140px] items-center gap-1 truncate rounded-[6px] border border-[#006045] bg-[#F2FFF8] px-2 py-1 text-[11px] font-bold text-[#006045] hover:bg-[#E6F4EC]"
+          className="inline-flex max-w-[140px] items-center gap-1 truncate rounded-[6px] border border-[#1E7C50] bg-[#FBFAF6] px-2 py-1 text-[11px] font-bold text-[#1E7C50] hover:bg-[#E6F4EC]"
         >
           <HiOutlinePaperClip className="h-3.5 w-3.5 shrink-0" />
           <span className="truncate">{file.originalName}</span>
@@ -41,12 +41,12 @@ function ProjectAttachmentsSection({
   return (
     <div className="space-y-3 text-right">
       <div className="flex items-center gap-2">
-        <HiOutlinePaperClip className="h-4 w-4 text-[#006045]" />
-        <h2 className="text-sm font-bold text-[#222020]">{title}</h2>
+        <HiOutlinePaperClip className="h-4 w-4 text-[#1E7C50]" />
+        <h2 className="text-[14.5px] font-bold text-ink-text">{title}</h2>
       </div>
 
       {!files?.length ? (
-        <p className="text-sm text-[#6E6E6E]">{emptyText}</p>
+        <p className="text-sm text-[#5C6E66]">{emptyText}</p>
       ) : requireAuth && !isAuthenticated ? (
         <ul className="space-y-2">
           {files.map((file) => (
@@ -54,7 +54,7 @@ function ProjectAttachmentsSection({
               <button
                 type="button"
                 onClick={onRequireAuth}
-                className="inline-flex items-center gap-2 rounded-[8px] border border-[#D1D5DB] bg-[#F9FAFB] px-3 py-2 text-sm text-[#6E6E6E]"
+                className="inline-flex items-center gap-2 rounded-xl border border-ink-hair bg-ink-card px-3 py-2 text-sm text-[#5C6E66]"
               >
                 برای دانلود وارد شوید — {file.originalName}
               </button>
@@ -69,7 +69,7 @@ function ProjectAttachmentsSection({
             return (
               <li
                 key={file._id || file.url}
-                className="flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[#D1D5DB] bg-[#F9FAFB] p-3"
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-ink-line bg-[#F7F5EF] p-3"
               >
                 <div className="flex min-w-0 items-center gap-3">
                   {image ? (
@@ -81,15 +81,15 @@ function ProjectAttachmentsSection({
                       />
                     </a>
                   ) : (
-                    <span className="flex h-14 w-14 items-center justify-center rounded-[8px] bg-[#E8F3EE] text-[#006045]">
+                    <span className="flex h-14 w-14 items-center justify-center rounded-[8px] bg-[#F1EFE8] text-[#1E7C50]">
                       <HiOutlinePaperClip className="h-6 w-6" />
                     </span>
                   )}
                   <div className="min-w-0 text-right">
-                    <p className="truncate text-sm font-bold text-[#222020]">
+                    <p className="truncate text-[14.5px] font-bold text-ink-text">
                       {file.originalName}
                     </p>
-                    <p className="mt-1 text-xs text-[#6E6E6E]">
+                    <p className="mt-1 text-[12.5px] text-ink-muted">
                       {formatFileSize(file.size)}
                     </p>
                   </div>
@@ -98,7 +98,7 @@ function ProjectAttachmentsSection({
                   href={url}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#006045] bg-white px-3 py-2 text-xs font-bold text-[#006045] hover:bg-[#F2FFF8]"
+                  className="inline-flex items-center gap-1.5 rounded-[8px] border border-[#1E7C50] bg-white px-3 py-2 text-xs font-bold text-[#1E7C50] hover:bg-[#FBFAF6]"
                 >
                   <HiOutlineArrowDownTray className="h-4 w-4" />
                   دانلود / مشاهده

@@ -1,40 +1,39 @@
 import { useState } from 'react';
-import { MdEdit } from 'react-icons/md';
+import { HiOutlinePencilSquare } from 'react-icons/hi2';
 import Modal from '../../../ui/Modal';
 import ChangeUserStatus from './ChangeUserStatus';
 import truncateText from '../../../utils/truncateText';
-import { MobileDataCard } from '../../../ui/ResponsiveTable';
+import { toPersianNumbers } from '../../../utils/toPersianNumbers';
+import { Avatar, DataCard, IconAction, StatusChip } from '../../../ui/DataTable';
 
-const USERS_GRID_COLS =
-  'grid-cols-[1.1fr_1.6fr_1.1fr_0.9fr_1fr_0.8fr]';
-
-const userStatus = [
-  {
-    label: 'رد شده',
-    className: 'border border-[#F9A8D4] bg-[#FDF2F8] text-[#BE185D]',
-  },
-  {
-    label: 'در انتظار تایید',
-    className: 'bg-[#E5E7EB] text-[#374151]',
-  },
-  {
-    label: 'تایید شده',
-    className: 'bg-karava-green text-white',
-  },
+/* Design B (dense): the admin list is the one table that grows to hundreds of
+ * rows, so it keeps every column and trades breathing room for scan speed. */
+export const USER_COLUMNS = [
+  { key: 'name', label: 'کاربر' },
+  { key: 'email', label: 'ایمیل' },
+  { key: 'phone', label: 'شماره موبایل' },
+  { key: 'role', label: 'نقش' },
+  { key: 'status', label: 'وضعیت' },
+  { key: 'actions', label: '' },
 ];
 
-function UserRow({ user, variant = 'desktop' }) {
-  const { status } = user;
-  const [open, setOpen] = useState(false);
-  const statusMeta = userStatus[status] || userStatus[1];
+/** user.status: 0 rejected · 1 pending · 2 approved */
+const STATUS = [
+  { key: 'rejected', label: 'رد شده' },
+  { key: 'pending', label: 'در انتظار تایید' },
+  { key: 'accepted', label: 'تایید شده' },
+];
 
-  const statusBadge = (
-    <span
-      className={`inline-flex min-w-[7.5rem] items-center justify-center rounded-[4px] px-2 py-0.5 text-center text-xs font-medium ${statusMeta.className}`}
-    >
-      {statusMeta.label}
-    </span>
-  );
+const ROLE_LABELS = {
+  OWNER: 'کارفرما',
+  FREELANCER: 'کارجو',
+  ADMIN: 'مدیر سیستم',
+};
+
+function UserRow({ user, variant = 'desktop' }) {
+  const [open, setOpen] = useState(false);
+  const meta = STATUS[user.status] || STATUS[1];
+  const roleLabel = ROLE_LABELS[user.role] || user.role || '—';
 
   const actions = (
     <>
@@ -45,34 +44,34 @@ function UserRow({ user, variant = 'desktop' }) {
       >
         <ChangeUserStatus userId={user._id} onClose={() => setOpen(false)} />
       </Modal>
-      <button
-        type="button"
+      <IconAction
+        icon={HiOutlinePencilSquare}
+        label="تغییر وضعیت کاربر"
         onClick={() => setOpen(true)}
-        aria-label="تغییر وضعیت"
-        className="inline-flex h-8 w-8 items-center justify-center"
-      >
-        <MdEdit className="h-5 w-5 text-[#006045]" />
-      </button>
+      />
     </>
   );
 
   if (variant === 'card') {
     return (
-      <MobileDataCard
+      <DataCard
         title={user.name || 'کاربر بدون نام'}
-        fields={[
+        status={meta.key}
+        statusLabel={meta.label}
+        meta={[roleLabel]}
+        stats={[
           {
-            key: 'email',
             label: 'ایمیل',
-            value: user.email || '—',
+            value: (
+              <span dir="ltr" className="block truncate text-left">
+                {user.email || '—'}
+              </span>
+            ),
           },
           {
-            key: 'phone',
             label: 'شماره موبایل',
-            value: user.phoneNumber || '—',
+            value: user.phoneNumber ? toPersianNumbers(user.phoneNumber) : '—',
           },
-          { key: 'role', label: 'نقش', value: user.role || '—' },
-          { key: 'status', label: 'وضعیت', value: statusBadge },
         ]}
         actions={actions}
       />
@@ -80,24 +79,35 @@ function UserRow({ user, variant = 'desktop' }) {
   }
 
   return (
-    <div
-      className={`box-border grid h-[68px] w-full shrink-0 items-center border-b border-[#000000] px-1 py-[19px] transition-colors hover:bg-[#F2FFF8] ${USERS_GRID_COLS}`}
-    >
-      <span className="min-w-0 truncate text-center text-sm text-[#374151]">
-        {user.name || '-'}
-      </span>
-      <span className="min-w-0 truncate text-center text-sm text-[#374151]">
-        {truncateText(user.email || '-', 28)}
-      </span>
-      <span className="text-center text-sm text-[#374151]">
-        {user.phoneNumber || '-'}
-      </span>
-      <span className="text-center text-sm text-[#374151]">{user.role}</span>
-      <div className="flex items-center justify-center">{statusBadge}</div>
-      <div className="flex items-center justify-center">{actions}</div>
-    </div>
+    <tr className="border-b border-[#F6F4EE] transition-colors last:border-b-0 hover:bg-ink-mint-tint/40">
+      <td className="whitespace-nowrap px-4 py-0">
+        <span className="flex h-12 items-center gap-2.5">
+          <Avatar name={user.name} className="h-8 w-8 rounded-lg text-[12px]" />
+          <span className="truncate text-[13px] font-bold text-ink-text">
+            {user.name || '—'}
+          </span>
+        </span>
+      </td>
+      <td className="whitespace-nowrap px-4 py-0 text-[13px] text-ink-body">
+        {truncateText(user.email || '—', 28)}
+      </td>
+      <td
+        dir="ltr"
+        className="whitespace-nowrap px-4 py-0 text-right font-['Sora',_sans-serif] text-[12.5px] text-ink-body"
+      >
+        {user.phoneNumber || '—'}
+      </td>
+      <td className="whitespace-nowrap px-4 py-0 text-[13px] text-ink-body">
+        {roleLabel}
+      </td>
+      <td className="whitespace-nowrap px-4 py-0">
+        <StatusChip status={meta.key} label={meta.label} size="sm" />
+      </td>
+      <td className="whitespace-nowrap px-4 py-0">
+        <span className="flex justify-end">{actions}</span>
+      </td>
+    </tr>
   );
 }
 
 export default UserRow;
-export { USERS_GRID_COLS };

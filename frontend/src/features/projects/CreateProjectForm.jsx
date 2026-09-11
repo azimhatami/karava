@@ -287,7 +287,7 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
         />
 
         {attachmentFile ? (
-          <div className="flex items-center gap-3 rounded-[10px] border border-[#006045] bg-[#F2FFF8] p-3">
+          <div className="flex items-center gap-3 rounded-[10px] border border-[#1E7C50] bg-[#FBFAF6] p-3">
             {pendingPreviewUrl ? (
               <img
                 src={pendingPreviewUrl}
@@ -296,10 +296,10 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
               />
             ) : null}
             <div className="min-w-0 flex-1 text-right">
-              <p className="truncate text-sm font-bold text-[#006045]">
+              <p className="truncate text-[13px] font-bold text-ink-mint-mid">
                 {attachmentFile.name}
               </p>
-              <p className="mt-1 text-xs text-[#6E6E6E]">
+              <p className="mt-1 text-[12.5px] text-ink-muted">
                 {formatFileSize(attachmentFile.size)} — پس از ذخیره پروژه آپلود می‌شود
               </p>
             </div>
@@ -314,7 +314,7 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
         ) : null}
 
         {attachmentError ? (
-          <p className="text-xs text-karava-red">{attachmentError}</p>
+          <p className="text-xs text-[#C9093D]">{attachmentError}</p>
         ) : null}
 
         {savedAttachments.length ? (
@@ -332,7 +332,7 @@ function CreateProjectForm({ onClose, projectToEdit = {} }) {
             <Loading />
           </div>
         ) : (
-          <button type="submit" className="karava-form-submit">
+          <button type="submit" className="ink-btn-accent w-full">
             تایید و ذخیره
           </button>
         )}

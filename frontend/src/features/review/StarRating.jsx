@@ -22,7 +22,7 @@ function StarRating({
         const starEl = (
           <HiStar
             className={`${iconClass} ${
-              filled ? 'text-[#EAB308]' : 'text-[#D1D5DB]'
+              filled ? 'text-[#EAB308]' : 'text-[#E4E1D6]'
             }`}
           />
         );

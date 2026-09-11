@@ -29,26 +29,26 @@ function ConversationsList({ basePath }) {
   return (
     <section className="flex w-full flex-col gap-3">
       <h3 className="owner-panel-title">گفتگوها</h3>
-      <div className="overflow-hidden rounded-[12px] border border-[#245A49] bg-white">
-        <ul className="divide-y divide-[#E5E7EB]">
+      <div className="ink-card overflow-hidden">
+        <ul className="divide-y divide-ink-hair">
           {conversations.map((item) => (
             <li key={item._id}>
               <Link
                 to={`${basePath}/${item._id}`}
-                className="flex items-center justify-between gap-3 px-4 py-4 transition-colors hover:bg-[#F2FFF8]"
+                className="flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-[#FBFAF6]"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#E8F3EE] text-[#006045]">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[10px] bg-ink-raised text-ink-mint">
                     <HiOutlineChatBubbleLeftRight className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 text-right">
-                    <p className="truncate text-sm font-bold text-[#222020]">
+                    <p className="truncate text-[14.5px] font-bold text-ink-text">
                       {item.counterpart?.name || 'کاربر'}
                     </p>
-                    <p className="mt-1 truncate text-xs text-[#006045]">
+                    <p className="mt-1 truncate text-[12.5px] text-ink-mint-mid">
                       {item.project?.title || 'پروژه'}
                     </p>
-                    <p className="mt-1 truncate text-xs text-[#6E6E6E]">
+                    <p className="mt-1 truncate text-[12.5px] text-ink-muted">
                       {item.lastMessage?.text
                         ? truncateText(item.lastMessage.text, 48)
                         : 'هنوز پیامی نیست'}
@@ -56,13 +56,13 @@ function ConversationsList({ basePath }) {
                   </div>
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-2">
-                  <span className="text-[11px] text-[#9CA3AF]">
+                  <span className="text-[11.5px] text-ink-dim">
                     {item.lastMessage?.createdAt
                       ? shortDate(item.lastMessage.createdAt)
                       : ''}
                   </span>
                   {item.unreadCount > 0 ? (
-                    <span className="inline-flex min-w-[20px] items-center justify-center rounded-full bg-[#C9093D] px-1.5 py-0.5 text-[10px] font-bold text-white">
+                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-ink-mint px-1.5 text-[11px] font-bold text-ink">
                       {item.unreadCount}
                     </span>
                   ) : null}

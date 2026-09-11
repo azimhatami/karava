@@ -16,7 +16,7 @@ function PriceField({
     <div className="karava-form-field">
       <label htmlFor={name} className="karava-form-label">
         {label}
-        {required ? <span className="text-karava-red"> *</span> : null}
+        {required ? <span className="text-[#C9093D]"> *</span> : null}
       </label>
 
       <div className="relative">
@@ -35,13 +35,13 @@ function PriceField({
           }}
           className="karava-form-input pl-16 text-left"
         />
-        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#6E6E6E]">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-[#5C6E66]">
           تومان
         </span>
       </div>
 
       {error ? (
-        <span className="mt-1 block text-right text-xs text-karava-red">
+        <span className="mt-1 block text-right text-xs text-[#C9093D]">
           {error}
         </span>
       ) : null}

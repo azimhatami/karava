@@ -21,7 +21,7 @@ function QueryErrorState({
         <button
           type="button"
           onClick={onRetry}
-          className="mt-1 inline-flex h-10 items-center justify-center rounded-[6px] border border-karava-green bg-white px-4 text-sm font-bold text-karava-green transition-colors hover:bg-[#F2FFF8]"
+          className="mt-1 inline-flex h-10 items-center justify-center rounded-[6px] border border-ink-line bg-white px-4 text-sm font-bold text-ink-mint-mid transition-colors hover:bg-[#FBFAF6]"
         >
           {retryLabel}
         </button>

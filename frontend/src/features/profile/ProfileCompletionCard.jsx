@@ -8,22 +8,22 @@ function ProfileCompletionCard({ user, profilePath }) {
   const isComplete = percent >= 100;
 
   return (
-    <section className="flex w-full flex-col gap-3 rounded-[12px] border border-[#0E6A50] bg-[#F8FFFC] p-4">
+    <section className="ink-card flex w-full flex-col gap-4 p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="text-right">
-          <h3 className="text-sm font-bold text-[#222020]">تکمیل پروفایل</h3>
-          <p className="mt-1 text-xs text-[#6E6E6E]">
+          <h3 className="text-[15px] font-bold text-ink-text">تکمیل پروفایل</h3>
+          <p className="mt-1.5 text-[13px] text-ink-muted">
             {isComplete
               ? 'پروفایل شما کامل است و می‌توانید پیشنهاد ارسال کنید'
               : `${filled} از ${total} مورد تکمیل شده — برای اقدام‌های مهم لازم است`}
           </p>
         </div>
-        <span className="text-sm font-bold text-[#006045]">{percent}٪</span>
+        <span className="text-lg font-black text-ink-mint-deep">{percent}٪</span>
       </div>
 
-      <div className="h-2 w-full overflow-hidden rounded-full bg-[#D1D5DB]">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-ink-well">
         <div
-          className="h-full rounded-full bg-[#006045] transition-all"
+          className="h-full rounded-full bg-ink-mint-mid transition-all"
           style={{ width: `${percent}%` }}
         />
       </div>
@@ -32,10 +32,10 @@ function ProfileCompletionCard({ user, profilePath }) {
         {fields.map((field) => (
           <span
             key={field.key}
-            className={`rounded-[6px] border px-2 py-1 text-xs ${
+            className={`rounded-full border px-3 py-1 text-[12px] ${
               field.complete
-                ? 'border-[#00D281] bg-[#ECFDF5] text-[#006045]'
-                : 'border-[#E5E7EB] bg-white text-[#6E6E6E]'
+                ? 'border-transparent bg-ink-mint-tint text-ink-mint-deep'
+                : 'border-ink-line bg-ink-card text-ink-dim'
             }`}
           >
             {field.label}
@@ -46,7 +46,7 @@ function ProfileCompletionCard({ user, profilePath }) {
       <div className="flex justify-end">
         <Link
           to={profilePath}
-          className="text-sm font-bold text-[#006045] hover:text-[#004d37]"
+          className="text-[13px] font-bold text-ink-mint-mid transition-colors hover:text-ink-mint-deep"
         >
           {isComplete ? 'مشاهده پروفایل' : 'تکمیل پروفایل'}
         </Link>

@@ -8,7 +8,7 @@ function Loading({ width='75', height='40' }) {
         height={height} 
         width={width} 
         radius={9} 
-        color="var(--karava-green)"
+        color="#1E7C50"
         wrapperStyle={{
           display: 'flex',
           justifyContent: 'center',

@@ -1,5 +1,5 @@
 import { createPortal } from 'react-dom';
-import { HiOutlineX } from 'react-icons/hi';
+import { HiOutlineXMark } from 'react-icons/hi2';
 import useOutsideClick from '../hooks/useOutsideClick';
 
 function Modal({ open, onClose, title, children }) {
@@ -8,26 +8,26 @@ function Modal({ open, onClose, title, children }) {
   if (!open) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-karava-text/30 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-ink/50 p-4 backdrop-blur-sm">
       <div
         ref={ref}
-        className="flex max-h-[calc(100vh-2rem)] w-full max-w-[640px] flex-col overflow-hidden rounded-[6px] border border-[#D1D5DB] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)]"
+        className="flex max-h-[calc(100vh-2rem)] w-full max-w-[640px] flex-col overflow-hidden rounded-2xl border border-ink-line bg-ink-card shadow-[0_24px_60px_rgba(7,20,17,0.28)]"
       >
-        <div className="relative shrink-0 px-6 pb-4 pt-6">
+        <div className="relative shrink-0 border-b border-ink-hair px-6 py-5">
           <button
             type="button"
             onClick={onClose}
             aria-label="بستن"
-            className="absolute left-6 top-6 flex h-6 w-6 items-center justify-center rounded-full border border-karava-green text-karava-green transition-colors hover:bg-karava-bg-subtle"
+            className="absolute left-5 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-lg text-ink-muted transition-colors hover:bg-ink-well hover:text-ink-text"
           >
-            <HiOutlineX className="h-3.5 w-3.5" />
+            <HiOutlineXMark className="h-5 w-5" />
           </button>
-          <h2 className="pr-8 text-right text-base font-bold leading-[19px] text-karava-text">
+          <h2 className="pl-10 text-right text-[16px] font-bold text-ink-text">
             {title}
           </h2>
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">{children}</div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 py-6">{children}</div>
       </div>
     </div>,
     document.body,

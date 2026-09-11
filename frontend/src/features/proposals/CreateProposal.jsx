@@ -135,7 +135,7 @@ function CreateProposal({ onClose, projectId }) {
         <div className="karava-form-field">
           <label htmlFor="duration" className="karava-form-label">
             مدت زمان
-            <span className="text-karava-red"> *</span>
+            <span className="text-[#C9093D]"> *</span>
           </label>
           <div className="grid grid-cols-[1fr_120px] gap-2">
             <input
@@ -164,11 +164,11 @@ function CreateProposal({ onClose, projectId }) {
             </select>
           </div>
           {errors.duration ? (
-            <span className="mt-1 block text-right text-xs text-karava-red">
+            <span className="mt-1 block text-right text-xs text-[#C9093D]">
               {errors.duration.message}
             </span>
           ) : errors.durationUnit ? (
-            <span className="mt-1 block text-right text-xs text-karava-red">
+            <span className="mt-1 block text-right text-xs text-[#C9093D]">
               {errors.durationUnit.message}
             </span>
           ) : null}
@@ -178,7 +178,7 @@ function CreateProposal({ onClose, projectId }) {
           {isCreating ? (
             <Loading />
           ) : (
-            <button type="submit" className="karava-form-submit mt-2">
+            <button type="submit" className="ink-btn-accent w-full mt-2">
               تایید و ذخیره
             </button>
           )}

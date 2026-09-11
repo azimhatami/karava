@@ -1,29 +1,67 @@
-import truncateText from '../../utils/truncateText';
 import shortDate from '../../utils/shortDate';
 import { toPersianNumbersWithComma } from '../../utils/toPersianNumbers';
-import Table from '../../ui/Table';
-import { MobileDataCard } from '../../ui/ResponsiveTable';
-import { HiOutlineTrash, HiEye } from 'react-icons/hi';
-import { TbPencilMinus } from 'react-icons/tb';
+import {
+  DataCard,
+  EscrowCell,
+  GridRow,
+  IconAction,
+  Money,
+  PrimaryCell,
+} from '../../ui/DataTable';
+import {
+  HiOutlineTrash,
+  HiOutlinePencilSquare,
+  HiOutlineChatBubbleLeftRight,
+} from 'react-icons/hi2';
 import Modal from '../../ui/Modal';
 import { useState } from 'react';
 import ConfirmDelete from '../../ui/ConfirmDelete';
 import useRemoveProject from './useRemoveProject';
 import CreateProjectForm from './CreateProjectForm';
 import ToggleProjectStatus from './ToggleProjectStatus';
-import ProjectTags from '../../ui/ProjectTags';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
-function ProjectTableRow({ project, index, variant = 'desktop' }) {
+export const OWNER_PROJECTS_COLUMNS = [
+  { key: 'project', label: 'پروژه', width: 'minmax(0, 2.4fr)' },
+  { key: 'budget', label: 'بودجه', width: '1fr' },
+  { key: 'escrow', label: 'وضعیت امانت', width: '1.1fr' },
+  { key: 'status', label: 'باز/بسته', width: '0.9fr' },
+  { key: 'actions', label: 'عملیات', width: '140px', align: 'end' },
+];
+
+const STATUS_KEY = { OPEN: 'open', CLOSED: 'closed', COMPLETED: 'completed' };
+
+function ProjectTableRow({ project, variant = 'desktop' }) {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const { removeProject } = useRemoveProject();
 
-  const editDeleteActions = (
+  const meta = [
+    project.category?.title,
+    project.deadline ? shortDate(project.deadline) : null,
+    project.freelancer?.name || 'فریلنسر انتخاب نشده',
+  ];
+
+  const actions = (
     <>
-      <button type="button" onClick={() => setIsEditOpen(true)} aria-label="ویرایش">
-        <TbPencilMinus className="h-5 w-5 text-lg text-primary-900" />
-      </button>
+      <IconAction
+        as={Link}
+        to={project._id}
+        icon={HiOutlineChatBubbleLeftRight}
+        label="پیشنهادهای این پروژه"
+      />
+      <IconAction
+        icon={HiOutlinePencilSquare}
+        label="ویرایش پروژه"
+        onClick={() => setIsEditOpen(true)}
+      />
+      <IconAction
+        icon={HiOutlineTrash}
+        label="حذف پروژه"
+        tone="danger"
+        onClick={() => setIsDeleteOpen(true)}
+      />
+
       <Modal
         open={isEditOpen}
         title={`ویرایش ${project.title}`}
@@ -35,9 +73,6 @@ function ProjectTableRow({ project, index, variant = 'desktop' }) {
         />
       </Modal>
 
-      <button type="button" onClick={() => setIsDeleteOpen(true)} aria-label="حذف">
-        <HiOutlineTrash className="h-5 w-5 text-lg text-error" />
-      </button>
       <Modal
         open={isDeleteOpen}
         title={`حذف ${project.title}`}
@@ -57,53 +92,30 @@ function ProjectTableRow({ project, index, variant = 'desktop' }) {
     </>
   );
 
-  const proposalsLink = (
-    <Link to={project._id} className="flex place-content-center" aria-label="درخواست‌ها">
-      <HiEye className="h-5 w-5 text-primary-900" />
-    </Link>
-  );
-
   if (variant === 'card') {
     return (
-      <MobileDataCard
+      <DataCard
         title={project.title}
-        fields={[
-          { key: 'index', label: 'ردیف', value: index + 1 },
+        status={STATUS_KEY[project.status] || 'closed'}
+        meta={meta.filter(Boolean)}
+        stats={[
           {
-            key: 'category',
-            label: 'دسته بندی',
-            value: project.category?.title || '—',
+            label: 'بودجه (تومان)',
+            value: toPersianNumbersWithComma(project.budget || 0),
           },
           {
-            key: 'budget',
-            label: 'بودجه',
-            value: toPersianNumbersWithComma(project.budget),
-          },
-          {
-            key: 'deadline',
-            label: 'ددلاین',
-            value: shortDate(project.deadline),
-          },
-          {
-            key: 'tags',
-            label: 'تگ ها',
-            value: <ProjectTags tags={project.tags} className="max-w-full" />,
-          },
-          {
-            key: 'freelancer',
-            label: 'فریلنسر',
-            value: project.freelancer?.name || '—',
-          },
-          {
-            key: 'status',
-            label: 'وضعیت',
-            value: <ToggleProjectStatus project={project} />,
+            label: 'وضعیت امانت',
+            value: <EscrowCell status={project.escrowStatus} />,
           },
         ]}
         actions={
           <>
-            {editDeleteActions}
-            {proposalsLink}
+            {project.status === 'COMPLETED' ? null : (
+              <ToggleProjectStatus project={project} />
+            )}
+            <span className="flex flex-1 items-center justify-end gap-2">
+              {actions}
+            </span>
           </>
         }
       />
@@ -111,24 +123,21 @@ function ProjectTableRow({ project, index, variant = 'desktop' }) {
   }
 
   return (
-    <Table.Row>
-      <td>{index + 1}</td>
-      <td>{truncateText(project.title, 30)}</td>
-      <td>{project.category?.title}</td>
-      <td>{toPersianNumbersWithComma(project.budget)}</td>
-      <td>{shortDate(project.deadline)}</td>
-      <td>
-        <ProjectTags tags={project.tags} className="max-w-[200px]" />
-      </td>
-      <td>{project.freelancer?.name || '-'}</td>
-      <td>
+    <GridRow columns={OWNER_PROJECTS_COLUMNS}>
+      <PrimaryCell
+        title={project.title}
+        status={STATUS_KEY[project.status] || 'closed'}
+        meta={meta}
+      />
+      <Money amount={project.budget} />
+      <EscrowCell status={project.escrowStatus} />
+      {project.status === 'COMPLETED' ? (
+        <span className="text-[13px] text-ink-dim">—</span>
+      ) : (
         <ToggleProjectStatus project={project} />
-      </td>
-      <td>
-        <div className="flex items-center gap-x-4">{editDeleteActions}</div>
-      </td>
-      <td>{proposalsLink}</td>
-    </Table.Row>
+      )}
+      <div className="flex items-center justify-end gap-2">{actions}</div>
+    </GridRow>
   );
 }
 

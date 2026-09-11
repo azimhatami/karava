@@ -8,7 +8,7 @@ function AppLayout({children}) {
       <Header />
       {children}
       {/* <Sidebar /> */}
-      <div className='bg-secondary-100 p-8 overflow-y-auto w-full h-[100%]'>
+      <div className='bg-ink-well p-8 overflow-y-auto w-full h-[100%]'>
         <div className='mx-auto max-w-screen-lg'>
           <Outlet />
         </div>

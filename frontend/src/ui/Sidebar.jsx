@@ -4,7 +4,7 @@ function Sidebar({ children }) {
   return(
     <>
       <div 
-        className='fixed bottom-0 left-0 right-0 md:relative bg-secondary-0 
+        className='fixed bottom-0 left-0 right-0 md:relative bg-ink-card 
           \ md:row-start-1 order-last md:row-span-2 md:border-l md:border-secondary-200 p-4 md:h-screen'
       >
         <ul className='flex md:items-start items-center md:justify-center justify-around md:flex md:flex-col md:gap-y-3'>

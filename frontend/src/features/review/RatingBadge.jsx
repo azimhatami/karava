@@ -9,7 +9,7 @@ function RatingBadge({
 }) {
   if (!totalReviews) {
     return (
-      <span className={`text-xs text-[#9CA3AF] ${className}`}>{emptyLabel}</span>
+      <span className={`text-xs text-[#8CA69B] ${className}`}>{emptyLabel}</span>
     );
   }
 

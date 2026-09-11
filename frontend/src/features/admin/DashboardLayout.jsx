@@ -48,7 +48,7 @@ function DashboardLayout() {
 
   return (
     <div className="space-y-8">
-      <div className="flex max-w-[912px] flex-col items-end gap-[19px] text-right">
+      <div className="flex w-full flex-col items-stretch gap-[19px] text-right">
         <h2 className="owner-panel-title w-full">
           داشبورد مدیریت سیستم(ادمین)
         </h2>
