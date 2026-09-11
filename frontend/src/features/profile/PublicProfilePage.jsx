@@ -34,8 +34,8 @@ function PublicProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-karava-bg-subtle">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+      <div className="min-h-screen bg-ink-paper">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 xl:px-[140px]">
           <HomeHeader variant="paper" />
           <div className="flex justify-center py-20">
             <Loading />
@@ -47,8 +47,8 @@ function PublicProfilePage() {
 
   if (isError || !user) {
     return (
-      <div className="min-h-screen bg-karava-bg-subtle">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+      <div className="min-h-screen bg-ink-paper">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 xl:px-[140px]">
           <HomeHeader variant="paper" />
           <div className="mt-10">
             <QueryErrorState
@@ -63,7 +63,7 @@ function PublicProfilePage() {
             <div className="mt-4 text-center">
               <Link
                 to="/"
-                className="inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
+                className="inline-flex text-sm font-bold text-ink-mint-mid hover:text-ink-mint-deep"
               >
                 بازگشت به صفحه اصلی
               </Link>
@@ -77,32 +77,32 @@ function PublicProfilePage() {
   const roleLabel = ROLE_LABELS[user.role] || 'کاربر';
 
   return (
-    <div className="min-h-screen bg-karava-bg-subtle">
-      <div className="mx-auto w-full max-w-[1440px] space-y-6 px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+    <div className="min-h-screen bg-ink-paper">
+      <div className="mx-auto w-full max-w-[1440px] space-y-6 px-4 pb-16 pt-6 md:px-8 xl:px-[140px]">
         <HomeHeader variant="paper" />
 
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm font-bold text-[#006045] hover:text-[#004d37]"
+          className="inline-flex items-center gap-2 text-[13.5px] font-bold text-ink-mint-mid transition-colors hover:text-ink-mint-deep"
         >
           <HiOutlineArrowRight className="h-4 w-4" />
           بازگشت
         </Link>
 
-        <section className="rounded-[12px] border border-[#222020] bg-white p-6">
+        <section className="ink-card p-6 md:p-8">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex items-center gap-3">
-              <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#E8F3EE] text-[#006045]">
+              <span className="flex h-16 w-16 items-center justify-center rounded-full bg-ink-raised text-ink-mint">
                 <HiOutlineUser className="h-7 w-7" />
               </span>
               <div>
-                <h1 className="text-xl font-bold text-[#222020]">
+                <h1 className="text-2xl font-black tracking-[-0.015em] text-ink-text">
                   {user.name || 'کاربر کارآوا'}
                 </h1>
-                <p className="mt-1 text-sm text-[#006045]">{roleLabel}</p>
+                <p className="mt-1.5 text-[13px] text-ink-muted">{roleLabel}</p>
               </div>
             </div>
-            <div className="rounded-[8px] border border-[#FDE68A] bg-[#FFFBEB] px-4 py-3 text-right">
+            <div className="rounded-xl border border-ink-hair bg-ink-well px-4 py-3 text-right">
               <StarRating value={Math.round(averageRating)} readOnly />
               <div className="mt-2">
                 <RatingBadge
@@ -114,14 +114,14 @@ function PublicProfilePage() {
           </div>
 
           {user.companyName ? (
-            <p className="mt-4 flex items-center gap-2 text-sm text-[#374151]">
-              <HiOutlineBriefcase className="h-4 w-4 text-[#006045]" />
+            <p className="mt-5 flex items-center gap-2 text-sm text-ink-body">
+              <HiOutlineBriefcase className="h-4 w-4 text-ink-mint-mid" />
               {user.companyName}
             </p>
           ) : null}
 
           {user.biography || user.companyDescription ? (
-            <p className="mt-4 whitespace-pre-wrap text-sm leading-7 text-[#4B5563]">
+            <p className="mt-5 whitespace-pre-wrap text-[15px] leading-[2.1] text-ink-body">
               {user.biography || user.companyDescription}
             </p>
           ) : null}
@@ -131,7 +131,7 @@ function PublicProfilePage() {
               {user.skills.map((skill) => (
                 <span
                   key={skill}
-                  className="inline-flex items-center rounded-[6px] border border-[#007A55] bg-[#8EC3A9] px-2.5 py-1.5 text-xs text-white"
+                  className="flex h-8 items-center rounded-lg border border-ink-line px-3.5 font-['Sora',_sans-serif] text-[13px] text-ink-body"
                 >
                   {skill}
                 </span>
@@ -140,9 +140,9 @@ function PublicProfilePage() {
           ) : null}
         </section>
 
-        <section className="overflow-hidden rounded-[12px] border border-[#D1D5DB] bg-white">
-          <div className="border-b border-[#E5E7EB] px-4 py-3">
-            <h2 className="text-sm font-bold text-[#222020]">
+        <section className="ink-card overflow-hidden">
+          <div className="border-b border-ink-hair px-5 py-4">
+            <h2 className="text-[15px] font-bold text-ink-text">
               نظرات ({toPersianNumbers(totalReviews)})
             </h2>
           </div>

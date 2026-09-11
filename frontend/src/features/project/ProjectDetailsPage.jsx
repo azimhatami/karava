@@ -15,6 +15,7 @@ import {
   HiOutlineClock,
   HiOutlineTag,
   HiOutlineUser,
+  HiOutlineLockClosed,
 } from 'react-icons/hi2';
 import usePublicProjectDetails from './usePublicProjectDetails';
 import useUser from '../authentication/useUser';
@@ -29,15 +30,15 @@ import RatingBadge from '../review/RatingBadge';
 const PROPOSAL_STATUS = {
   0: {
     label: 'پیشنهاد شما رد شده است',
-    className: 'border-[#F9A8D4] bg-[#FDF2F8] text-[#BE185D]',
+    className: 'bg-ink-amber-tint text-ink-amber-deep',
   },
   1: {
     label: 'شما قبلاً پیشنهاد داده‌اید - در انتظار بررسی',
-    className: 'border-[#D1D5DB] bg-[#F3F4F6] text-[#374151]',
+    className: 'bg-ink-well text-ink-muted',
   },
   2: {
     label: 'پیشنهاد شما پذیرفته شد',
-    className: 'border-[#00D281] bg-[#ECFDF5] text-[#006045]',
+    className: 'bg-ink-mint-tint text-ink-mint-deep',
   },
 };
 
@@ -50,8 +51,8 @@ function ProjectDetailsPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-karava-bg-subtle">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+      <div className="min-h-screen bg-ink-paper">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 xl:px-[140px]">
           <HomeHeader variant="paper" />
           <div className="flex justify-center py-20">
             <Loading />
@@ -63,8 +64,8 @@ function ProjectDetailsPage() {
 
   if (isError || !project) {
     return (
-      <div className="min-h-screen bg-karava-bg-subtle">
-        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+      <div className="min-h-screen bg-ink-paper">
+        <div className="mx-auto w-full max-w-[1440px] px-4 py-6 md:px-8 xl:px-[140px]">
           <HomeHeader variant="paper" />
           <div className="mt-10">
             <QueryErrorState
@@ -79,7 +80,7 @@ function ProjectDetailsPage() {
             <div className="mt-4 text-center">
               <Link
                 to="/"
-                className="inline-flex text-sm font-bold text-[#006045] hover:text-[#004d37]"
+                className="inline-flex text-sm font-bold text-ink-mint-mid hover:text-ink-mint-deep"
               >
                 بازگشت به لیست پروژه‌ها
               </Link>
@@ -107,25 +108,25 @@ function ProjectDetailsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-karava-bg-subtle">
-      <div className="mx-auto w-full max-w-[1440px] space-y-6 px-4 py-6 md:px-8 md:py-8 xl:px-[108px]">
+    <div className="min-h-screen bg-ink-paper">
+      <div className="mx-auto w-full max-w-[1440px] space-y-6 px-4 pb-16 pt-6 md:px-8 xl:px-[140px]">
         <HomeHeader variant="paper" />
 
         <div className="flex items-center justify-between gap-3">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm font-bold text-[#006045] hover:text-[#004d37]"
+            className="inline-flex items-center gap-2 text-[13.5px] font-bold text-ink-mint-mid transition-colors hover:text-ink-mint-deep"
           >
             <HiOutlineArrowRight className="h-4 w-4" />
             بازگشت به پروژه‌ها
           </Link>
           <span
-            className={`inline-flex rounded-[6px] border px-2.5 py-1 text-xs font-medium ${
+            className={`ink-chip ${
               isCompleted
-                ? 'border-[#7DD3FC] bg-[#E0F2FE] text-[#075985]'
+                ? 'bg-[#EEF1F5] text-[#46586B]'
                 : isOpen
-                  ? 'border-[#00D281] bg-[#008245] text-white'
-                  : 'border-[#C9093D] bg-[#FFF1F2] text-[#BE185D]'
+                  ? 'bg-ink-mint-tint text-ink-mint-deep'
+                  : 'bg-ink-amber-tint text-ink-amber-deep'
             }`}
           >
             {isCompleted ? 'تکمیل‌شده' : isOpen ? 'باز' : 'بسته'}
@@ -133,15 +134,15 @@ function ProjectDetailsPage() {
         </div>
 
         <section className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-          <div className="flex flex-col gap-6 rounded-[12px] border border-[#222020] bg-white p-6">
+          <div className="ink-card flex flex-col gap-7 p-6 md:p-8">
             <div className="space-y-3 text-right">
-              <p className="text-sm text-[#6E6E6E]">
+              <p className="text-[13px] text-ink-dim">
                 {project.category?.title || 'بدون دسته'}
               </p>
-              <h1 className="text-2xl font-bold leading-9 text-[#222020]">
+              <h1 className="text-[28px] font-black leading-[1.4] tracking-[-0.015em] text-ink-text">
                 {project.title}
               </h1>
-              <p className="whitespace-pre-wrap text-sm leading-7 text-[#4B5563]">
+              <p className="whitespace-pre-wrap text-[15px] leading-[2.1] text-ink-body">
                 {project.description}
               </p>
             </div>
@@ -170,20 +171,20 @@ function ProjectDetailsPage() {
             </div>
 
             <div className="space-y-3 text-right">
-              <h2 className="text-sm font-bold text-[#222020]">مهارت‌ها و تگ‌ها</h2>
+              <h2 className="text-[13px] text-ink-dim">مهارت‌ها و تگ‌ها</h2>
               {(project.tags || []).length ? (
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="inline-flex items-center rounded-[6px] border border-[#007A55] bg-[#8EC3A9] px-2.5 py-1.5 text-xs text-white"
+                      className="flex h-8 items-center rounded-lg border border-ink-line px-3.5 font-['Sora',_sans-serif] text-[13px] text-ink-body"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-[#6E6E6E]">تگی ثبت نشده است</p>
+                <p className="text-[13px] text-ink-dim">تگی ثبت نشده است</p>
               )}
             </div>
 
@@ -199,7 +200,7 @@ function ProjectDetailsPage() {
               project.isOwner ||
               (project.deliverables || []).length > 0) && (
               <div className="space-y-3 text-right">
-                <h2 className="text-sm font-bold text-[#222020]">تحویل کار</h2>
+                <h2 className="text-[13px] text-ink-dim">تحویل کار</h2>
                 {project.isAssignedFreelancer || myProposal?.status === 2 ? (
                   <FileUploadField
                     kind="deliverable"
@@ -232,16 +233,18 @@ function ProjectDetailsPage() {
           </div>
 
           <aside className="flex flex-col gap-4">
-            <div className="rounded-[12px] border border-[#0E6A50] bg-[#F8FFFC] p-4">
-              <div className="mb-3 flex items-center gap-2 text-[#006045]">
+            <EscrowExplainer isCompleted={isCompleted} />
+
+            <div className="ink-card p-5">
+              <div className="mb-4 flex items-center gap-2 text-ink-muted">
                 <HiOutlineUser className="h-5 w-5" />
-                <h2 className="text-sm font-bold">اطلاعات کارفرما</h2>
+                <h2 className="text-[13px]">کارفرما</h2>
               </div>
-              <div className="space-y-2 text-right text-sm text-[#222020]">
+              <div className="space-y-2.5 text-right text-sm text-ink-text">
                 {project.owner?._id ? (
                   <Link
                     to={`/users/${project.owner._id}`}
-                    className="font-bold text-[#006045] hover:underline"
+                    className="text-[15px] font-bold text-ink-text hover:text-ink-mint-mid"
                   >
                     {project.owner?.name || 'کارفرما'}
                   </Link>
@@ -255,32 +258,32 @@ function ProjectDetailsPage() {
                   />
                 </div>
                 {project.owner?.companyName ? (
-                  <p className="text-[#006045]">{project.owner.companyName}</p>
+                  <p className="text-[13px] font-medium text-ink-mint-mid">{project.owner.companyName}</p>
                 ) : null}
                 {project.owner?.companyDescription ? (
-                  <p className="leading-6 text-[#6E6E6E]">
+                  <p className="text-[13px] leading-6 text-ink-muted">
                     {project.owner.companyDescription}
                   </p>
                 ) : null}
-                <p className="text-xs text-[#6E6E6E]">
+                <p className="text-xs text-ink-dim">
                   تعداد پروژه‌های ثبت‌شده:{' '}
                   {toPersianNumbers(project.ownerProjectCount || 0)}
                 </p>
               </div>
             </div>
 
-            <div className="rounded-[12px] border border-[#D1D5DB] bg-white p-4">
-              <h2 className="mb-3 text-right text-sm font-bold text-[#222020]">
+            <div className="ink-card p-5">
+              <h2 className="mb-4 text-right text-[15px] font-bold text-ink-text">
                 ارسال پیشنهاد
               </h2>
 
               {!isOpen ? (
-                <p className="rounded-[8px] border border-[#F9A8D4] bg-[#FFF1F2] p-3 text-right text-sm text-[#BE185D]">
+                <p className="rounded-xl bg-ink-amber-tint p-3.5 text-right text-[13px] leading-6 text-ink-amber-deep">
                   این پروژه دیگر پیشنهاد نمی‌پذیرد.
                 </p>
               ) : myProposal ? (
                 <div
-                  className={`rounded-[8px] border p-3 text-right text-sm ${proposalStatus.className}`}
+                  className={`rounded-xl p-3.5 text-right text-[13px] ${proposalStatus.className}`}
                 >
                   <p className="font-bold">{proposalStatus.label}</p>
                   <p className="mt-2 text-xs opacity-90">
@@ -299,7 +302,7 @@ function ProjectDetailsPage() {
                 <button
                   type="button"
                   onClick={handleProposalClick}
-                  className="karava-form-submit"
+                  className="ink-btn-accent w-full"
                 >
                   {user ? 'ارسال درخواست' : 'ورود و ارسال درخواست'}
                 </button>
@@ -333,15 +336,75 @@ function ProjectDetailsPage() {
   );
 }
 
+const ESCROW_STEPS = [
+  {
+    title: 'پذیرش پیشنهاد',
+    note: 'بودجه از کیف پول کارفرما بلوکه می‌شود.',
+  },
+  {
+    title: 'انجام و تحویل کار',
+    note: 'گفتگو و ارسال فایل تحویل در همین صفحه.',
+  },
+  {
+    title: 'آزادسازی مبلغ',
+    note: 'با تأیید کارفرما به کیف پول فریلنسر واریز می‌شود.',
+  },
+];
+
+/** Static explainer — escrow is what the platform offers, but nothing in the
+ *  UI said so before. */
+function EscrowExplainer({ isCompleted }) {
+  return (
+    <div className="rounded-2xl bg-ink p-5">
+      <div className="mb-4 flex items-center gap-2.5">
+        <HiOutlineLockClosed className="h-[18px] w-[18px] text-ink-mint" />
+        <h2 className="text-sm font-bold text-[#F2F6F4]">پرداخت امن کارآوا</h2>
+      </div>
+
+      <ol className="flex flex-col gap-3.5">
+        {ESCROW_STEPS.map((step, index) => {
+          const done = isCompleted;
+          return (
+            <li key={step.title} className="flex items-start gap-3">
+              <span
+                className={`mt-0.5 flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full border-[1.5px] ${
+                  done
+                    ? 'border-ink-mint bg-ink-mint'
+                    : 'border-white/30 bg-transparent'
+                }`}
+                aria-hidden="true"
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${
+                    done ? 'bg-ink' : 'bg-transparent'
+                  }`}
+                />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-[13.5px] font-bold text-[#F2F6F4]">
+                  {toPersianNumbers(index + 1)}. {step.title}
+                </span>
+                <span className="mt-0.5 block text-[12.5px] leading-[1.85] text-ink-dim">
+                  {step.note}
+                </span>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
+
 function InfoChip({ icon: Icon, label, value }) {
   return (
-    <div className="flex items-start gap-3 rounded-[8px] border border-[#E5E7EB] bg-[#F9FAFB] p-3 text-right">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[6px] bg-[#E8F3EE] text-[#006045]">
+    <div className="flex items-center gap-3 rounded-xl border border-ink-hair bg-ink-card p-4 text-right">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink-well text-ink-mint-deep">
         <Icon className="h-4 w-4" />
       </span>
       <div className="min-w-0">
-        <p className="text-xs text-[#6E6E6E]">{label}</p>
-        <p className="mt-1 text-sm font-bold text-[#222020]">{value}</p>
+        <p className="text-xs text-ink-dim">{label}</p>
+        <p className="mt-1 text-[15px] font-bold text-ink-text">{value}</p>
       </div>
     </div>
   );
